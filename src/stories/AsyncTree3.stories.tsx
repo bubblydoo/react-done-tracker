@@ -27,12 +27,15 @@ const Tree = (props: { doneTracker: DoneTracker; imageSrc: string }) => {
       </DelayedContainer>
       <ForkDoneTracker doneTracker={doneTracker}>
         {(doneTracker) => (
-          <input
-            placeholder="Type more than 3 characters"
-            onChange={(e) => {
-              if (e.target.value.length > 2) doneTracker.signalDone();
-            }}
-          />
+          <>
+            Type more than 2 characters:
+            <input
+              type={"text"}
+              onChange={(e) => {
+                if (e.target.value.length > 2) doneTracker.signalDone();
+              }}
+            />
+          </>
         )}
       </ForkDoneTracker>
     </>
