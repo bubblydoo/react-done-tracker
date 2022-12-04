@@ -7,6 +7,7 @@ type Props = any;
 export default function StoryWrapper({
   component,
   showForceRefresh = true,
+  strictMode = true,
   ...props
 }: Props) {
   const forceRefreshRef = useRef<(() => void) | null>(null);
@@ -31,7 +32,7 @@ export default function StoryWrapper({
 
   const { onDone, onAbort, onError, onPending } = props;
 
-  return (
+  const wrapper = (
     <div style={style}>
       {showForceRefresh && (
         <button onClick={() => forceRefreshRef?.current?.()}>
@@ -51,6 +52,7 @@ export default function StoryWrapper({
           )}
           onAbort={useCallback(
             (...args) => {
+              console.log("Story wrapper status", "aborted");
               onAbort?.(...args);
               setStatus("aborted");
             },
@@ -58,6 +60,7 @@ export default function StoryWrapper({
           )}
           onError={useCallback(
             (...args) => {
+              console.log("Story wrapper status", "error");
               onError?.(...args);
               setStatus("error");
             },
@@ -75,4 +78,6 @@ export default function StoryWrapper({
       </div>
     </div>
   );
+
+  return strictMode ? <React.StrictMode>{wrapper}</React.StrictMode> : wrapper;
 }

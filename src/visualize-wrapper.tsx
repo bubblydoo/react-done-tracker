@@ -9,7 +9,7 @@ export default function visualizeDoneWrapper<
   return function visualizeDoneHOC({ doneTracker, ...props }) {
     const name = doneTrackerName || (Component as any)?.displayName;
     return (
-      <DoneVisualizer name={name} doneTracker={doneTracker}>
+      <DoneVisualizer name={"Visualizer for " + name} doneTracker={doneTracker}>
         {(doneTracker) => (
           <Component {...(props as any)} doneTracker={doneTracker} />
         )}

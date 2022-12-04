@@ -21,4 +21,5 @@ const Template: StoryFn = (args, { component }) => (
 export const Primary = Template.bind({});
 Primary.args = {
   children: "Click me",
+  persistDone: false
 };

@@ -1,5 +1,5 @@
 export * from './done-tracker';
-export * from './done-tracker-hook';
+export * from './use-done-tracker-raw';
 export * from './done-tracked';
 export * from './visualize-wrapper';
 export * from './track-component-done';

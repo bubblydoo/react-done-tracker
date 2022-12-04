@@ -1,12 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { useDoneTracker } from "../done-tracker-hook";
+import { useDoneTracker } from "../use-done-tracker";
 import { equal } from "../util/equal";
 
 type Props = DoneTrackedProps<JSX.IntrinsicElements["img"]>;
 
-export default function Image({ doneTracker, ...props }: Props) {
-  const localDoneTracker = useDoneTracker(doneTracker, "Image");
+export default function Image({
+  doneTracker: parentDoneTracker,
+  ...props
+}: Props) {
+  const [doneTracker] = useDoneTracker(parentDoneTracker, {
+    name: "Image",
+    isDone: () => equal(todo, done),
+    willHaveChildren: false
+  });
 
   const todo = props.src;
 
@@ -15,18 +22,10 @@ export default function Image({ doneTracker, ...props }: Props) {
   // we need to keep track of this, because img.complete is true even when errored
   const erroredSrc = useRef<string | undefined>();
 
-  useEffect(() => {
-    console.log('image done?', todo, done);
-    if (equal(todo, done)) localDoneTracker.signalDone();
-  }, [localDoneTracker, todo, done]);
-
   const ref = useRef<HTMLImageElement>();
 
   return (
-    <>
-    {localDoneTracker.id}:{localDoneTracker.done ? "done" : "not done"}
     <img
-    style={{ display: 'block'}}
       {...props}
       ref={(r) => {
         if (!r) return;
@@ -35,14 +34,13 @@ export default function Image({ doneTracker, ...props }: Props) {
       }}
       onLoad={() => {
         erroredSrc.current = undefined;
-        setDone(ref.current?.src)
+        setDone(ref.current?.src);
       }}
       onError={(err) => {
         console.error(err);
         erroredSrc.current = props.src;
-        localDoneTracker.signalError(err);
+        doneTracker.signalError(err);
       }}
     />
-    </>
   );
 }

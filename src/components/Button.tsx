@@ -1,17 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { useDoneTracker } from "../done-tracker-hook";
+import { useDoneTracker } from "../use-done-tracker";
 
-type Props = DoneTrackedProps<JSX.IntrinsicElements["button"]>;
+type Props = DoneTrackedProps<JSX.IntrinsicElements["button"]> & {
+  persistDone?: boolean;
+};
 
-export default function Button({ doneTracker, children, ...props }: Props) {
-  const localDoneTracker = useDoneTracker(doneTracker, "Button");
+export default function Button({
+  doneTracker: parentDoneTracker,
+  persistDone,
+  children,
+  ...props
+}: Props) {
+  const done = useRef(false);
 
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    if (done) localDoneTracker.signalDone();
-  }, [localDoneTracker, done])
+  const [, { check }] = useDoneTracker(parentDoneTracker, {
+    name: "Button",
+    resetDone: useCallback(() => {
+      if (!persistDone) done.current = false;
+    }, [persistDone]),
+    isDone: useCallback(() => done.current, []),
+    willHaveChildren: false
+  });
 
   return (
     <button
@@ -19,7 +29,8 @@ export default function Button({ doneTracker, children, ...props }: Props) {
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        setDone(true);
+        done.current = true;
+        check();
       }}
     >
       {children}

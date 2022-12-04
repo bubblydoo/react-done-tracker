@@ -1,23 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { useDoneTracker } from "../done-tracker-hook";
+import { useDoneTracker } from "../use-done-tracker";
 
 export default function DelayedComponent(
   props: DoneTrackedProps<{ delay: number }>
 ) {
-  const localDoneTracker = useDoneTracker(props.doneTracker);
-  const [delaying, setDelaying] = useState(true);
+  const delaying = useRef(true);
+
+  const [doneTracker, { check }] = useDoneTracker(props.doneTracker, {
+    name: "DelayedComponent",
+    isDone: useCallback(() => !delaying.current, []),
+    resetDone: useCallback(() => (delaying.current = true), []),
+    willHaveChildren: false
+  });
+
+  const [start, setStart] = useState<number>(Infinity);
+  const [left, setLeft] = useState<number>(Infinity);
+
+  const end = start + props.delay;
 
   useEffect(() => {
-    if (!localDoneTracker) return;
+    if (!doneTracker) return;
     const timeoutId = setTimeout(() => {
-      localDoneTracker.signalDone();
-      setDelaying(false);
+      doneTracker.signalDone();
+      delaying.current = false;
+      check();
     }, props.delay);
+    setStart(+new Date());
     return () => clearTimeout(timeoutId);
-  }, [localDoneTracker, props.delay]);
+  }, [doneTracker, props.delay, check]);
 
-  useEffect(() => setDelaying(true), [localDoneTracker]);
+  useEffect(() => {
+    if (!start) return;
+    if (end < +new Date()) return;
+    const fn = () => {
+      setLeft((start + props.delay - +new Date()) / 1000);
+      requestAnimationFrame(fn);
+    };
+    const rafId = requestAnimationFrame(fn);
+    return () => cancelAnimationFrame(rafId);
+  }, [start, end, props.delay]);
 
-  return <div>{delaying ? "Delaying" : "Done"}</div>;
+  const { format } = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1
+  });
+
+  return <div>{doneTracker.done ? "Done" : `Loading: ${!left ? "Loading" : format(left)}s left`}</div>;
 }
