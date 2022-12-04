@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer } from "react";
+import { useDebugValue, useEffect, useMemo, useReducer } from "react";
 import { DoneTracker } from "./done-tracker";
 
 export const useDoneTrackerRaw = (doneTracker: DoneTracker, name?: string) => {
@@ -11,14 +11,26 @@ export const useDoneTrackerRaw = (doneTracker: DoneTracker, name?: string) => {
     [name, doneTracker]
   );
 
+  useDebugValue(
+    `Doneness of ${name}: ${
+      localDoneTracker.aborted
+        ? "aborted"
+        : localDoneTracker.done
+        ? "done"
+        : localDoneTracker.error
+        ? `error: ${localDoneTracker.error}`
+        : "pending"
+    }`
+  );
+
   useEffect(() => {
-    console.log('new local done tracker', localDoneTracker.id)
+    console.log("new local done tracker", localDoneTracker.id);
     localDoneTracker.setup();
     doneTracker.add(localDoneTracker);
 
     return () => {
       if (!localDoneTracker.done) localDoneTracker.abort();
-    }
+    };
   }, [doneTracker, localDoneTracker]);
 
   return localDoneTracker;
