@@ -8,7 +8,7 @@ import StoryWrapper from "./story-wrapper";
 import OrigDelayedContainer from "../components/DelayedContainer";
 import OrigDelayedComponent from "../components/DelayedComponent";
 import OrigButton from "../components/Button";
-import visualizeDoneWrapper from "./visualize-wrapper";
+import visualizeDoneWrapper from "../visualize-wrapper";
 
 const DelayedContainer = visualizeDoneWrapper(OrigDelayedContainer);
 const DelayedComponent = visualizeDoneWrapper(OrigDelayedComponent);

@@ -6,7 +6,7 @@ import OrigDelayedComponent from "../components/DelayedComponent";
 import { DoneTracker } from "../done-tracker";
 import { useDoneTracker } from "../done-tracker-hook";
 import StoryWrapper from "./story-wrapper";
-import visualizeDoneWrapper from "./visualize-wrapper";
+import visualizeDoneWrapper from "../visualize-wrapper";
 import DoneVisualizer from "../components/DoneVisualizer";
 
 const DelayedContainer = visualizeDoneWrapper(OrigDelayedContainer);
