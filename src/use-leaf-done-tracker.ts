@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { DoneTracker } from "./done-tracker-interface";
 import { LeafDoneTracker } from "./leaf-done-tracker";
 import { NodeDoneTracker } from "./node-done-tracker";
@@ -34,7 +34,8 @@ export const useLeafDoneTracker = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localDoneTracker, resetDone]);
 
-  useEffect(() => check(localDoneTracker), [check, localDoneTracker]);
+  // useLayoutEffect is used so the doneness can be detected before first paint
+  useLayoutEffect(() => check(localDoneTracker), [check, localDoneTracker]);
 
   return [
     localDoneTracker,
