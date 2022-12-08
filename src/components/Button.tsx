@@ -20,7 +20,7 @@ export default function Button({
       if (!persistDone) done.current = false;
     }, [persistDone]),
     isDone: useCallback(() => done.current, []),
-    willHaveChildren: false
+    willBeSignaledDone: true
   });
 
   return (

@@ -9,17 +9,20 @@ export const useDoneTracker = (
     isDone,
     resetDone,
     willHaveChildren,
+    willBeSignaledDone
   }: {
     name?: string;
     isDone?: () => boolean;
     resetDone?: () => void;
     willHaveChildren?: boolean;
+    willBeSignaledDone?: boolean
   } = {}
 ) => {
   const localDoneTracker = useDoneTrackerRaw(doneTracker, name);
 
   if (willHaveChildren === true) localDoneTracker.ensureWillHaveChildren();
   if (willHaveChildren === false) localDoneTracker.ensureWillHaveNoChildren();
+  if (willBeSignaledDone === true) localDoneTracker.ensureWillBeSignaledDone();
 
   const check = useCallback(
     (localDoneTracker: DoneTracker) => {
@@ -31,8 +34,8 @@ export const useDoneTracker = (
   const prevDoneTracker = useRef<DoneTracker>();
 
   useMemo(() => {
-    if (prevDoneTracker.current !== doneTracker) resetDone?.();
-    prevDoneTracker.current = doneTracker;
+    if (prevDoneTracker.current !== localDoneTracker) resetDone?.();
+    prevDoneTracker.current = localDoneTracker;
     // reset when there's a new done tracker
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localDoneTracker, resetDone]);

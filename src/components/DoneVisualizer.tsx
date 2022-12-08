@@ -5,7 +5,7 @@ import { useDoneTrackerRaw } from "../use-done-tracker-raw";
 
 const componentStyle = (dt: DoneTracker): React.CSSProperties => {
   return {
-    background: dt.done ? "green" : dt.error ? "red" : "lightgrey",
+    background: dt.done ? "green" : dt.errored ? "red" : "lightgrey",
     position: "relative",
     margin: 8,
     padding: 8,

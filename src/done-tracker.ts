@@ -4,7 +4,6 @@ const global = typeof window !== "undefined" ? (window as any) : {};
 global._done_tracker_id = 0;
 
 const log = (...args: any[]) => console.log("[Done Tracker]", ...args);
-
 const warn = (...args: any[]) => console.warn("[Done Tracker]", ...args);
 
 /**
@@ -18,13 +17,16 @@ export class DoneTracker {
   /** All children done (except when ensured children and children.size === 0) */
   private _done = false;
   private _aborted = false;
-  private _errored: any = null;
+  private _error: any = null;
   private _errorSource: DoneTracker | undefined;
   private _willHaveChildren: boolean | null = null;
+  private _willBeSignaledDone: boolean | null = null;
+  private _willHaveChildrenOrBeSignaledDone: boolean | null = null;
+  // assume empty is done after = 1000
 
   private _signalDoneToParent?: () => void = () =>
     warn("Not added to parent yet when signaling done", this.id);
-  private _signalCancelToParent?: () => void = () =>
+  private _signalAbortToParent?: () => void = () =>
     warn("Not added to parent yet when signaling cancel", this.id);
   private _signalErrorToParent?: (err: any, source: DoneTracker) => void = () =>
     warn("Not added to parent yet when signaling error", this.id);
@@ -53,11 +55,11 @@ export class DoneTracker {
   }
 
   get errored() {
-    return !!this._errored;
+    return !!this._error;
   }
 
   get error() {
-    return this._errored;
+    return this._error;
   }
 
   constructor(
@@ -70,9 +72,12 @@ export class DoneTracker {
     log("Created", performance.now(), this.id);
   }
 
-  add(child: DoneTracker) {
+  add = (child: DoneTracker) => {
     if (this._willHaveChildren === false) {
-      console.warn("Ensured not to have children", this.id, "->", child.id);
+      warn("Ensured not to have children", this.id, "->", child.id);
+    }
+    if (this._willBeSignaledDone === true) {
+      warn("Ensured to be signaled done", this.id, "->", child.id);
     }
     if (this.done) {
       warn(
@@ -85,49 +90,18 @@ export class DoneTracker {
     }
     this.children.add(child);
     log("🍴 Added", this.id, "->", child.id);
-    child._signalDoneToParent = () => this.calculateDoneness();
-    child._signalCancelToParent = () => this.children.delete(child);
+    child._signalDoneToParent = () => this._calculateDoneness();
+    child._signalAbortToParent = () => {
+      this.children.delete(child);
+      if (!this._willBeSignaledDone) this._calculateDonenessNextMicrotask();
+    }
     child._signalErrorToParent = (err, source) =>
       this._signalError(err, source);
     if (child._done) {
       warn("Child was already done when added", child.id);
-      this.calculateDoneness();
+      this._calculateDonenessNextMicrotask();
     }
   }
-
-  // forkChild = (
-  //   onChildDone?: () => any,
-  //   onChildAbort?: () => any,
-  //   onChildError?: (err: any, source?: DoneTracker) => any,
-  //   name?: string
-  // ) => {
-  //   log("Forking", this.id);
-  //   const child = new DoneTracker(
-  //     () => {
-  //       onChildDone?.();
-  //       this.childrenDone.set(child, true);
-  //       this.calculateDoneness();
-  //     },
-  //     () => {
-  //       onChildAbort?.();
-  //       log("Received abort", this.id, "from child", child.id);
-  //       this.childrenDone.delete(child);
-  //     },
-  //     (err, source = this) => {
-  //       this._error = err;
-  //       this._errorSource = source;
-  //       this._signalError(err, source);
-  //       onChildError?.(err, source);
-  //     },
-  //     name
-  //   );
-  //   if (this.allChildrenDone) {
-  //     warn("Parent already done while forking", this.id, "->", child.id);
-  //   }
-  //   log("🍴 Forked", this.id, "->", child.id);
-  //   this.childrenDone.set(child, false);
-  //   return child;
-  // };
 
   abort = () => {
     log("Signaling aborted", this.id);
@@ -137,8 +111,10 @@ export class DoneTracker {
     }
     this._aborted = true;
     this.onAbort?.();
-    this._signalCancelToParent?.();
+    this._signalAbortToParent?.();
+    if (this._willBeSignaledDone) return;
     Array.from(this.children).forEach((child) => !child.done && child.abort());
+    this._calculateDonenessNextMicrotask();
   };
 
   /**
@@ -160,7 +136,11 @@ export class DoneTracker {
       warn("Already done, can't signal done", this.id);
       return;
     }
-    this.calculateDoneness();
+    if (this.children.size > 0) {
+      warn("You cannot signal done on a done tracker with children", this.id);
+      return;
+    }
+    this._calculateDoneness();
   };
 
   signalError = (err: any) => {
@@ -168,7 +148,7 @@ export class DoneTracker {
   };
 
   private _signalError = (err: any, source: DoneTracker) => {
-    this._errored = err;
+    this._error = err;
     this._errorSource = source;
     this.onError?.(err, source);
     this._signalErrorToParent?.(err, source);
@@ -182,9 +162,28 @@ export class DoneTracker {
     this._willHaveChildren = false;
   };
 
-  private calculateDoneness() {
+  ensureWillBeSignaledDone = () => {
+    this._willBeSignaledDone = true;
+  };
+
+  private _calculateDonenessNextMicrotask() {
+    // Double-renders in React run in the same microtask, so next microtask should be enough
+    // https://github.dev/facebook/react/blob/645ae2686b157c9f80193e1ada75b7e00ef49acf/packages/react-reconciler/src/ReactFiberHooks.js#L527
+    // and https://stackblitz.com/edit/react-gwohwc?file=src%2FApp.js
+    queueMicrotask(() => this._calculateDoneness());
+  }
+
+  private _calculateDoneness() {
     if (this._done) {
       warn("🧮 Calculating doneness but already done", this.id);
+      return;
+    }
+    if (this._aborted) {
+      warn("🧮 Calculating doneness but aborted", this.id);
+      return;
+    }
+    if (this._error) {
+      warn("🧮 Calculating doneness but errored", this.id);
       return;
     }
     const nDoneChildren = Array.from(this.children).filter(
@@ -200,7 +199,7 @@ export class DoneTracker {
     console.groupEnd();
     if (this._done) return;
     if (this._willHaveChildren && this.children.size === 0) {
-      warn("🚧 Will have children so not done yet");
+      warn("🚧 Will have children so not done yet", this.id);
       return;
     }
     const allChildrenDone = nDoneChildren === this.children.size;

@@ -11,15 +11,21 @@ export default function DelayedContainer(
 ) {
   const delaying = useRef(true);
 
-  const [doneTracker, { check }] = useDoneTracker(props.doneTracker, {
-    name: "DelayedContainer",
-    isDone: useCallback(() => !delaying.current, []),
-    resetDone: useCallback(() => (delaying.current = true), []),
-    willHaveChildren: false
+  const [nodeDoneTracker] = useDoneTracker(props.doneTracker, {
+    name: "DelayedContainer Node",
+    willHaveChildren: true,
   });
 
-  const [childrenDoneTracker] = useDoneTracker(props.doneTracker, {
+  const [delayDoneTracker, { check }] = useDoneTracker(nodeDoneTracker, {
+    name: "DelayedContainer Delay",
+    isDone: useCallback(() => !delaying.current, []),
+    resetDone: useCallback(() => (delaying.current = true), []),
+    willBeSignaledDone: true
+  });
+
+  const [childrenDoneTracker] = useDoneTracker(nodeDoneTracker, {
     name: "DelayedContainer Children",
+    willHaveChildren: true
   });
 
   const [start, setStart] = useState<number>(Infinity);
@@ -28,15 +34,14 @@ export default function DelayedContainer(
   const end = start + props.delay;
 
   useEffect(() => {
-    if (!doneTracker) return;
+    if (!delayDoneTracker) return;
     const timeoutId = setTimeout(() => {
-      doneTracker.signalDone();
       delaying.current = false;
       check();
     }, props.delay);
     setStart(+new Date());
     return () => clearTimeout(timeoutId);
-  }, [doneTracker, props.delay, check]);
+  }, [delayDoneTracker, props.delay, check]);
 
   useEffect(() => {
     if (!start) return;
@@ -59,11 +64,11 @@ export default function DelayedContainer(
   return (
     <>
       <div>
-        {doneTracker.done
+        {delayDoneTracker.done
           ? "Done"
           : `Loading: ${!left ? "Loading" : format(left)}s left`}
       </div>
-      <div>{doneTracker.done && childrenComponents}</div>
+      <div>{delayDoneTracker.done && childrenComponents}</div>
     </>
   );
 }

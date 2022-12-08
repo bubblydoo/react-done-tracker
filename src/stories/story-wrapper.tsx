@@ -8,6 +8,8 @@ export default function StoryWrapper({
   component,
   showForceRefresh = true,
   strictMode = true,
+  // willHaveChildren = undefined,
+  // willBeSignaledDone = undefined,
   ...props
 }: Props) {
   const forceRefreshRef = useRef<(() => void) | null>(null);

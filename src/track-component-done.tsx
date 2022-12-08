@@ -38,6 +38,7 @@ export function trackComponentDone(
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [tick, onDone, onAbort, onError, ...Object.values(props)]
     );
+    doneTracker.ensureWillHaveChildren();
     // use useMemo because useEffect is too slow
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useMemo(() => onPending?.(), [onPending, doneTracker]);

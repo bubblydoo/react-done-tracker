@@ -17,8 +17,8 @@ export const useDoneTrackerRaw = (doneTracker: DoneTracker, name?: string) => {
         ? "aborted"
         : localDoneTracker.done
         ? "done"
-        : localDoneTracker.error
-        ? `error: ${localDoneTracker.error}`
+        : localDoneTracker.errored
+        ? `errored: ${localDoneTracker.error}`
         : "pending"
     }`
   );

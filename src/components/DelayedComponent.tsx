@@ -11,7 +11,7 @@ export default function DelayedComponent(
     name: "DelayedComponent",
     isDone: useCallback(() => !delaying.current, []),
     resetDone: useCallback(() => (delaying.current = true), []),
-    willHaveChildren: false
+    willBeSignaledDone: true
   });
 
   const [start, setStart] = useState<number>(Infinity);
