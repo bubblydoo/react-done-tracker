@@ -1,7 +1,6 @@
-const DEBUG = true;
-
-const global = typeof window !== "undefined" ? (window as any) : {};
-global._done_tracker_id = 0;
+import { BaseDoneTracker } from "./base-done-tracker";
+import { DoneTracker } from "./done-tracker-interface";
+import { getUniqueId } from "./get-unique-id";
 
 const log = (...args: any[]) => console.log("[Done Tracker]", ...args);
 const warn = (...args: any[]) => console.warn("[Done Tracker]", ...args);
@@ -10,9 +9,9 @@ const warn = (...args: any[]) => console.warn("[Done Tracker]", ...args);
  * Keeps track of "doneness" of a component tree
  * A DoneTracker is done when all of its children are done
  */
-export class DoneTracker {
+export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   private readonly children = new Set<DoneTracker>();
-  private readonly _id = global._done_tracker_id++;
+  private readonly _id = getUniqueId();
   private _name: string | undefined;
   /** All children done (except when ensured children and children.size === 0) */
   private _done = false;
@@ -20,16 +19,6 @@ export class DoneTracker {
   private _error: any = null;
   private _errorSource: DoneTracker | undefined;
   private _willHaveChildren: boolean | null = null;
-  private _willBeSignaledDone: boolean | null = null;
-  private _willHaveChildrenOrBeSignaledDone: boolean | null = null;
-  // assume empty is done after = 1000
-
-  private _signalDoneToParent?: () => void = () =>
-    warn("Not added to parent yet when signaling done", this.id);
-  private _signalAbortToParent?: () => void = () =>
-    warn("Not added to parent yet when signaling cancel", this.id);
-  private _signalErrorToParent?: (err: any, source: DoneTracker) => void = () =>
-    warn("Not added to parent yet when signaling error", this.id);
 
   private readonly _createdAt = performance.now();
   private _doneAt: number | null = null;
@@ -62,12 +51,8 @@ export class DoneTracker {
     return this._error;
   }
 
-  constructor(
-    private onDone?: () => any,
-    private onAbort?: () => any,
-    private onError?: (err: any, source?: DoneTracker) => any,
-    name?: string
-  ) {
+  constructor(name?: string) {
+    super();
     if (name) this._name = name;
     log("Created", performance.now(), this.id);
   }
@@ -75,9 +60,6 @@ export class DoneTracker {
   add = (child: DoneTracker) => {
     if (this._willHaveChildren === false) {
       warn("Ensured not to have children", this.id, "->", child.id);
-    }
-    if (this._willBeSignaledDone === true) {
-      warn("Ensured to be signaled done", this.id, "->", child.id);
     }
     if (this.done) {
       warn(
@@ -90,18 +72,20 @@ export class DoneTracker {
     }
     this.children.add(child);
     log("🍴 Added", this.id, "->", child.id);
-    child._signalDoneToParent = () => this._calculateDoneness();
-    child._signalAbortToParent = () => {
+    child.addEventListener("done", () => this._calculateDoneness());
+    child.addEventListener("abort", () => {
       this.children.delete(child);
-      if (!this._willBeSignaledDone) this._calculateDonenessNextMicrotask();
-    }
-    child._signalErrorToParent = (err, source) =>
-      this._signalError(err, source);
-    if (child._done) {
+      this._calculateDonenessNextMicrotask();
+    });
+    child.addEventListener("error", ([error, errorSource]) => {
+      this._signalError(error, errorSource);
+    });
+
+    if (child.done) {
       warn("Child was already done when added", child.id);
       this._calculateDonenessNextMicrotask();
     }
-  }
+  };
 
   abort = () => {
     log("Signaling aborted", this.id);
@@ -110,9 +94,7 @@ export class DoneTracker {
       return;
     }
     this._aborted = true;
-    this.onAbort?.();
-    this._signalAbortToParent?.();
-    if (this._willBeSignaledDone) return;
+    this.dispatchEvent("abort");
     Array.from(this.children).forEach((child) => !child.done && child.abort());
     this._calculateDonenessNextMicrotask();
   };
@@ -126,44 +108,14 @@ export class DoneTracker {
     this._aborted = false;
   };
 
-  signalDone = () => {
-    log("Signaling done", this.id);
-    if (this.aborted) {
-      warn("Already aborted, can't signal done", this.id);
-      return;
-    }
-    if (this.done) {
-      warn("Already done, can't signal done", this.id);
-      return;
-    }
-    if (this.children.size > 0) {
-      warn("You cannot signal done on a done tracker with children", this.id);
-      return;
-    }
-    this._calculateDoneness();
-  };
-
-  signalError = (err: any) => {
-    this._signalError(err, this);
-  };
-
   private _signalError = (err: any, source: DoneTracker) => {
     this._error = err;
     this._errorSource = source;
-    this.onError?.(err, source);
-    this._signalErrorToParent?.(err, source);
+    this.dispatchEvent("error", err, source);
   };
 
-  ensureWillHaveChildren = () => {
-    this._willHaveChildren = true;
-  };
-
-  ensureWillHaveNoChildren = () => {
-    this._willHaveChildren = false;
-  };
-
-  ensureWillBeSignaledDone = () => {
-    this._willBeSignaledDone = true;
+  setWillHaveChildren = (value: boolean) => {
+    this._willHaveChildren = value;
   };
 
   private _calculateDonenessNextMicrotask() {
@@ -171,6 +123,10 @@ export class DoneTracker {
     // https://github.dev/facebook/react/blob/645ae2686b157c9f80193e1ada75b7e00ef49acf/packages/react-reconciler/src/ReactFiberHooks.js#L527
     // and https://stackblitz.com/edit/react-gwohwc?file=src%2FApp.js
     queueMicrotask(() => this._calculateDoneness());
+  }
+
+  calculateDoneness() {
+    this._calculateDoneness();
   }
 
   private _calculateDoneness() {
@@ -209,8 +165,7 @@ export class DoneTracker {
     // this._doneAt = performance.now();
     // this._doneMethod = 'children';
     log("✅ All done", this.id, "in", this._doneAt - this._createdAt, "ms");
-    this.onDone?.();
-    this._signalDoneToParent?.();
+    this.dispatchEvent("done");
   }
 
   log() {
@@ -229,8 +184,7 @@ export class DoneTracker {
     console.log(this);
     console.groupEnd();
     for (const child of Array.from(this.children)) {
-      // debugger;
-      child.log();
+      child.log?.();
     }
     console.groupEnd();
   }

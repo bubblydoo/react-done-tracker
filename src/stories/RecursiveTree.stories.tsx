@@ -1,28 +1,35 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useState } from "react";
-import { DoneTracker } from "../done-tracker";
-import { useDoneTrackerRaw } from "../use-done-tracker-raw";
 import StoryWrapper from "./story-wrapper";
 import visualizeDoneWrapper from "../visualize-wrapper";
-import OrigForkDoneTracker from "../components/ForkDoneTracker";
+import OrigForkNodeDoneTracker from "../components/ForkNodeDoneTracker";
+import { NodeDoneTracker } from "../node-done-tracker";
+import OrigForkLeafDoneTracker from "../components/ForkLeafDoneTracker";
+import { useNodeDoneTracker } from "../use-node-done-tracker";
 
-const ForkDoneTracker = visualizeDoneWrapper(OrigForkDoneTracker);
+const ForkNodeDoneTracker = visualizeDoneWrapper(OrigForkNodeDoneTracker);
+const ForkLeafDoneTracker = visualizeDoneWrapper(OrigForkLeafDoneTracker);
 
 function RecursiveElement(props: {
   count: number;
   depth: number;
   children: any;
-  doneTracker: DoneTracker;
+  doneTracker: NodeDoneTracker;
 }) {
   if (props.depth <= 0)
-    return <button onClick={() => props.doneTracker.signalDone()}>Done</button>;
+    return (
+      <ForkLeafDoneTracker doneTracker={props.doneTracker}>
+        {(doneTracker) => (
+          <button onClick={() => doneTracker.signalDone()}>Done</button>
+        )}
+      </ForkLeafDoneTracker>
+    );
   const els = new Array(props.count).fill(0).map((x, i) => {
     return (
-      <ForkDoneTracker
+      <ForkNodeDoneTracker
         key={i}
         doneTracker={props.doneTracker}
-        willBeSignaledDone={props.depth === 1}
         willHaveChildren={props.depth > 1}
         name={`FDT ${props.depth}#${i}`}
       >
@@ -37,14 +44,14 @@ function RecursiveElement(props: {
             </RecursiveElement>
           </div>
         )}
-      </ForkDoneTracker>
+      </ForkNodeDoneTracker>
     );
   });
   return <div>{els}</div>;
 }
 
-const Tree = (props: { doneTracker: DoneTracker; imageSrc: string }) => {
-  const doneTracker = useDoneTrackerRaw(props.doneTracker);
+const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
+  const [doneTracker] = useNodeDoneTracker(props.doneTracker);
 
   const [count, setCount] = useState(1);
   const [depth, setDepth] = useState(1);

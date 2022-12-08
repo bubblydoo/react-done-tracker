@@ -1,3 +1,3 @@
-import { DoneTracker } from "./done-tracker";
+import { NodeDoneTracker } from "./node-done-tracker";
 
-export type DoneTrackedProps<P> = { doneTracker: DoneTracker } & P;
+export type DoneTrackedProps<P> = { doneTracker: NodeDoneTracker } & P;

@@ -1,7 +1,8 @@
 import React from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { DoneTracker } from "../done-tracker";
-import { useDoneTrackerRaw } from "../use-done-tracker-raw";
+import { DoneTracker } from "../done-tracker-interface";
+import { NodeDoneTracker } from "../node-done-tracker";
+import { useNodeDoneTracker } from "../use-node-done-tracker";
 
 const componentStyle = (dt: DoneTracker): React.CSSProperties => {
   return {
@@ -32,10 +33,11 @@ export default function DoneVisualizer({
   children,
 }: DoneTrackedProps<{
   name?: string;
-  children?: (doneTracker: DoneTracker) => any;
+  children?: (doneTracker: NodeDoneTracker) => any;
 }>) {
-  const localDoneTracker = useDoneTrackerRaw(doneTracker, name);
-  localDoneTracker.ensureWillHaveChildren();
+  const [localDoneTracker] = useNodeDoneTracker(doneTracker, {
+    name: name || "Visualizer"
+  });
 
   const childrenComponents = children?.(localDoneTracker);
 

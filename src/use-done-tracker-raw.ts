@@ -1,11 +1,33 @@
-import { useDebugValue, useEffect, useMemo, useReducer } from "react";
-import { DoneTracker } from "./done-tracker";
+import { useDebugValue, useEffect, useMemo, useReducer, useRef } from "react";
+import { DoneTracker } from "./done-tracker-interface";
+import { LeafDoneTracker } from "./leaf-done-tracker";
+import { NodeDoneTracker } from "./node-done-tracker";
 
-export const useDoneTrackerRaw = (doneTracker: DoneTracker, name?: string) => {
+export function useDoneTrackerRaw<
+  T extends "node" | "leaf",
+  D extends DoneTracker = T extends "node" ? NodeDoneTracker : LeafDoneTracker
+>(doneTracker: NodeDoneTracker, type: T, name?: string): D {
   const [, rerender] = useReducer((i: number) => i + 1, 0);
 
-  const localDoneTracker = useMemo<DoneTracker>(
-    () => new DoneTracker(rerender, rerender, rerender, name),
+  const unsubscribeFromPrevious = useRef<() => void>();
+
+  const localDoneTracker = useMemo<D>(
+    () => {
+      unsubscribeFromPrevious.current?.();
+
+      const doneTracker =
+        type === "node" ? new NodeDoneTracker(name) : new LeafDoneTracker(name);
+      doneTracker.addEventListener("done", rerender);
+      doneTracker.addEventListener("abort", rerender);
+      doneTracker.addEventListener("error", rerender);
+
+      unsubscribeFromPrevious.current = () => {
+        doneTracker.removeEventListener("done", rerender);
+        doneTracker.removeEventListener("abort", rerender);
+        doneTracker.removeEventListener("error", rerender);
+      }
+      return doneTracker as any;
+    },
     // doneTracker needs to be in here!
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [name, doneTracker]
@@ -24,14 +46,14 @@ export const useDoneTrackerRaw = (doneTracker: DoneTracker, name?: string) => {
   );
 
   useEffect(() => {
-    console.log("new local done tracker", localDoneTracker.id);
+    console.log("new local done tracker", type, localDoneTracker.id);
     localDoneTracker.setup();
     doneTracker.add(localDoneTracker);
 
     return () => {
       if (!localDoneTracker.done) localDoneTracker.abort();
     };
-  }, [doneTracker, localDoneTracker]);
+  }, [doneTracker, localDoneTracker, type]);
 
   return localDoneTracker;
-};
+}

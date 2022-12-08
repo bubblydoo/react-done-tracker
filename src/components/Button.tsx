@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { useDoneTracker } from "../use-done-tracker";
+import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 
 type Props = DoneTrackedProps<JSX.IntrinsicElements["button"]> & {
   persistDone?: boolean;
@@ -14,13 +14,12 @@ export default function Button({
 }: Props) {
   const done = useRef(false);
 
-  const [, { check }] = useDoneTracker(parentDoneTracker, {
+  const [, { check }] = useLeafDoneTracker(parentDoneTracker, {
     name: "Button",
     resetDone: useCallback(() => {
       if (!persistDone) done.current = false;
     }, [persistDone]),
     isDone: useCallback(() => done.current, []),
-    willBeSignaledDone: true
   });
 
   return (

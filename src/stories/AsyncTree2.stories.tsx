@@ -2,14 +2,16 @@ import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { DoneTracker } from "../done-tracker";
-import { useDoneTrackerRaw } from "../use-done-tracker-raw";
 import StoryWrapper from "./story-wrapper";
 import OrigDelayedContainer from "../components/DelayedContainer";
 import OrigDelayedComponent from "../components/DelayedComponent";
 import OrigButton from "../components/Button";
 import Image from "../components/Image";
 import visualizeDoneWrapper from "../visualize-wrapper";
+import { useNodeDoneTracker } from "../use-node-done-tracker";
+import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { NodeDoneTracker } from "../node-done-tracker";
+import { DoneTracker } from "../done-tracker-interface";
 
 const DelayedContainer = visualizeDoneWrapper(OrigDelayedContainer);
 const DelayedComponent = visualizeDoneWrapper(OrigDelayedComponent);
@@ -21,13 +23,14 @@ const OrigContainerWithImageDelayingChildren = (
   props: DoneTrackedProps<{
     delay: number;
     src: string;
-    children?: (doneTracker: DoneTracker) => any;
+    children?: (doneTracker: NodeDoneTracker) => any;
   }>
 ) => {
   console.log("delayed component", props.doneTracker.id);
-  const localDoneTracker = useDoneTrackerRaw(props.doneTracker, "local");
-  const imageDoneTracker = useDoneTrackerRaw(props.doneTracker, "image");
-  const childrenDoneTracker = useDoneTrackerRaw(props.doneTracker, "children");
+  const [nodeDoneTracker] = useNodeDoneTracker(props.doneTracker);
+  const [localDoneTracker] = useLeafDoneTracker(nodeDoneTracker, { name: "Local" });
+  const [imageDoneTracker] = useNodeDoneTracker(nodeDoneTracker, { name: "Image" });
+  const [childrenDoneTracker] = useNodeDoneTracker(nodeDoneTracker, { name: "Children" });
   const [delaying, setDelaying] = useState(true);
 
   console.log("Rerendering component", localDoneTracker?.id);
@@ -59,9 +62,8 @@ const ContainerWithImageDelayingChildren = visualizeDoneWrapper(
   OrigContainerWithImageDelayingChildren
 );
 
-const Tree = (props: { doneTracker: DoneTracker; imageSrc: string }) => {
-  const localDoneTracker = useDoneTrackerRaw(props.doneTracker);
-  localDoneTracker.ensureWillHaveChildren();
+const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
+  const [localDoneTracker] = useNodeDoneTracker(props.doneTracker);
 
   return (
     <>

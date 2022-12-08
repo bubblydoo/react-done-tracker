@@ -1,6 +1,5 @@
-/* eslint-disable react/display-name */
-import React, { useEffect, useMemo, useReducer, useRef } from "react";
-import { DoneTracker } from "./done-tracker";
+import React, { useMemo, useReducer, useRef } from "react";
+import { NodeDoneTracker } from "./node-done-tracker";
 
 interface Props {
   onDone: () => any;
@@ -8,18 +7,6 @@ interface Props {
   onError: (err: any, source: any) => any;
   onPending: () => any;
 }
-
-const useEffectSkipFirst: typeof useEffect = (cb, deps) => {
-  const mounted = useRef(true);
-
-  useEffect(() => {
-    if (!mounted.current) {
-      return cb();
-    }
-    mounted.current = false;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-};
 
 export function trackComponentDone(
   Component: any,
@@ -33,12 +20,30 @@ export function trackComponentDone(
     if (forceRefreshRef) {
       forceRefreshRef.current = () => rerender();
     }
+
+    const unsubscribeFromPrevious = useRef<() => void>();
+
     const doneTracker = useMemo(
-      () => new DoneTracker(onDone, onAbort, onError, "Root"),
+      () => {
+        unsubscribeFromPrevious.current?.();
+
+        const dt = new NodeDoneTracker("Root");
+        console.log("creating new root", dt.id);
+        dt.addEventListener("done", onDone);
+        dt.addEventListener("abort", onAbort);
+        dt.addEventListener("error", onError);
+
+        unsubscribeFromPrevious.current = () => {
+          doneTracker.removeEventListener("done", rerender);
+          doneTracker.removeEventListener("abort", rerender);
+          doneTracker.removeEventListener("error", rerender);
+        }
+        // dt.setWillHaveChildren(true);
+        return dt;
+      },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [tick, onDone, onAbort, onError, ...Object.values(props)]
     );
-    doneTracker.ensureWillHaveChildren();
     // use useMemo because useEffect is too slow
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useMemo(() => onPending?.(), [onPending, doneTracker]);

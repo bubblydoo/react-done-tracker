@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { useDoneTracker } from "../use-done-tracker";
+import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 import { equal } from "../util/equal";
 
 type Props = DoneTrackedProps<JSX.IntrinsicElements["img"]>;
@@ -9,10 +9,9 @@ export default function Image({
   doneTracker: parentDoneTracker,
   ...props
 }: Props) {
-  const [doneTracker] = useDoneTracker(parentDoneTracker, {
+  const [doneTracker] = useLeafDoneTracker(parentDoneTracker, {
     name: "Image",
     isDone: () => equal(todo, done),
-    willHaveChildren: false
   });
 
   const todo = props.src;

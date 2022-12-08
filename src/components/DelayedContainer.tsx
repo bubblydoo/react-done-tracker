@@ -1,29 +1,28 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { DoneTrackedProps } from "../done-tracked";
-import { DoneTracker } from "../done-tracker";
-import { useDoneTracker } from "../use-done-tracker";
+import { NodeDoneTracker } from "../node-done-tracker";
+import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useNodeDoneTracker } from "../use-node-done-tracker";
 
 export default function DelayedContainer(
   props: DoneTrackedProps<{
     delay: number;
-    children: (doneTracker: DoneTracker) => any;
+    children: (doneTracker: NodeDoneTracker) => any;
   }>
 ) {
   const delaying = useRef(true);
 
-  const [nodeDoneTracker] = useDoneTracker(props.doneTracker, {
-    name: "DelayedContainer Node",
-    willHaveChildren: true,
+  const [nodeDoneTracker] = useNodeDoneTracker(props.doneTracker, {
+    name: "DelayedContainer Node"
   });
 
-  const [delayDoneTracker, { check }] = useDoneTracker(nodeDoneTracker, {
+  const [delayDoneTracker, { check }] = useLeafDoneTracker(nodeDoneTracker, {
     name: "DelayedContainer Delay",
     isDone: useCallback(() => !delaying.current, []),
     resetDone: useCallback(() => (delaying.current = true), []),
-    willBeSignaledDone: true
   });
 
-  const [childrenDoneTracker] = useDoneTracker(nodeDoneTracker, {
+  const [childrenDoneTracker] = useNodeDoneTracker(nodeDoneTracker, {
     name: "DelayedContainer Children",
     willHaveChildren: true
   });

@@ -1,31 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { DoneTracker } from "./done-tracker";
+import { DoneTracker } from "./done-tracker-interface";
+import { LeafDoneTracker } from "./leaf-done-tracker";
+import { NodeDoneTracker } from "./node-done-tracker";
 import { useDoneTrackerRaw } from "./use-done-tracker-raw";
 
-export const useDoneTracker = (
-  doneTracker: DoneTracker,
+export const useLeafDoneTracker = (
+  doneTracker: NodeDoneTracker,
   {
     name,
     isDone,
-    resetDone,
-    willHaveChildren,
-    willBeSignaledDone
+    resetDone
   }: {
     name?: string;
     isDone?: () => boolean;
     resetDone?: () => void;
-    willHaveChildren?: boolean;
-    willBeSignaledDone?: boolean
   } = {}
 ) => {
-  const localDoneTracker = useDoneTrackerRaw(doneTracker, name);
-
-  if (willHaveChildren === true) localDoneTracker.ensureWillHaveChildren();
-  if (willHaveChildren === false) localDoneTracker.ensureWillHaveNoChildren();
-  if (willBeSignaledDone === true) localDoneTracker.ensureWillBeSignaledDone();
+  const localDoneTracker = useDoneTrackerRaw(doneTracker, "leaf", name);
 
   const check = useCallback(
-    (localDoneTracker: DoneTracker) => {
+    (localDoneTracker: LeafDoneTracker) => {
       if (isDone?.()) localDoneTracker.signalDone();
     },
     [isDone]
