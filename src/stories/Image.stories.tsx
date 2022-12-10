@@ -23,3 +23,8 @@ export const Primary = Template.bind({});
 Primary.args = {
   src: "https://picsum.photos/200/300",
 };
+
+export const Error = Template.bind({});
+Error.args = {
+  src: "https://example.qwkeinasc/",
+};
