@@ -19,7 +19,7 @@ export const useNodeDoneTracker = (
   localDoneTracker.setWillHaveChildren(true);
 
   useEffect(() => {
-    // if the children are delayed,
+    // if the children are delayed, use willHaveChildren
     if (willHaveChildren) return;
     queueMicrotask(() => {
       // if at this point the node doesn't have children, it will be done
