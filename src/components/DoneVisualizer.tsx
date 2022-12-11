@@ -35,7 +35,7 @@ export default function DoneVisualizer({
   name?: string;
   children?: (doneTracker: NodeDoneTracker) => any;
 }>) {
-  const [localDoneTracker] = useNodeDoneTracker(doneTracker, {
+  const localDoneTracker = useNodeDoneTracker(doneTracker, {
     name: name || "Visualizer"
   });
 

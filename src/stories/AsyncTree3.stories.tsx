@@ -14,7 +14,7 @@ const Button = visualizeDoneWrapper(OrigButton);
 const ForkDoneTracker = visualizeDoneWrapper(OrigForkDoneTracker);
 
 const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
-  const [doneTracker] = useNodeDoneTracker(props.doneTracker);
+  const doneTracker = useNodeDoneTracker(props.doneTracker);
 
   return (
     <>

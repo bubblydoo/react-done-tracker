@@ -51,7 +51,7 @@ function RecursiveElement(props: {
 }
 
 const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
-  const [doneTracker] = useNodeDoneTracker(props.doneTracker);
+  const doneTracker = useNodeDoneTracker(props.doneTracker);
 
   const [count, setCount] = useState(1);
   const [depth, setDepth] = useState(1);

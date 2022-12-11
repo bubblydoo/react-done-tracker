@@ -13,7 +13,7 @@ const DelayedContainer = visualizeDoneWrapper(OrigDelayedContainer);
 const DelayedComponent = visualizeDoneWrapper(OrigDelayedComponent);
 
 const Tree = (props: { doneTracker: NodeDoneTracker }) => {
-  const [doneTracker] = useNodeDoneTracker(props.doneTracker);
+  const doneTracker = useNodeDoneTracker(props.doneTracker);
 
   return (
     <DoneVisualizer doneTracker={doneTracker} name={"Root"}>

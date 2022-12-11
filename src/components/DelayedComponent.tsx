@@ -7,7 +7,7 @@ export default function DelayedComponent(
 ) {
   const [delaying, setDelaying] = useState(true);
 
-  const [doneTracker] = useLeafDoneTracker(props.doneTracker, {
+  const doneTracker = useLeafDoneTracker(props.doneTracker, {
     name: "DelayedComponent",
     done: !delaying,
     reset: () => setDelaying(true),

@@ -11,7 +11,7 @@ export default function ForkLeafDoneTracker({
     typeof useLeafDoneTracker
   >[1]
 >) {
-  const [doneTracker] = useLeafDoneTracker(parentDoneTracker, {
+  const doneTracker = useLeafDoneTracker(parentDoneTracker, {
     name: "ForkLeafDoneTracker",
     ...args,
   });

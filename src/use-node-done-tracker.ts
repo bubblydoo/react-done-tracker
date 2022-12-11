@@ -28,5 +28,5 @@ export const useNodeDoneTracker = (
     });
   }, [localDoneTracker, willHaveChildren]);
 
-  return [localDoneTracker, {}] as const;
+  return localDoneTracker;
 };

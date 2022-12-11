@@ -42,13 +42,5 @@ export const useLeafDoneTracker = (
   // useEffect is used because the leaf might not be added to the parent yet
   useEffect(() => check(localDoneTracker), [check, localDoneTracker]);
 
-  return [
-    localDoneTracker,
-    {
-      check: useCallback(
-        () => check(localDoneTracker),
-        [check, localDoneTracker]
-      ),
-    },
-  ] as const;
+  return localDoneTracker;
 };

@@ -27,10 +27,10 @@ const OrigContainerWithImageDelayingChildren = (
   }>
 ) => {
   console.log("delayed component", props.doneTracker.id);
-  const [nodeDoneTracker] = useNodeDoneTracker(props.doneTracker);
-  const [localDoneTracker] = useLeafDoneTracker(nodeDoneTracker, { name: "Local" });
-  const [imageDoneTracker] = useNodeDoneTracker(nodeDoneTracker, { name: "Image" });
-  const [childrenDoneTracker] = useNodeDoneTracker(nodeDoneTracker, { name: "Children" });
+  const nodeDoneTracker = useNodeDoneTracker(props.doneTracker);
+  const localDoneTracker = useLeafDoneTracker(nodeDoneTracker, { name: "Local" });
+  const imageDoneTracker = useNodeDoneTracker(nodeDoneTracker, { name: "Image" });
+  const childrenDoneTracker = useNodeDoneTracker(nodeDoneTracker, { name: "Children" });
   const [delaying, setDelaying] = useState(true);
 
   console.log("Rerendering component", localDoneTracker?.id);
@@ -63,7 +63,7 @@ const ContainerWithImageDelayingChildren = visualizeDoneWrapper(
 );
 
 const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
-  const [localDoneTracker] = useNodeDoneTracker(props.doneTracker);
+  const localDoneTracker = useNodeDoneTracker(props.doneTracker);
 
   return (
     <>

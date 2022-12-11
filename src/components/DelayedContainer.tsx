@@ -12,17 +12,17 @@ export default function DelayedContainer(
 ) {
   const [delaying, setDelaying] = useState(true);
 
-  const [nodeDoneTracker] = useNodeDoneTracker(props.doneTracker, {
+  const nodeDoneTracker = useNodeDoneTracker(props.doneTracker, {
     name: "DelayedContainer Node"
   });
 
-  const [delayDoneTracker] = useLeafDoneTracker(nodeDoneTracker, {
+  const delayDoneTracker = useLeafDoneTracker(nodeDoneTracker, {
     name: "DelayedContainer Delay",
     done: !delaying,
     reset: () => setDelaying(true),
   });
 
-  const [childrenDoneTracker] = useNodeDoneTracker(nodeDoneTracker, {
+  const childrenDoneTracker = useNodeDoneTracker(nodeDoneTracker, {
     name: "DelayedContainer Children",
     willHaveChildren: true
   });
