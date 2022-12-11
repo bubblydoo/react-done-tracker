@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DoneTrackedProps } from "../done-tracked";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 
 export default function DelayedComponent(
   props: DoneTrackedProps<{ delay: number }>
 ) {
-  const delaying = useRef(true);
+  const [delaying, setDelaying] = useState(true);
 
-  const [doneTracker, { check }] = useLeafDoneTracker(props.doneTracker, {
+  const [doneTracker] = useLeafDoneTracker(props.doneTracker, {
     name: "DelayedComponent",
-    isDone: useCallback(() => !delaying.current, []),
-    resetDone: useCallback(() => (delaying.current = true), [])
+    done: !delaying,
+    reset: () => setDelaying(true),
   });
 
   const [start, setStart] = useState<number>(Infinity);
@@ -21,13 +21,11 @@ export default function DelayedComponent(
   useEffect(() => {
     if (!doneTracker) return;
     const timeoutId = setTimeout(() => {
-      doneTracker.signalDone();
-      delaying.current = false;
-      check();
+      setDelaying(false);
     }, props.delay);
     setStart(+new Date());
     return () => clearTimeout(timeoutId);
-  }, [doneTracker, props.delay, check]);
+  }, [doneTracker, props.delay]);
 
   useEffect(() => {
     if (!start) return;

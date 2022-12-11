@@ -34,9 +34,9 @@ export function trackComponentDone(
         dt.addEventListener("error", onError);
 
         unsubscribeFromPrevious.current = () => {
-          doneTracker.removeEventListener("done", rerender);
-          doneTracker.removeEventListener("abort", rerender);
-          doneTracker.removeEventListener("error", rerender);
+          doneTracker.removeEventListener("done", onDone);
+          doneTracker.removeEventListener("abort", onAbort);
+          doneTracker.removeEventListener("error", onError);
         }
         // dt.setWillHaveChildren(true);
         return dt;

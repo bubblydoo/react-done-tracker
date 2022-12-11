@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DoneTrackedProps } from "../done-tracked";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
@@ -10,16 +10,16 @@ export default function DelayedContainer(
     children: (doneTracker: NodeDoneTracker) => any;
   }>
 ) {
-  const delaying = useRef(true);
+  const [delaying, setDelaying] = useState(true);
 
   const [nodeDoneTracker] = useNodeDoneTracker(props.doneTracker, {
     name: "DelayedContainer Node"
   });
 
-  const [delayDoneTracker, { check }] = useLeafDoneTracker(nodeDoneTracker, {
+  const [delayDoneTracker] = useLeafDoneTracker(nodeDoneTracker, {
     name: "DelayedContainer Delay",
-    isDone: useCallback(() => !delaying.current, []),
-    resetDone: useCallback(() => (delaying.current = true), []),
+    done: !delaying,
+    reset: () => setDelaying(true),
   });
 
   const [childrenDoneTracker] = useNodeDoneTracker(nodeDoneTracker, {
@@ -35,12 +35,11 @@ export default function DelayedContainer(
   useEffect(() => {
     if (!delayDoneTracker) return;
     const timeoutId = setTimeout(() => {
-      delaying.current = false;
-      check();
+      setDelaying(false);
     }, props.delay);
     setStart(+new Date());
     return () => clearTimeout(timeoutId);
-  }, [delayDoneTracker, props.delay, check]);
+  }, [delayDoneTracker, props.delay]);
 
   useEffect(() => {
     if (!start) return;

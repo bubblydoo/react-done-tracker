@@ -69,7 +69,7 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   };
 
   signalDone = () => {
-    log("Signaling done", this.id);
+    log("✅ Signaling done", this.id);
     if (this.aborted) {
       warn("Already aborted, can't signal done", this.id);
       return;
@@ -88,6 +88,7 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   };
 
   private _signalError = (err: any) => {
+    log("❌ Signaling errored", this.id);
     this._error = err;
     this.dispatchEvent("error", err, this);
   };

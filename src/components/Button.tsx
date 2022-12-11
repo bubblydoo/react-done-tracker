@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { DoneTrackedProps } from "../done-tracked";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 
@@ -12,14 +12,14 @@ export default function Button({
   children,
   ...props
 }: Props) {
-  const done = useRef(false);
+  const [done, setDone] = useState(false);
 
-  const [, { check }] = useLeafDoneTracker(parentDoneTracker, {
+  useLeafDoneTracker(parentDoneTracker, {
     name: "Button",
-    resetDone: useCallback(() => {
-      if (!persistDone) done.current = false;
-    }, [persistDone]),
-    isDone: useCallback(() => done.current, []),
+    done,
+    reset: () => {
+      if (!persistDone)  setDone(false);
+    },
   });
 
   return (
@@ -28,8 +28,7 @@ export default function Button({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        done.current = true;
-        check();
+        setDone(true);
       }}
     >
       {children}

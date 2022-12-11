@@ -8,34 +8,39 @@ export const useLeafDoneTracker = (
   doneTracker: NodeDoneTracker,
   {
     name,
-    isDone,
-    resetDone
+    done,
+    error,
+    reset
   }: {
     name?: string;
-    isDone?: () => boolean;
-    resetDone?: () => void;
+    done?: boolean;
+    error?: any;
+    reset?: () => void;
   } = {}
 ) => {
   const localDoneTracker = useDoneTrackerRaw(doneTracker, "leaf", name);
 
   const check = useCallback(
     (localDoneTracker: LeafDoneTracker) => {
-      if (isDone?.()) localDoneTracker.signalDone();
+      if (done) localDoneTracker.signalDone();
+      if (error) localDoneTracker.signalError(error);
     },
-    [isDone]
+    [done, error]
   );
 
   const prevDoneTracker = useRef<DoneTracker>();
 
   useMemo(() => {
-    if (prevDoneTracker.current !== localDoneTracker) resetDone?.();
+    if (prevDoneTracker.current !== localDoneTracker) reset?.();
     prevDoneTracker.current = localDoneTracker;
     // reset when there's a new done tracker
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localDoneTracker, resetDone]);
+  }, [localDoneTracker, reset]);
 
   // useLayoutEffect is used so the doneness can be detected before first paint
   useLayoutEffect(() => check(localDoneTracker), [check, localDoneTracker]);
+  // useEffect is used because the leaf might not be added to the parent yet
+  useEffect(() => check(localDoneTracker), [check, localDoneTracker]);
 
   return [
     localDoneTracker,
