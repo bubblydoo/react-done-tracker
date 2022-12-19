@@ -1,22 +1,24 @@
 import React, { useState } from "react";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
+import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
 
-type Props = JSX.IntrinsicElements["button"] & {
+type Props = ImperativeDoneTrackedProps<JSX.IntrinsicElements["button"]> & {
   persistDone?: boolean;
 };
 
 export default function Button({
+  doneTracker: parentDoneTracker,
   persistDone,
   children,
   ...props
 }: Props) {
   const [done, setDone] = useState(false);
 
-  useLeafDoneTracker({
+  useImperativeLeafDoneTracker(parentDoneTracker, {
     name: "Button",
     done,
     reset: () => {
-      if (!persistDone) setDone(false);
+      if (!persistDone)  setDone(false);
     },
   });
 

@@ -5,6 +5,7 @@ import StoryWrapper from "./story-wrapper";
 import Button from "../components/Button";
 
 export default {
+  title: 'Contextual API/Button',
   component: Button,
   args: {
     onDone: action("done"),

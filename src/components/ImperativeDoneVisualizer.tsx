@@ -1,8 +1,8 @@
 import React from "react";
-import { DoneTrackedProps } from "../done-tracked";
+import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
 import { DoneTracker } from "../done-tracker-interface";
 import { NodeDoneTracker } from "../node-done-tracker";
-import { useNodeDoneTracker } from "../use-node-done-tracker";
+import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 
 const componentStyle = (dt: DoneTracker): React.CSSProperties => {
   return {
@@ -27,16 +27,17 @@ const indicatorStyle: React.CSSProperties = {
   background: "#ffffff88",
 };
 
-export default function DoneVisualizer({
+export default function ImperativeDoneVisualizer({
   name,
   doneTracker,
   children,
-}: DoneTrackedProps<{
+}: ImperativeDoneTrackedProps<{
   name?: string;
   children?: (doneTracker: NodeDoneTracker) => any;
 }>) {
-  const localDoneTracker = useNodeDoneTracker(doneTracker, {
-    name: name || "Visualizer"
+  const localDoneTracker = useImperativeNodeDoneTracker(doneTracker, {
+    name: name || "Visualizer",
+    willHaveChildren: true
   });
 
   const childrenComponents = children?.(localDoneTracker);

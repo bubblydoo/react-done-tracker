@@ -1,36 +1,47 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import { DoneTrackedProps } from "../done-tracked";
+import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
 import StoryWrapper from "./story-wrapper";
-import OrigDelayedContainer from "../components/DelayedContainer";
-import OrigDelayedComponent from "../components/DelayedComponent";
-import OrigButton from "../components/Button";
-import Image from "../components/Image";
-import visualizeDoneWrapper from "../visualize-wrapper";
-import { useNodeDoneTracker } from "../use-node-done-tracker";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
+import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
+import ImperativeButton from "../components/ImperativeButton";
+import Image from "../components/ImperativeImage";
+import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
+import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { DoneTracker } from "../done-tracker-interface";
+import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 
-const DelayedContainer = visualizeDoneWrapper(OrigDelayedContainer);
-const DelayedComponent = visualizeDoneWrapper(OrigDelayedComponent);
-const Button = visualizeDoneWrapper(OrigButton);
+const DelayedContainer = imperativeVisualizeDoneWrapper(
+  ImperativeDelayedContainer
+);
+const DelayedComponent = imperativeVisualizeDoneWrapper(
+  ImperativeDelayedComponent
+);
+const Button = imperativeVisualizeDoneWrapper(ImperativeButton);
 
-const status = (dt: DoneTracker) => `${dt.name}:${dt.done ? "Done" : "Not done"}`;
+const status = (dt: DoneTracker) =>
+  `${dt.name}:${dt.done ? "Done" : "Not done"}`;
 
 const OrigContainerWithImageDelayingChildren = (
-  props: DoneTrackedProps<{
+  props: ImperativeDoneTrackedProps<{
     delay: number;
     src: string;
     children?: (doneTracker: NodeDoneTracker) => any;
   }>
 ) => {
   console.log("delayed component", props.doneTracker.id);
-  const nodeDoneTracker = useNodeDoneTracker(props.doneTracker);
-  const localDoneTracker = useLeafDoneTracker(nodeDoneTracker, { name: "Local" });
-  const imageDoneTracker = useNodeDoneTracker(nodeDoneTracker, { name: "Image" });
-  const childrenDoneTracker = useNodeDoneTracker(nodeDoneTracker, { name: "Children" });
+  const nodeDoneTracker = useImperativeNodeDoneTracker(props.doneTracker);
+  const localDoneTracker = useImperativeLeafDoneTracker(nodeDoneTracker, {
+    name: "Local",
+  });
+  const imageDoneTracker = useImperativeNodeDoneTracker(nodeDoneTracker, {
+    name: "Image",
+  });
+  const childrenDoneTracker = useImperativeNodeDoneTracker(nodeDoneTracker, {
+    name: "Children",
+  });
   const [delaying, setDelaying] = useState(true);
 
   console.log("Rerendering component", localDoneTracker?.id);
@@ -51,19 +62,21 @@ const OrigContainerWithImageDelayingChildren = (
 
   return (
     <div>
-      {status(localDoneTracker)} & {status(imageDoneTracker)} & {status(childrenDoneTracker)}
-      <Image src={props.src} doneTracker={imageDoneTracker}/>
+      {status(localDoneTracker)} & {status(imageDoneTracker)} &{" "}
+      {status(childrenDoneTracker)}
+      <Image src={props.src} doneTracker={imageDoneTracker} />
       {delaying ? "Delaying" : "Done"} {childrenComponents}
     </div>
   );
 };
 
-const ContainerWithImageDelayingChildren = visualizeDoneWrapper(
-  OrigContainerWithImageDelayingChildren
+const ContainerWithImageDelayingChildren = imperativeVisualizeDoneWrapper(
+  OrigContainerWithImageDelayingChildren,
+  "ContainerWithImageDelayingChildren"
 );
 
 const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
-  const localDoneTracker = useNodeDoneTracker(props.doneTracker);
+  const localDoneTracker = useImperativeNodeDoneTracker(props.doneTracker);
 
   return (
     <>
@@ -86,12 +99,15 @@ const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
           </div>
         )}
       </DelayedContainer>
-      <Button doneTracker={localDoneTracker} persistDone={true}>{"Click to make done (persisted)"}</Button>
+      <Button doneTracker={localDoneTracker} persistDone={true}>
+        {"Click to make done (persisted)"}
+      </Button>
     </>
   );
 };
 
 export default {
+  title: "Imperative API/Async tree 2",
   component: Tree,
   args: {
     onDone: action("done"),
@@ -102,7 +118,12 @@ export default {
 } as Meta;
 
 const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component} />
+  <StoryWrapper
+    {...args}
+    showForceRefresh={true}
+    component={component}
+    imperative={true}
+  />
 );
 
 export const Primary = Template.bind({});

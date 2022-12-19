@@ -3,10 +3,10 @@ import React from "react";
 import { action } from "@storybook/addon-actions";
 import type { StoryFn, Meta } from "@storybook/react";
 import StoryWrapper from "./story-wrapper";
-import Image from "../components/Image";
+import Image from "../components/ImperativeImage";
 
 export default {
-  title: 'Contextual API/Image',
+  title: 'Imperative API/Image',
   component: Image,
   args: {
     onDone: action("done"),
@@ -17,7 +17,7 @@ export default {
 } as Meta;
 
 const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} component={component} />
+  <StoryWrapper {...args} component={component} imperative={true} />
 );
 
 export const Primary = Template.bind({});

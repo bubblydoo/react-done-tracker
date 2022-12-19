@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from "react";
 import { action } from "@storybook/addon-actions";
 import type { StoryFn, Meta } from "@storybook/react";
 import StoryWrapper from "./story-wrapper";
-import Image from "../components/Image";
+import Button from "../components/ImperativeButton";
 
 export default {
-  title: 'Contextual API/Image',
-  component: Image,
+  title: 'Imperative API/Button',
+  component: Button,
   args: {
     onDone: action("done"),
     onAbort: action("abort"),
@@ -17,15 +16,11 @@ export default {
 } as Meta;
 
 const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} component={component} />
+  <StoryWrapper {...args} component={component} imperative={true} />
 );
 
 export const Primary = Template.bind({});
 Primary.args = {
-  src: "https://picsum.photos/200/300",
-};
-
-export const Error = Template.bind({});
-Error.args = {
-  src: "https://example.qwkeinasc/",
+  children: "Click me",
+  persistDone: false
 };

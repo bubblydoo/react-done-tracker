@@ -8,14 +8,15 @@ export default function StoryWrapper({
   component,
   showForceRefresh = true,
   strictMode = true,
+  imperative = false,
   // willHaveChildren = undefined,
   // willBeSignaledDone = undefined,
   ...props
 }: Props) {
   const forceRefreshRef = useRef<(() => void) | null>(null);
   const C = useMemo(
-    () => trackComponentDone(component, forceRefreshRef),
-    [component]
+    () => trackComponentDone(component, imperative, forceRefreshRef),
+    [component, imperative]
   );
 
   const [status, setStatus] = useState("pending");

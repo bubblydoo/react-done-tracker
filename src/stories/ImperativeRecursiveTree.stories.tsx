@@ -3,51 +3,59 @@ import { Meta, StoryFn } from "@storybook/react";
 import React, { useState } from "react";
 import StoryWrapper from "./story-wrapper";
 import OrigImperativeForkNodeDoneTracker from "../components/ImperativeForkNodeDoneTracker";
-import ForkLeafDoneTracker from "../components/ForkLeafDoneTracker";
-import { imperativeToContextual } from "../imperative-to-contextual";
+import { NodeDoneTracker } from "../node-done-tracker";
+import OrigImperativeForkLeafDoneTracker from "../components/ImperativeForkLeafDoneTracker";
+import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 
-const ForkNodeDoneTracker = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker)
-);
+const ImperativeForkNodeDoneTracker = imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker);
+const ImperativeForkLeafDoneTracker = imperativeVisualizeDoneWrapper(OrigImperativeForkLeafDoneTracker);
 
 function RecursiveElement(props: {
   count: number;
   depth: number;
   children: any;
+  doneTracker: NodeDoneTracker;
 }) {
   if (props.depth <= 0)
     return (
-      <ForkLeafDoneTracker>
+      <ImperativeForkLeafDoneTracker doneTracker={props.doneTracker}>
         {(doneTracker) => (
           <>
             <button onClick={() => doneTracker.signalDone()}>✅ Done</button>
-            <button onClick={() => doneTracker.signalError("error")}>
-              ❌ Error
-            </button>
+            <button onClick={() => doneTracker.signalError('error')}>❌ Error</button>
           </>
         )}
-      </ForkLeafDoneTracker>
+      </ImperativeForkLeafDoneTracker>
     );
   const els = new Array(props.count).fill(0).map((x, i) => {
     return (
-      <ForkNodeDoneTracker
+      <ImperativeForkNodeDoneTracker
         key={i}
+        doneTracker={props.doneTracker}
         willHaveChildren={props.depth > 1}
         name={`FDT ${props.depth}#${i}`}
       >
-        <div style={{ marginLeft: 8 }}>
-          <RecursiveElement count={props.count} depth={props.depth - 1}>
-            {props.children}
-          </RecursiveElement>
-        </div>
-      </ForkNodeDoneTracker>
+        {(doneTracker) => (
+          <div style={{ marginLeft: 8 }}>
+            <RecursiveElement
+              count={props.count}
+              depth={props.depth - 1}
+              doneTracker={doneTracker}
+            >
+              {props.children}
+            </RecursiveElement>
+          </div>
+        )}
+      </ImperativeForkNodeDoneTracker>
     );
   });
   return <div>{els}</div>;
 }
 
-const Tree = () => {
+const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
+  const doneTracker = useImperativeNodeDoneTracker(props.doneTracker);
+
   const [count, setCount] = useState(1);
   const [depth, setDepth] = useState(1);
 
@@ -69,7 +77,7 @@ const Tree = () => {
           onChange={(e) => setDepth(+e.target.value)}
         ></input>
       </label>
-      <RecursiveElement count={count} depth={depth}>
+      <RecursiveElement count={count} depth={depth} doneTracker={doneTracker}>
         hi
       </RecursiveElement>
     </>
@@ -77,7 +85,7 @@ const Tree = () => {
 };
 
 export default {
-  title: "Contextual API/Recursive tree",
+  title: 'Imperative API/Recursive tree',
   component: Tree,
   args: {
     onDone: action("done"),
@@ -88,7 +96,7 @@ export default {
 } as Meta;
 
 const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component} />
+  <StoryWrapper {...args} showForceRefresh={true} component={component} imperative={true} />
 );
 
 export const Primary = Template.bind({});

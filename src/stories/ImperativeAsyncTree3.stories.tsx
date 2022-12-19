@@ -2,19 +2,21 @@ import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
 import StoryWrapper from "./story-wrapper";
-import OrigDelayedContainer from "../components/DelayedContainer";
-import OrigButton from "../components/Button";
-import visualizeDoneWrapper from "../visualize-wrapper";
-import OrigForkDoneTracker from "../components/ForkLeafDoneTracker";
-import { useNodeDoneTracker } from "../use-node-done-tracker";
+import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
+import ImperativeButton from "../components/ImperativeButton";
+import OrigImperativeForkDoneTracker from "../components/ImperativeForkLeafDoneTracker";
+import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
+import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 
-const DelayedContainer = visualizeDoneWrapper(OrigDelayedContainer);
-const Button = visualizeDoneWrapper(OrigButton);
-const ForkDoneTracker = visualizeDoneWrapper(OrigForkDoneTracker);
+const DelayedContainer = imperativeVisualizeDoneWrapper(ImperativeDelayedContainer);
+const Button = imperativeVisualizeDoneWrapper(ImperativeButton);
+const ImperativeForkDoneTracker = imperativeVisualizeDoneWrapper(
+  OrigImperativeForkDoneTracker,
+);
 
 const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
-  const doneTracker = useNodeDoneTracker(props.doneTracker);
+  const doneTracker = useImperativeNodeDoneTracker(props.doneTracker);
 
   return (
     <>
@@ -25,7 +27,7 @@ const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
           </div>
         )}
       </DelayedContainer>
-      <ForkDoneTracker doneTracker={doneTracker}>
+      <ImperativeForkDoneTracker doneTracker={doneTracker}>
         {(doneTracker) => (
           <>
             Type more than 2 characters:
@@ -37,12 +39,13 @@ const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
             />
           </>
         )}
-      </ForkDoneTracker>
+      </ImperativeForkDoneTracker>
     </>
   );
 };
 
 export default {
+  title: "Imperative API/Async tree 3",
   component: Tree,
   args: {
     onDone: action("done"),
@@ -53,7 +56,12 @@ export default {
 } as Meta;
 
 const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component} />
+  <StoryWrapper
+    {...args}
+    showForceRefresh={true}
+    component={component}
+    imperative={true}
+  />
 );
 
 export const Primary = Template.bind({});

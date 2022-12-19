@@ -1,40 +1,33 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
-import OrigDelayedContainer from "../components/DelayedContainer";
-import OrigDelayedComponent from "../components/DelayedComponent";
+import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
+import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import StoryWrapper from "./story-wrapper";
-import visualizeDoneWrapper from "../visualize-wrapper";
-import DoneVisualizer from "../components/DoneVisualizer";
-import { useNodeDoneTracker } from "../use-node-done-tracker";
-import { NodeDoneTracker } from "../node-done-tracker";
+import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
+import { imperativeToContextual } from "../imperative-to-contextual";
+import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 
-const DelayedContainer = visualizeDoneWrapper(OrigDelayedContainer);
-const DelayedComponent = visualizeDoneWrapper(OrigDelayedComponent);
+const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
+const DelayedContainer = imperativeToContextual(
+  imperativeVisualizeDoneWrapper(ImperativeDelayedContainer, "DelayedContainer")
+);
+const DelayedComponent = imperativeToContextual(
+  imperativeVisualizeDoneWrapper(ImperativeDelayedComponent, "DelayedComponent")
+);
 
-const Tree = (props: { doneTracker: NodeDoneTracker }) => {
-  const doneTracker = useNodeDoneTracker(props.doneTracker);
-
+const Tree = () => {
   return (
-    <DoneVisualizer doneTracker={doneTracker} name={"Root"}>
-      {(doneTracker) => (
-        <>
-          {doneTracker.id}
-          <DelayedContainer doneTracker={doneTracker} delay={2000}>
-            {(doneTracker) => (
-              <DelayedComponent
-                doneTracker={doneTracker}
-                delay={2000}
-              ></DelayedComponent>
-            )}
-          </DelayedContainer>
-        </>
-      )}
+    <DoneVisualizer name={"Root"}>
+      <DelayedContainer delay={2000}>
+        <DelayedComponent delay={2000}></DelayedComponent>
+      </DelayedContainer>
     </DoneVisualizer>
   );
 };
 
 export default {
+  title: "Contextual API/Simple async tree",
   component: Tree,
   args: {
     onDone: action("done"),

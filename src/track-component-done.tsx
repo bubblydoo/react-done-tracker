@@ -1,4 +1,5 @@
 import React, { useMemo, useReducer, useRef } from "react";
+import { DoneTrackerContext } from "./done-tracker-context";
 import { NodeDoneTracker } from "./node-done-tracker";
 
 interface Props {
@@ -10,7 +11,8 @@ interface Props {
 
 export function trackComponentDone(
   Component: any,
-  forceRefreshRef: { current: (() => void) | null }
+  imperative?: boolean,
+  forceRefreshRef?: { current: (() => void) | null }
 ) {
   return React.forwardRef<unknown, Props>(function TrackComponentDone(
     { onDone, onAbort, onError, onPending, ...props }: any,
@@ -37,7 +39,7 @@ export function trackComponentDone(
           doneTracker.removeEventListener("done", onDone);
           doneTracker.removeEventListener("abort", onAbort);
           doneTracker.removeEventListener("error", onError);
-        }
+        };
         // dt.setWillHaveChildren(true);
         return dt;
       },
@@ -47,8 +49,15 @@ export function trackComponentDone(
     // use useMemo because useEffect is too slow
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useMemo(() => onPending?.(), [onPending, doneTracker]);
-    return (
-      <Component {...props} doneTracker={doneTracker} ref={ref}></Component>
+
+    const componentProps = { ...props, ref };
+    if (imperative) componentProps.doneTracker = doneTracker;
+    return imperative ? (
+      <Component {...componentProps}></Component>
+    ) : (
+      <DoneTrackerContext.Provider value={doneTracker}>
+        <Component {...componentProps} />
+      </DoneTrackerContext.Provider>
     );
   });
 }

@@ -1,32 +1,11 @@
-import { useEffect } from "react";
-import { NodeDoneTracker } from "./node-done-tracker";
-import { useDoneTrackerRaw } from "./use-done-tracker-raw";
+import { useDoneTrackerContext } from "./use-done-tracker-context";
+import { useImperativeNodeDoneTracker } from "./use-imperative-node-done-tracker";
 
-export const useNodeDoneTracker = (
-  doneTracker: NodeDoneTracker,
-  {
-    name,
-    willHaveChildren,
-  }: {
-    name?: string;
-    /** If the children are not registered within one `useEffect`, turn on this flag */
-    willHaveChildren?: boolean;
-  } = {}
-) => {
-  const localDoneTracker = useDoneTrackerRaw(doneTracker, "node", name);
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Params = Parameters<typeof useImperativeNodeDoneTracker>[1] & {};
 
-  // temporarily require children to prevent aborts from setting the node to done
-  localDoneTracker.setWillHaveChildren(true);
+export const useNodeDoneTracker = (params?: Params) => {
+  const parentDoneTracker = useDoneTrackerContext();
 
-  useEffect(() => {
-    // if the children are delayed, use willHaveChildren
-    if (willHaveChildren) return;
-    queueMicrotask(() => {
-      // if at this point the node doesn't have children, it will be done
-      localDoneTracker.setWillHaveChildren(false);
-      localDoneTracker.calculateDoneness();
-    });
-  }, [localDoneTracker, willHaveChildren]);
-
-  return localDoneTracker;
-};
+  return useImperativeNodeDoneTracker(parentDoneTracker, params);
+}

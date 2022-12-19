@@ -1,4 +1,5 @@
 import { useDebugValue, useEffect, useMemo, useReducer, useRef } from "react";
+import { DoneTrackerError } from "./done-tracker-error";
 import { DoneTracker } from "./done-tracker-interface";
 import { LeafDoneTracker } from "./leaf-done-tracker";
 import { NodeDoneTracker } from "./node-done-tracker";
@@ -7,6 +8,8 @@ export function useDoneTrackerRaw<
   T extends "node" | "leaf",
   D extends DoneTracker = T extends "node" ? NodeDoneTracker : LeafDoneTracker
 >(doneTracker: NodeDoneTracker, type: T, name?: string): D {
+  if (!doneTracker) throw new DoneTrackerError("Falsy done tracker passed to useDoneTrackerRaw");
+
   const [, rerender] = useReducer((i: number) => i + 1, 0);
 
   const unsubscribeFromPrevious = useRef<() => void>();
