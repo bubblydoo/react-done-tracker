@@ -12,7 +12,6 @@ export function visualizeDoneWrapper<
     const doneTracker = useDoneTrackerContext();
 
     const name = doneTrackerName || (Component as any)?.displayName;
-
     const visualizerName = name ? "Visualizer for " + name : "Visualizer";
 
     return (
@@ -38,9 +37,11 @@ export function imperativeVisualizeDoneWrapper<
     props: ImperativeDoneTrackedProps<P>
   ) {
     const name = doneTrackerName || (Component as any)?.displayName;
+    const visualizerName = name ? "Visualizer for " + name : "Visualizer";
+
     return (
       <ImperativeDoneVisualizer
-        name={"Visualizer for " + name}
+        name={visualizerName}
         doneTracker={props.doneTracker}
       >
         {(doneTracker) => (

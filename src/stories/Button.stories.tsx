@@ -10,7 +10,6 @@ const helperArgs = {
   onAbort: action("abort"),
   onError: action("error"),
   onPending: action("pending"),
-  fullscreen: true,
 };
 
 export default {

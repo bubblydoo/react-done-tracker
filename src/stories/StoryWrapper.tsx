@@ -32,7 +32,6 @@ export default function StoryWrapper<T extends ComponentType<any>>({
   onAbort,
   onError,
   onPending,
-  fullscreen,
   ...componentProps
 }: StoryWrapperProps<T>) {
   const forceRefreshRef = useRef<(() => void) | null>(null);
@@ -48,22 +47,24 @@ export default function StoryWrapper<T extends ComponentType<any>>({
 
   const [status, setStatus] = useState("pending");
 
-  const wrapperStyle = {
-    ...(fullscreen ? { minHeight: "100vh" } : {}),
-    minWidth: "100%",
-    padding: "16px",
-    backgroundColor: {
-      pending: "lightgray",
-      done: "green",
-      error: "red",
-      aborted: "orange",
-    }[status],
-  };
+  const backgroundColor = {
+    pending: "lightgray",
+    done: "green",
+    error: "red",
+    aborted: "orange",
+  }[status]!;
+
+  const body = document.querySelector<HTMLElement>(".sb-show-main");
+  if (body) body.style.backgroundColor = backgroundColor;
 
   const wrapper = (
-    <div style={wrapperStyle}>
+    <div style={{ padding: 16, backgroundColor }}>
       {!hideForceRefresh && (
-        <button onClick={() => forceRefreshRef?.current?.()}>Restart</button>
+        <div>
+          <button onClick={() => forceRefreshRef?.current?.()}>
+            🔄 Restart
+          </button>
+        </div>
       )}
       <div>
         <C

@@ -5,7 +5,6 @@ import { TrackComponentDoneProps } from "../track-component-done";
 export default function ContextualStoryWrapper(
   props: TrackComponentDoneProps<{
     children: any;
-    fullscreen?: boolean;
     hideForceRefresh?: boolean;
     disableStrictMode?: boolean;
   }>
@@ -22,22 +21,27 @@ export default function ContextualStoryWrapper(
     children,
   } = props;
 
-  const wrapperStyle = {
-    ...(props.fullscreen ? { minHeight: "100vh" } : {}),
-    minWidth: "100%",
-    padding: "16px",
-    backgroundColor: {
-      pending: "lightgray",
-      done: "green",
-      error: "red",
-      aborted: "orange",
-    }[status],
-  };
+  const backgroundColor = {
+    pending: "lightgray",
+    done: "green",
+    error: "red",
+    aborted: "orange",
+  }[status]!;
+
+  const body = document.querySelector<HTMLElement>(".sb-show-main");
+  if (body) body.style.backgroundColor = backgroundColor;
 
   const forceRefreshRef: MutableRefObject<(() => void) | null> = useRef(null);
 
   const wrapper = (
-    <div style={wrapperStyle}>
+    <div style={{ padding: 16, backgroundColor }}>
+      {!hideForceRefresh && (
+        <div>
+          <button onClick={() => forceRefreshRef.current?.()}>
+            🔄 Restart
+          </button>
+        </div>
+      )}
       <TrackDone
         doneTrackerName="ContextualStoryWrapperRoot"
         forceRefreshRef={forceRefreshRef}
@@ -73,11 +77,6 @@ export default function ContextualStoryWrapper(
       >
         {children}
       </TrackDone>
-      {!hideForceRefresh && (
-        <div>
-          <button onClick={() => forceRefreshRef.current?.()}>Restart</button>
-        </div>
-      )}
     </div>
   );
 
@@ -106,7 +105,6 @@ export function ContextualStoryHelper(
       onPending={props.onPending}
       onError={props.onError}
       onAbort={props.onAbort}
-      fullscreen={props.fullscreen}
       hideForceRefresh={props.hideForceRefresh}
     >
       <Component {...props.args} />

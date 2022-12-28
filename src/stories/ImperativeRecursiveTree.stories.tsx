@@ -93,7 +93,6 @@ export default {
     onAbort: action("abort"),
     onError: action("error"),
     onPending: action("pending"),
-    fullscreen: true,
   },
 } as Meta;
 
