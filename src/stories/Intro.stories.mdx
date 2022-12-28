@@ -35,6 +35,8 @@ Use this library to keep track of when things are done!
 
 ### Simple example: an image
 
+Let's define a simple image element. We want to know when the image is done loading.
+
 ```tsx
 function Image({ src }: { src: string }) {
   const [loadedSrc, setLoadedSrc] = useState();
@@ -48,6 +50,15 @@ function Image({ src }: { src: string }) {
 }
 ```
 
+Once the image is loaded, it is done.
+
+```tsx
+<Image src={"https://picsum.photos/200"} />
+```
+
+If you refresh the done tracker, it will immediately be done again,
+because the requested image is still loaded.
+
 <Canvas>
   <Story name="Image">
     <ContextualStoryWrapper {...actions}>
@@ -58,6 +69,23 @@ function Image({ src }: { src: string }) {
 
 ### Simple example: a component that needs some time
 
+```tsx
+function DelayedComponent() {
+  const [delaying, setDelaying] = useState(true);
+
+  const doneTracker = useLeafDoneTracker({
+    done: !delaying,
+    reset: () => setDelaying(true),
+  });
+
+  // some countdown logic...
+
+  return <div>{delaying ? "Loading" : "Done"}</div>
+}
+```
+
+When you refresh this done tracker, it will become pending again, because we have restarted the countdown.
+
 <Canvas>
   <Story name="Delayed Component">
     <ContextualStoryWrapper {...actions}>
@@ -67,6 +95,9 @@ function Image({ src }: { src: string }) {
 </Canvas>
 
 ### Multiple components that need time
+
+Internally, this library keeps track of the doneness of components with a tree.
+This makes it easy to add multiple children with different loading states.
 
 <Canvas>
   <Story name="Multiple Delayed Components">
@@ -79,6 +110,9 @@ function Image({ src }: { src: string }) {
 </Canvas>
 
 ### A HOC that visualizes doneness
+
+With the `visualizeDoneWrapper` HOC, we can visualize the doneness of components.
+In the top-left corner, you can see the unique id of the done tracker.
 
 export const VisualizedDelayedComponent =
   visualizeDoneWrapper(DelayedComponent);
@@ -98,6 +132,8 @@ const VisualizedDelayedComponent = visualizeDoneWrapper(DelayedComponent);
 </Canvas>
 
 ### A container that needs time, with children that need time as well
+
+Because we use a tree of done states, we can easily add nested loaded components.
 
 export const VisualizedDelayedContainer =
   visualizeDoneWrapper(DelayedContainer);
@@ -124,7 +160,7 @@ export const VisualizedDelayedContainer =
 
 ### Done-tracked components can have errors
 
-For example, an image can have a network error.
+Error handling is built in. For example, an image can have a network error.
 
 ```tsx
 <Image src={"https://example.qwkeinasc"} />
@@ -169,6 +205,11 @@ export const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
 </Canvas>
 
 ### We have a Contextual API and an Imperative API
+
+This library heavily uses React Context to pass DoneTrackers to children. We call that the Contextual API.
+There is also an Imperative API. With that API, we pass the DoneTracker to children as a prop.
+
+Let's implement a done-tracked button with both APIs:
 
 #### Contextual API:
 
@@ -257,7 +298,7 @@ function App() {
 
 ### In some cases the Imperative API is easier to use...
 
-Because it's easy to use the Done Tracker on the context and use it imperatively, inline:
+Because it's easy to use the Done Tracker from the context and use it imperatively, inline:
 
 ```tsx
 <ForkLeafDoneTracker>
