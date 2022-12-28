@@ -7,20 +7,17 @@ export default function Image(props: Props) {
   const todo = props.src;
 
   const [done, setDone] = useState<string | undefined>();
-  const [error, setError] = useState<any>();
+  const [error, setError] = useState<any>(null);
+
+  // we need to keep track of this, because img.complete is true even when errored
+  const erroredSrc = useRef<string | undefined>();
 
   useLeafDoneTracker({
     name: "Image",
     done: todo === done,
-    error,
-    reset: () => {
-      setDone(undefined);
-      setError(undefined);
-    }
+    error: todo === erroredSrc.current ? error : undefined,
+    reset: () => setDone(undefined),
   });
-
-  // we need to keep track of this, because img.complete is true even when errored
-  const erroredSrc = useRef<string | undefined>();
 
   const ref = useRef<HTMLImageElement>();
 
