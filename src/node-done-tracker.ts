@@ -91,8 +91,8 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       if (this.error || this.done || this.aborted) return;
       this._calculateDonenessNextMicrotask();
     });
-    child.addEventListener("error", ([error, errorSource]) => {
-      this._signalErrorNextMicrotask(error, errorSource);
+    child.addEventListener("error", ([err, source]) => {
+      this._signalError(err, source);
     });
 
     if (child.done) {
@@ -123,12 +123,6 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this._error = null;
     this._errorSource = undefined;
   };
-
-  private _signalErrorNextMicrotask = (err: any, source: DoneTracker) => {
-    // see _calculateDonenessNextMicrotask
-    this._signalError(err, source)
-    queueMicrotask(() => this._signalError(err, source));
-  }
 
   private _signalError = (err: any, source: DoneTracker) => {
     this._error = err;
