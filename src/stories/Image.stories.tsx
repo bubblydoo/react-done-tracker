@@ -32,5 +32,5 @@ Primary.args = {
 
 export const Error = Template.bind({});
 Error.args = {
-  src: "https://example.qwkeinasc/",
+  src: "https://example.qwkeinasc",
 };

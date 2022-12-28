@@ -6,13 +6,17 @@ type Props = JSX.IntrinsicElements["img"];
 export default function Image(props: Props) {
   const todo = props.src;
 
-  const [done, setDone] = useState<string>();
+  const [done, setDone] = useState<string | undefined>();
   const [error, setError] = useState<any>();
 
   useLeafDoneTracker({
     name: "Image",
     done: todo === done,
-    error
+    error,
+    reset: () => {
+      setDone(undefined);
+      setError(undefined);
+    }
   });
 
   // we need to keep track of this, because img.complete is true even when errored

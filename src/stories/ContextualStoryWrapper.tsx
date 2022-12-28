@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useCallback, useRef, useState } from "react";
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import TrackDone from "../components/TrackDone";
 import { TrackComponentDoneProps } from "../track-component-done";
 
@@ -7,6 +7,7 @@ export default function ContextualStoryWrapper(
     children: any;
     hideForceRefresh?: boolean;
     disableStrictMode?: boolean;
+    forceRefreshRef?: MutableRefObject<(() => void) | null>;
   }>
 ) {
   const [status, setStatus] = useState("pending");
@@ -32,6 +33,10 @@ export default function ContextualStoryWrapper(
   if (body) body.style.backgroundColor = backgroundColor;
 
   const forceRefreshRef: MutableRefObject<(() => void) | null> = useRef(null);
+
+  if (props.forceRefreshRef) {
+    props.forceRefreshRef.current = () => forceRefreshRef.current?.();
+  }
 
   const wrapper = (
     <div style={{ padding: 16, backgroundColor }}>
@@ -97,6 +102,13 @@ export function ContextualStoryHelper(
 ) {
   const Component = props.component;
 
+  const forceRefreshRef = useRef<(() => void) | null>(null);
+
+  // reset done tracker when component args change
+  useEffect(() => {
+    forceRefreshRef.current?.();
+  }, [props.args]);
+
   if (!Component) return <></>;
 
   return (
@@ -106,6 +118,7 @@ export function ContextualStoryHelper(
       onError={props.onError}
       onAbort={props.onAbort}
       hideForceRefresh={props.hideForceRefresh}
+      forceRefreshRef={forceRefreshRef}
     >
       <Component {...props.args} />
     </ContextualStoryWrapper>
