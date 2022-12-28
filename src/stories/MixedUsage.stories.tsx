@@ -1,5 +1,5 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
@@ -14,7 +14,7 @@ import {
   imperativeVisualizeDoneWrapper,
 } from "../visualize-wrapper";
 import Image from "../components/Image";
-import DoneTrackerProvider from "../done-tracker-provider";
+import { DoneTrackerProvider } from "../done-tracker-provider";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const DelayedContainer = imperativeToContextual(

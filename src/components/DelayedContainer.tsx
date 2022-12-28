@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import DoneTrackerProvider from "../done-tracker-provider";
+import { DoneTrackerProvider } from "../done-tracker-provider";
 import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { useNodeDoneTracker } from "../use-node-done-tracker";

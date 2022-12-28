@@ -1,7 +1,7 @@
 import { LeafDoneTracker } from "../leaf-done-tracker";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 
-export default function ForkLeafDoneTracker({
+export function ForkLeafDoneTracker({
   children,
   ...args
 }: { children: (doneTracker: LeafDoneTracker) => any } & Parameters<

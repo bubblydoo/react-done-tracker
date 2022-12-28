@@ -5,8 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import ImperativeTrackDone from "../components/ImperativeTrackDone";
-import ContextualTrackDone from "../components/TrackDone";
+import { ImperativeTrackDone } from "../components/ImperativeTrackDone";
+import { TrackDone as ContextualTrackDone } from "../components/TrackDone";
 import { DoneTracker } from "../done-tracker-interface";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { TrackComponentDoneProps } from "../track-component-done";

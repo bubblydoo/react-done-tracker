@@ -2,7 +2,7 @@ import React from "react";
 import { DoneTrackerContext } from "./done-tracker-context";
 import { NodeDoneTracker } from "./node-done-tracker";
 
-export default function DoneTrackerProvider(props: {
+export function DoneTrackerProvider(props: {
   doneTracker: NodeDoneTracker;
   children: any;
 }) {

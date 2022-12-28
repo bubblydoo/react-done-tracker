@@ -2,12 +2,12 @@ import React, {
   MutableRefObject,
   useReducer,
 } from "react";
-import DoneTrackerProvider from "../done-tracker-provider";
+import { DoneTrackerProvider } from "../done-tracker-provider";
 import { TrackComponentDoneProps } from "../track-component-done";
 import { useDoneTrackerSubscription } from "../use-done-tracker-subscription";
 import { useRootDoneTracker } from "../use-root-done-tracker";
 
-export default function TrackDone({
+export function TrackDone({
   children,
   forceRefreshRef,
   doneTrackerName = "Root",
