@@ -13,9 +13,13 @@ interface Props {
 export default function DelayedContainer(props: Props) {
   const [delaying, setDelaying] = useState(true);
 
-  const doneTracker = useNodeDoneTracker();
-  const childrenDoneTracker = useImperativeNodeDoneTracker(doneTracker, { willHaveChildren: true });
+  const doneTracker = useNodeDoneTracker({ name: "Delayed Container" });
+  const childrenDoneTracker = useImperativeNodeDoneTracker(doneTracker, {
+    name: "Delayed Container Children",
+    willHaveChildren: true,
+  });
   const delayDoneTracker = useImperativeLeafDoneTracker(doneTracker, {
+    name: "Delayed Container Delay",
     done: !delaying,
     reset: () => setDelaying(true),
   });

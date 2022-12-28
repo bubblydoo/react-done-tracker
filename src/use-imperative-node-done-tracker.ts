@@ -10,7 +10,10 @@ export const useImperativeNodeDoneTracker = (
     willHaveChildren,
   }: {
     name?: string;
-    /** If the children are not registered within one `useEffect`, turn on this flag */
+    /**
+     * If the children are not always registered within one `useEffect` after creating this done tracker,
+     * turn on this flag
+     */
     willHaveChildren?: boolean;
   } = {}
 ) => {
