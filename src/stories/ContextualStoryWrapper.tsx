@@ -88,30 +88,28 @@ export default function ContextualStoryWrapper(
   );
 }
 
-export function ContextualStoryHelper(props: { component: any; args: any }) {
+export function ContextualStoryHelper(
+  props: TrackComponentDoneProps<{
+    fullscreen?: boolean;
+    hideForceRefresh?: boolean;
+    component: any;
+    args: any;
+  }>
+) {
   const Component = props.component;
-  const {
-    onDone,
-    onPending,
-    onError,
-    onAbort,
-    fullscreen,
-    hideForceRefresh,
-    ...componentArgs
-  } = props.args;
 
   if (!Component) return <></>;
 
   return (
     <ContextualStoryWrapper
-      onDone={onDone}
-      onPending={onPending}
-      onError={onError}
-      onAbort={onAbort}
-      fullscreen={fullscreen}
-      hideForceRefresh={hideForceRefresh}
+      onDone={props.onDone}
+      onPending={props.onPending}
+      onError={props.onError}
+      onAbort={props.onAbort}
+      fullscreen={props.fullscreen}
+      hideForceRefresh={props.hideForceRefresh}
     >
-      <Component {...componentArgs} />
+      <Component {...props.args} />
     </ContextualStoryWrapper>
   );
 }

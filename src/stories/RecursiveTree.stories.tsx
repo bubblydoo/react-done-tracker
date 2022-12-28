@@ -77,21 +77,23 @@ const Tree = () => {
   );
 };
 
+const helperArgs = {
+  onDone: action("done"),
+  onAbort: action("abort"),
+  onError: action("error"),
+  onPending: action("pending"),
+  fullscreen: true,
+};
+
 export default {
   title: "Contextual API/Recursive tree",
   component: Tree,
-  args: {
-    onDone: action("done"),
-    onAbort: action("abort"),
-    onError: action("error"),
-    onPending: action("pending"),
-    fullscreen: true,
-  },
+  args: {},
 } as Meta;
 
 const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
-  return <ContextualStoryHelper args={args} component={component} />;
-
+  return <ContextualStoryHelper {...helperArgs} args={args} component={component} />;
 };
+
 export const Primary = Template.bind({});
 Primary.args = {};
