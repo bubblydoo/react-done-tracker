@@ -8,7 +8,7 @@ Keep track of when an async tree is done rendering.
 npm i react-done-tracker
 ```
 
-### Examples
+## Example
 
 ```tsx
 import { TrackDone, useLeafDoneTracker } from "react-done-tracker";
@@ -17,16 +17,18 @@ function Image({ src }: { src: string }) {
   const [loadedSrc, setLoadedSrc] = useState();
 
   useLeafDoneTracker({
-    done: loadedSrc === src
+    done: loadedSrc === src,
   });
 
-  return <img src={src} onLoad={(e) => setLoadedSrc(e.target.src)} />
+  return <img src={src} onLoad={(e) => setLoadedSrc(e.target.src)} />;
 }
 
 export function App() {
-  return <TrackDone onDone={() => console.log("✅")}>
-    <Image src={"https://picsum.photos/200"} />
-  </TrackDone>
+  return (
+    <TrackDone onDone={() => console.log("✅")}>
+      <Image src={"https://picsum.photos/200"} />
+    </TrackDone>
+  );
 }
 ```
 
@@ -53,6 +55,7 @@ Once a done tracker is done, errored or aborted, it cannot change its state anym
 ### How do you change the state of a done tracker?
 
 There are two types of done trackers:
+
 - Nodes
 - Leafs
 
@@ -98,3 +101,120 @@ This library exposes many utilities to work with done trackers, most of them as 
 Suspense is used for lazy loading data, and does not render anything to the DOM. React Done Tracker is made to wait for things to render to the DOM.
 
 For example, you cannot use Suspense to wait for a slow canvas to render, or for a video to be loaded into a &lt;video&gt; element.
+
+## More examples
+
+It's best to take a look at [Storybook](https://react-done-tracker.vercel.app) first to get a feeling of how this library can be used.
+
+### Creating a Root done tracker
+
+Contextual API:
+
+```tsx
+import { TrackDone } from "react-done-tracker";
+
+function App() {
+  return <TrackDone onDone={...} onError={...}>
+    <Image src={"https://picsum.photos/200"}>
+  </TrackDone>
+}
+```
+
+Imperative API:
+
+```tsx
+import { ImperativeTrackDone } from "react-done-tracker";
+
+function App() {
+  return <ImperativeTrackDone onDone={...} onError={...}>{(doneTracker) => (
+    <ImperativeImage src={"https://picsum.photos/200"} doneTracker={doneTracker}>
+  )}</ImperativeTrackDone>
+}
+```
+
+### Use a done tracker directly
+
+While you probably don't need to use the done trackers directly, they are quite simple and easy to use:
+
+```tsx
+const child1 = new LeafDoneTracker();
+const child2 = new LeafDoneTracker();
+
+const parent = new NodeDoneTracker();
+
+parent.add(child1);
+parent.add(child2);
+
+child1.signalDone();
+
+assert(!parent.done);
+
+child2.signalDone();
+
+assert(parent.done);
+```
+
+### Using a node done tracker
+
+In this example, we tap into the done tracker and set the background color based
+on the state of the done tracker.
+
+Contextual API:
+
+```tsx
+import { TrackDone, DoneTrackerProvider, useNodeDoneTracker } from "react-done-tracker";
+
+function Tap({ children }) {
+  const doneTracker = useNodeDoneTracker({
+    name: "Tap",
+    willHaveChildren: true
+  });
+
+  return (
+    <div style={{ background: doneTracker.done ? "green" : "black" }}>
+      <DoneTrackerProvider doneTracker={doneTracker}>
+        {props.children}
+      </DoneTrackerProvider>
+    </div>
+  );
+}
+
+function App() {
+  return <TrackDone onDone={...} onError={...}>
+    <Tap>
+      <Button />
+    </Tap>
+  </TrackDone>
+}
+```
+
+### Visualize the state of a subtree
+
+Contextual API:
+
+```tsx
+import { TrackDone, visualizeDoneWrapper} from "react-done-tracker";
+
+const VisualizedImage = visualizeDoneWrapper(Image);
+
+function App() {
+  return <TrackDone>
+    <VisualizedImage src={...}/>
+  </TrackDone>
+}
+```
+
+### Use an inline imperative leaf done tracker
+
+```tsx
+import { ForkLeafDoneTracker } from "react-done-tracker";
+
+<ForkLeafDoneTracker>
+  {(doneTracker) => (
+    <>
+      <button onClick={() => doneTracker.signalDone()}>✅ Done</button>
+      <button onClick={() => doneTracker.signalError("error")}>❌ Error</button>
+    </>
+  )}
+</ForkLeafDoneTracker>
+```
