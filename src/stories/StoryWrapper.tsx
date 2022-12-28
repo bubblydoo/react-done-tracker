@@ -15,9 +15,8 @@ import {
 type StoryWrapperProps<T extends ComponentType> = TrackComponentDoneProps<{
   component: T;
   hideForceRefresh?: boolean;
-  strictMode?: boolean;
+  disableStrictMode?: boolean;
   imperative?: boolean;
-  style?: any
 }> &
   Omit<
     ComponentPropsWithRef<T>,
@@ -27,13 +26,12 @@ type StoryWrapperProps<T extends ComponentType> = TrackComponentDoneProps<{
 export default function StoryWrapper<T extends ComponentType<any>>({
   component,
   hideForceRefresh = false,
-  strictMode = true,
+  disableStrictMode = false,
   imperative = false,
   onDone,
   onAbort,
   onError,
   onPending,
-  style,
   fullscreen,
   ...componentProps
 }: StoryWrapperProps<T>) {
@@ -60,15 +58,12 @@ export default function StoryWrapper<T extends ComponentType<any>>({
       error: "red",
       aborted: "orange",
     }[status],
-    ...style
   };
 
   const wrapper = (
     <div style={wrapperStyle}>
       {!hideForceRefresh && (
-        <button onClick={() => forceRefreshRef?.current?.()}>
-          Restart
-        </button>
+        <button onClick={() => forceRefreshRef?.current?.()}>Restart</button>
       )}
       <div>
         <C
@@ -110,5 +105,9 @@ export default function StoryWrapper<T extends ComponentType<any>>({
     </div>
   );
 
-  return strictMode ? <React.StrictMode>{wrapper}</React.StrictMode> : wrapper;
+  return disableStrictMode ? (
+    wrapper
+  ) : (
+    <React.StrictMode>{wrapper}</React.StrictMode>
+  );
 }
