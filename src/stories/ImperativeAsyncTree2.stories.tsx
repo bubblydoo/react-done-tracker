@@ -1,8 +1,8 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
-import StoryWrapper from "./StoryWrapper";
+import { ImperativeStoryDecorator } from "./StoryWrapper";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import ImperativeButton from "../components/ImperativeButton";
@@ -12,7 +12,6 @@ import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracke
 import { NodeDoneTracker } from "../node-done-tracker";
 import { DoneTracker } from "../done-tracker-interface";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
-import { TrackComponentDoneProps } from "../track-component-done";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(
   ImperativeDelayedContainer
@@ -110,23 +109,14 @@ const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
 export default {
   title: "Imperative API/Async tree 2",
   component: Tree,
-  args: {
-    onDone: action("done"),
-    onAbort: action("abort"),
-    onError: action("error"),
-    onPending: action("pending"),
-  },
+  decorators: [
+    ImperativeStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper
-    {...args}
-    component={component!}
-    imperative={true}
-  />
-);
-
-export const Primary = Template.bind({});
-Primary.args = {
-  imageSrc: "https://picsum.photos/200/100",
-};
+export const Primary = { args: { imageSrc: "https://picsum.photos/200/100" } };

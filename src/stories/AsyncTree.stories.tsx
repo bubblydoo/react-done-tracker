@@ -1,20 +1,19 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React from "react";
 import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import { imperativeToContextual } from "../imperative-to-contextual";
-import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
-import { TrackComponentDoneProps } from "../track-component-done";
-import { ContextualStoryHelper } from "./ContextualStoryWrapper";
+import { visualizeDoneWrapper } from "../visualize-wrapper";
+import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
-const DelayedContainer = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(ImperativeDelayedContainer)
+const DelayedContainer = visualizeDoneWrapper(
+  imperativeToContextual(ImperativeDelayedContainer)
 );
-const DelayedComponent = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(ImperativeDelayedComponent)
+const DelayedComponent = visualizeDoneWrapper(
+  imperativeToContextual(ImperativeDelayedComponent)
 );
 
 const Tree = () => {
@@ -33,24 +32,17 @@ const Tree = () => {
   );
 };
 
-const helperArgs = {
-  onDone: action("done"),
-  onAbort: action("abort"),
-  onError: action("error"),
-  onPending: action("pending"),
-};
-
 export default {
   title: "Contextual API/Async tree",
   component: Tree,
-  args: {},
+  decorators: [
+    ContextualStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    })
+  ]
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
-  return (
-    <ContextualStoryHelper {...helperArgs} args={args} component={component} />
-  );
-};
-
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = { args: {} };

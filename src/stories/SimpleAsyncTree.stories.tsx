@@ -1,13 +1,12 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React from "react";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
 import { imperativeToContextual } from "../imperative-to-contextual";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
-import { TrackComponentDoneProps } from "../track-component-done";
-import { ContextualStoryHelper } from "./ContextualStoryWrapper";
+import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
 const DelayedContainer = imperativeToContextual(
@@ -27,22 +26,17 @@ const Tree = () => {
   );
 };
 
-const helperArgs = {
-  onDone: action("done"),
-  onAbort: action("abort"),
-  onError: action("error"),
-  onPending: action("pending"),
-};
-
 export default {
   title: "Contextual API/Simple async tree",
   component: Tree,
-  args: {},
+  decorators: [
+    ContextualStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
-  return <ContextualStoryHelper {...helperArgs} args={args} component={component} />;
-};
-
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = { args: {} };

@@ -1,12 +1,11 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React, { useState } from "react";
 import OrigImperativeForkNodeDoneTracker from "../components/ImperativeForkNodeDoneTracker";
 import ForkLeafDoneTracker from "../components/ForkLeafDoneTracker";
 import { imperativeToContextual } from "../imperative-to-contextual";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
-import { TrackComponentDoneProps } from "../track-component-done";
-import { ContextualStoryHelper } from "./ContextualStoryWrapper";
+import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const ForkNodeDoneTracker = imperativeToContextual(
   imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker)
@@ -77,22 +76,18 @@ const Tree = () => {
   );
 };
 
-const helperArgs = {
-  onDone: action("done"),
-  onAbort: action("abort"),
-  onError: action("error"),
-  onPending: action("pending"),
-};
-
 export default {
   title: "Contextual API/Recursive tree",
   component: Tree,
-  args: {},
+  decorators: [
+    ContextualStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
-  return <ContextualStoryHelper {...helperArgs} args={args} component={component} />;
-};
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = { args: {} };

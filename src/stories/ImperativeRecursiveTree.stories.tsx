@@ -1,7 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useState } from "react";
-import StoryWrapper from "./StoryWrapper";
+import StoryWrapper, { ImperativeStoryDecorator } from "./StoryWrapper";
 import OrigImperativeForkNodeDoneTracker from "../components/ImperativeForkNodeDoneTracker";
 import { NodeDoneTracker } from "../node-done-tracker";
 import OrigImperativeForkLeafDoneTracker from "../components/ImperativeForkLeafDoneTracker";
@@ -54,7 +54,7 @@ function RecursiveElement(props: {
   return <div>{els}</div>;
 }
 
-const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
+const Tree = (props: { doneTracker: NodeDoneTracker }) => {
   const doneTracker = useImperativeNodeDoneTracker(props.doneTracker);
 
   const [count, setCount] = useState(1);
@@ -88,17 +88,14 @@ const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
 export default {
   title: 'Imperative API/Recursive tree',
   component: Tree,
-  args: {
-    onDone: action("done"),
-    onAbort: action("abort"),
-    onError: action("error"),
-    onPending: action("pending"),
-  },
+  decorators: [
+    ImperativeStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper {...args} component={component!} imperative={true} />
-);
-
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = { args: {} };

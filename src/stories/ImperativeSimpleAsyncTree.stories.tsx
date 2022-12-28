@@ -3,7 +3,7 @@ import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
 import OrigDelayedContainer from "../components/ImperativeDelayedContainer";
 import OrigDelayedComponent from "../components/ImperativeDelayedComponent";
-import StoryWrapper from "./StoryWrapper";
+import StoryWrapper, { ContextualStoryDecorator } from "./StoryWrapper";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
@@ -36,19 +36,16 @@ const Tree = (props: { doneTracker: NodeDoneTracker }) => {
 };
 
 export default {
-  title: 'Imperative API/Simple async tree',
+  title: "Imperative API/Simple async tree",
   component: Tree,
-  args: {
-    onDone: action("done"),
-    onAbort: action("abort"),
-    onError: action("error"),
-    onPending: action("pending"),
-  },
+  decorators: [
+    ContextualStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper {...args} component={component!} imperative={true} />
-);
-
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = { args: {} };

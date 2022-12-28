@@ -1,18 +1,17 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React from "react";
-import StoryWrapper from "./StoryWrapper";
+import { ImperativeStoryDecorator } from "./StoryWrapper";
 import OrigImperativeForkLeafDoneTracker from "../components/ImperativeForkLeafDoneTracker";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
-import { TrackComponentDoneProps } from "../track-component-done";
 
 const ImperativeForkLeafDoneTracker = imperativeVisualizeDoneWrapper(
   OrigImperativeForkLeafDoneTracker,
 );
 
-const Input = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
+const Input = (props: { doneTracker: NodeDoneTracker }) => {
   const doneTracker = useImperativeNodeDoneTracker(props.doneTracker);
 
   return (
@@ -35,17 +34,15 @@ const Input = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
 export default {
   title: 'Imperative API/Input',
   component: Input,
-  args: {
-    onDone: action("done"),
-    onAbort: action("abort"),
-    onError: action("error"),
-    onPending: action("pending"),
-  },
+  decorators: [
+    ImperativeStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper {...args} component={component!} imperative={true} />
-);
+export const Primary = { args: {} };
 
-export const Primary = Template.bind({});
-Primary.args = {};

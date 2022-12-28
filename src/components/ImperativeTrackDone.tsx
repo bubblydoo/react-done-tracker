@@ -1,13 +1,11 @@
-import React, {
-  MutableRefObject,
-  useReducer,
-} from "react";
+import React, { MutableRefObject, useReducer } from "react";
 import DoneTrackerProvider from "../done-tracker-provider";
+import { NodeDoneTracker } from "../node-done-tracker";
 import { TrackComponentDoneProps } from "../track-component-done";
 import { useDoneTrackerSubscription } from "../use-done-tracker-subscription";
 import { useRootDoneTracker } from "../use-root-done-tracker";
 
-export default function TrackDone({
+export default function ImperativeTrackDone({
   children,
   forceRefreshRef,
   doneTrackerName = "Root",
@@ -15,7 +13,7 @@ export default function TrackDone({
   onError,
   onPending,
 }: TrackComponentDoneProps<{
-  children: any;
+  children: (doneTracker: NodeDoneTracker) => any;
   forceRefreshRef?: MutableRefObject<(() => void) | null>;
   doneTrackerName?: string;
 }>) {
@@ -34,7 +32,7 @@ export default function TrackDone({
 
   return (
     <DoneTrackerProvider doneTracker={doneTracker}>
-      {children}
+      {children(doneTracker)}
     </DoneTrackerProvider>
   );
 }

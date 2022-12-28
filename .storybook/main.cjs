@@ -7,6 +7,10 @@ module.exports = {
   },
   docs: {
     docsPage: true,
-    autodocs: true
-  }
+    autodocs: true,
+    source: {
+      type: 'dynamic',
+      excludeDecorators: true,
+    },
+  },
 };

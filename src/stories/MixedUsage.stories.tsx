@@ -15,8 +15,7 @@ import {
 } from "../visualize-wrapper";
 import Image from "../components/Image";
 import DoneTrackerProvider from "../done-tracker-provider";
-import { TrackComponentDoneProps } from "../track-component-done";
-import { ContextualStoryHelper } from "./ContextualStoryWrapper";
+import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const DelayedContainer = imperativeToContextual(
   imperativeVisualizeDoneWrapper(ImperativeDelayedContainer)
@@ -101,24 +100,21 @@ const Tree = (props: { imageSrc: string }) => {
   );
 };
 
-const helperArgs = {
-  onDone: action("done"),
-  onAbort: action("abort"),
-  onError: action("error"),
-  onPending: action("pending"),
-};
-
 export default {
   title: "Contextual API/Mixed Usage",
   component: Tree,
-  args: {},
+  decorators: [
+    ContextualStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
-  return <ContextualStoryHelper {...helperArgs} args={args} component={component} />;
-};
-
-export const Primary = Template.bind({});
-Primary.args = {
-  imageSrc: "https://picsum.photos/200/100",
+export const Primary = {
+  args: {
+    imageSrc: "https://picsum.photos/200/100",
+  },
 };

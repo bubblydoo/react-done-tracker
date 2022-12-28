@@ -1,22 +1,23 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React from "react";
-import StoryWrapper from "./StoryWrapper";
+import { ImperativeStoryDecorator } from "./StoryWrapper";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeButton from "../components/ImperativeButton";
 import OrigImperativeForkDoneTracker from "../components/ImperativeForkLeafDoneTracker";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
-import { TrackComponentDoneProps } from "../track-component-done";
 
-const DelayedContainer = imperativeVisualizeDoneWrapper(ImperativeDelayedContainer);
+const DelayedContainer = imperativeVisualizeDoneWrapper(
+  ImperativeDelayedContainer
+);
 const Button = imperativeVisualizeDoneWrapper(ImperativeButton);
 const ImperativeForkDoneTracker = imperativeVisualizeDoneWrapper(
-  OrigImperativeForkDoneTracker,
+  OrigImperativeForkDoneTracker
 );
 
-const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
+const Tree = (props: { doneTracker: NodeDoneTracker }) => {
   const doneTracker = useImperativeNodeDoneTracker(props.doneTracker);
 
   return (
@@ -48,21 +49,14 @@ const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {
 export default {
   title: "Imperative API/Async tree 3",
   component: Tree,
-  args: {
-    onDone: action("done"),
-    onAbort: action("abort"),
-    onError: action("error"),
-    onPending: action("pending"),
-  },
+  decorators: [
+    ImperativeStoryDecorator({
+      onDone: action("done"),
+      onAbort: action("abort"),
+      onError: action("error"),
+      onPending: action("pending"),
+    }),
+  ],
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper
-    {...args}
-    component={component!}
-    imperative={true}
-  />
-);
-
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = { args: {} };
