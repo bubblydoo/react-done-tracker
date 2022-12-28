@@ -1,11 +1,9 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import StoryWrapper from "./StoryWrapper";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import ImperativeButton from "../components/ImperativeButton";
-import ImperativeImage from "../components/ImperativeImage";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
 import { DoneTracker } from "../done-tracker-interface";
@@ -18,6 +16,7 @@ import {
 import Image from "../components/Image";
 import DoneTrackerProvider from "../done-tracker-provider";
 import { TrackComponentDoneProps } from "../track-component-done";
+import { ContextualStoryHelper } from "./ContextualStoryWrapper";
 
 const DelayedContainer = imperativeToContextual(
   imperativeVisualizeDoneWrapper(ImperativeDelayedContainer)
@@ -110,12 +109,13 @@ export default {
     onAbort: action("abort"),
     onError: action("error"),
     onPending: action("pending"),
+    fullscreen: true,
   },
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component!} />
-);
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
+  return <ContextualStoryHelper args={args} component={component} />;
+};
 
 export const Primary = Template.bind({});
 Primary.args = {

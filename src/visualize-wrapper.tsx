@@ -13,11 +13,10 @@ export function visualizeDoneWrapper<
 
     const name = doneTrackerName || (Component as any)?.displayName;
 
+    const visualizerName = name ? "Visualizer for " + name : "Visualizer";
+
     return (
-      <ImperativeDoneVisualizer
-        name={"Visualizer for " + name}
-        doneTracker={doneTracker}
-      >
+      <ImperativeDoneVisualizer name={visualizerName} doneTracker={doneTracker}>
         {(doneTracker) => (
           <DoneTrackerContext.Provider value={doneTracker}>
             <Component {...(props as any)} />

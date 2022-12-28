@@ -1,18 +1,290 @@
-import { Canvas, Meta, Story } from "@storybook/addon-docs";
+import { Canvas, Meta, Story, Source } from "@storybook/addon-docs";
+import { action } from "@storybook/addon-actions";
 
 import Image from "../components/Image";
-import StoryWrapper from "./SmallStoryWrapper";
+import Button from "../components/Button";
+import ImperativeButton from "../components/ImperativeButton";
+import ContextualStoryWrapper from "./ContextualStoryWrapper";
+import StoryWrapper from "./StoryWrapper";
+import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
+import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
+import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
+import ForkLeafDoneTracker from "../components/ForkLeafDoneTracker";
+import { imperativeToContextual } from "../imperative-to-contextual";
+import { visualizeDoneWrapper } from "../visualize-wrapper";
+
+export const DelayedComponent = imperativeToContextual(
+  ImperativeDelayedComponent
+);
+export const DelayedContainer = imperativeToContextual(
+  ImperativeDelayedContainer
+);
 
 <Meta title="Intro" />
 
+export const actions = {
+  onDone: action("done"),
+  onAbort: action("abort"),
+  onError: action("error"),
+  onPending: action("pending"),
+};
+
 # React Done Tracker
 
-Use this library to detect when things are done!
+Use this library to keep track of when things are done!
 
 ### Simple example: an image
 
+```tsx
+function Image({ src }: { src: string }) {
+  const [loadedSrc, setLoadedSrc] = useState();
+
+  // the component is done when the loaded source is the requested source
+  useLeafDoneTracker({
+    done: loadedSrc === src,
+  });
+
+  return <img src={src} onLoad={(e) => setLoadedSrc(e.target.src)} />;
+}
+```
+
 <Canvas>
   <Story name="Image">
-    <StoryWrapper component={Image} src={"https://picsum.photos/200/300"} />
+    <ContextualStoryWrapper {...actions}>
+      <Image src={"https://picsum.photos/200"} />
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+### Simple example: a component that needs some time
+
+<Canvas>
+  <Story name="Delayed Component">
+    <ContextualStoryWrapper {...actions}>
+      <DelayedComponent delay={3000} />
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+### Multiple components that need time
+
+<Canvas>
+  <Story name="Multiple Delayed Components">
+    <ContextualStoryWrapper {...actions}>
+      <DelayedComponent delay={3000} />
+      <DelayedComponent delay={4000} />
+      <DelayedComponent delay={5000} />
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+### A HOC that visualizes doneness
+
+export const VisualizedDelayedComponent =
+  visualizeDoneWrapper(DelayedComponent);
+
+```ts
+const VisualizedDelayedComponent = visualizeDoneWrapper(DelayedComponent);
+```
+
+<Canvas>
+  <Story name="Visualized Multiple Delayed Components">
+    <ContextualStoryWrapper {...actions}>
+      <VisualizedDelayedComponent delay={3000} />
+      <VisualizedDelayedComponent delay={4000} />
+      <VisualizedDelayedComponent delay={5000} />
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+### A container that needs time, with children that need time as well
+
+export const VisualizedDelayedContainer =
+  visualizeDoneWrapper(DelayedContainer);
+
+```ts
+export const VisualizedDelayedContainer =
+  visualizeDoneWrapper(DelayedContainer);
+```
+
+<Canvas>
+  <Story name="Container and children">
+    <ContextualStoryWrapper {...actions}>
+      <VisualizedDelayedContainer delay={3000}>
+        <VisualizedDelayedComponent delay={3000} />
+        <VisualizedDelayedComponent delay={4000} />
+      </VisualizedDelayedContainer>
+      <VisualizedDelayedContainer delay={5000}>
+        <VisualizedDelayedComponent delay={3000} />
+        <VisualizedDelayedComponent delay={4000} />
+      </VisualizedDelayedContainer>
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+### Done-tracked components can have errors
+
+For example, an image can have a network error.
+
+```tsx
+<Image src={"https://example.qwkeinasc"} />
+```
+
+<Canvas>
+  <Story name="Image error">
+    <ContextualStoryWrapper {...actions}>
+      <Image src={"https://example.qwkeinasc"} />
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+### Errors always bubble to the top
+
+export const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
+
+```tsx
+<DoneVisualizer>
+  <Image src={"https://example.qwkeinasc"}/>
+  <Image src={"https://picsum.photos/100/100"}/>
+</DoneVisualizer>
+<DoneVisualizer>
+  <Image src={"https://picsum.photos/101/100"}/>
+  <Image src={"https://picsum.photos/102/100"}/>
+</DoneVisualizer>
+```
+
+<Canvas>
+  <Story name="Error in a tree">
+    <ContextualStoryWrapper {...actions}>
+      <DoneVisualizer>
+        <Image src={"https://example.qwkeinasc"} />
+        <Image src={"https://picsum.photos/100/100"} />
+      </DoneVisualizer>
+      <DoneVisualizer>
+        <Image src={"https://picsum.photos/101/100"} />
+        <Image src={"https://picsum.photos/102/100"} />
+      </DoneVisualizer>
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+### We have a Contextual API and an Imperative API
+
+#### Contextual API:
+
+```tsx
+export default function Button({ children, ...props }: Props) {
+  const [done, setDone] = useState(false);
+
+  useLeafDoneTracker({
+    name: "Button",
+    done,
+    reset: () => setDone(false),
+  });
+
+  return (
+    <button
+      {...props}
+      onClick={(e) => setDone(true)}
+    >
+      {children}
+    </button>
+  );
+}
+
+function App() {
+  return (
+    <TrackDone onDone={() => console.log("Done!")}>
+      <Button>✅ Done</Button>
+    </TrackDone>
+  );
+}
+```
+
+<Canvas>
+  <Story name="Contextual button">
+    <ContextualStoryWrapper {...actions}>
+      <Button>✅ Done</Button>
+    </ContextualStoryWrapper>
+  </Story>
+</Canvas>
+
+#### Imperative API:
+
+```tsx
+export default function ImperativeButton({
+  doneTracker: parentDoneTracker,
+  children,
+  ...props
+}: Props) {
+  const [done, setDone] = useState(false);
+
+  useImperativeLeafDoneTracker(parentDoneTracker, {
+    name: "Button",
+    done,
+    reset: () => setDone(false),
+  });
+
+  return (
+    <button
+      {...props}
+      onClick={(e) => setDone(true)}
+    >
+      {children}
+    </button>
+  );
+}
+
+function App() {
+  const doneTracker = useRootDoneTracker();
+
+  useDoneTrackerSubscription(doneTracker, { done: () => console.log("Done!") });
+
+  return <ImperativeButton doneTracker={doneTracker}>✅ Done</ImperativeButton>;
+}
+```
+
+<Canvas>
+  <Story name="Imperative button">
+    <StoryWrapper
+      component={ImperativeButton}
+      imperative={true}
+      children={"✅ Done"}
+      style={{ minHeight: "none" }}
+    />
+  </Story>
+</Canvas>
+
+### In some cases the Imperative API is easier to use...
+
+Because it's easy to use the Done Tracker on the context and use it imperatively, inline:
+
+```tsx
+<ForkLeafDoneTracker>
+  {(doneTracker) => (
+    <>
+      <button onClick={() => doneTracker.signalDone()}>✅ Done</button>
+      <button onClick={() => doneTracker.signalError("error")}>❌ Error</button>
+    </>
+  )}
+</ForkLeafDoneTracker>
+```
+
+<Canvas>
+  <Story name="Forked buttons">
+    <ContextualStoryWrapper {...actions}>
+      <DoneVisualizer>
+        <ForkLeafDoneTracker>
+          {(doneTracker) => (
+            <>
+              <button onClick={() => doneTracker.signalDone()}>✅ Done</button>
+              <button onClick={() => doneTracker.signalError("error")}>
+                ❌ Error
+              </button>
+            </>
+          )}
+        </ForkLeafDoneTracker>
+      </DoneVisualizer>
+    </ContextualStoryWrapper>
   </Story>
 </Canvas>

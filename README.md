@@ -11,6 +11,8 @@ npm i react-done-tracker
 ### Examples
 
 ```tsx
+import { TrackDone, useLeafDoneTracker } from "react-done-tracker";
+
 function Image({ src }: { src: string }) {
   const [loadedSrc, setLoadedSrc] = useState();
 
@@ -22,20 +24,13 @@ function Image({ src }: { src: string }) {
 }
 
 export function App() {
-  const doneTracker = useRootDoneTracker();
-
-  useEffect(() => {
-    const fn = () => console.log("✅");
-
-    doneTracker.addEventListener("done", fn);
-    return () => doneTracker.removeEventListener("done", fn);
-  });
-
-  return <DoneTrackerProvider value={doneTracker}>
+  return <TrackDone onDone={() => console.log("✅")}>
     <Image src={"https://picsum.photos/200"}>
-  </DoneTrackerProvider>
+  </TrackDone>
 }
 ```
+
+More examples: see [Storybook](https://react-done-tracker.vercel.app)
 
 ### How does this compare to Suspense?
 

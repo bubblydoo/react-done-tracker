@@ -20,6 +20,8 @@ export type TrackComponentDoneProps<P = any> = {
  * This wrapper wraps a done-trackable component and exposes the done tracker lifecycle
  * as props on the component.
  *
+ * If you only need to track components using the Contextual API, use `TrackDone`.
+ *
  * @example
  * ```
  * const RootImage = trackComponentDone(Image);

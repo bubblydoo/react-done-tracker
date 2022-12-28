@@ -33,7 +33,7 @@ export function useDoneTrackerRaw<
     },
     // doneTracker needs to be in here!
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [name, doneTracker]
+    [name, type, doneTracker]
   );
 
   useDebugValue(
@@ -49,7 +49,6 @@ export function useDoneTrackerRaw<
   );
 
   useEffect(() => {
-    console.log("new local done tracker", type, localDoneTracker.id);
     localDoneTracker.setup();
     doneTracker.add(localDoneTracker);
 

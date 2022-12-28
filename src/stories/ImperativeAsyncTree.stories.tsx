@@ -50,13 +50,13 @@ export default {
     onAbort: action("abort"),
     onError: action("error"),
     onPending: action("pending"),
+    fullscreen: true,
   },
 } as Meta;
 
 const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
   <StoryWrapper
     {...args}
-    showForceRefresh={true}
     component={component!}
     imperative={true}
   />

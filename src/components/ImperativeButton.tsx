@@ -18,7 +18,7 @@ export default function Button({
     name: "Button",
     done,
     reset: () => {
-      if (!persistDone)  setDone(false);
+      if (!persistDone) setDone(false);
     },
   });
 

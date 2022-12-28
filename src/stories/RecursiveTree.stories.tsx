@@ -1,12 +1,12 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useState } from "react";
-import StoryWrapper from "./StoryWrapper";
 import OrigImperativeForkNodeDoneTracker from "../components/ImperativeForkNodeDoneTracker";
 import ForkLeafDoneTracker from "../components/ForkLeafDoneTracker";
 import { imperativeToContextual } from "../imperative-to-contextual";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { TrackComponentDoneProps } from "../track-component-done";
+import { ContextualStoryHelper } from "./ContextualStoryWrapper";
 
 const ForkNodeDoneTracker = imperativeToContextual(
   imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker)
@@ -85,12 +85,13 @@ export default {
     onAbort: action("abort"),
     onError: action("error"),
     onPending: action("pending"),
+    fullscreen: true,
   },
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component!} />
-);
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
+  return <ContextualStoryHelper args={args} component={component} />;
 
+};
 export const Primary = Template.bind({});
 Primary.args = {};

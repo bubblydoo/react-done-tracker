@@ -70,15 +70,29 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       );
       return;
     }
+    if (this.error) {
+      warn(
+        "Parent already errored while adding child",
+        this.id,
+        "while adding",
+        child.id
+      );
+      return;
+    }
     this.children.add(child);
     log("🍴 Added", this.id, "->", child.id);
-    child.addEventListener("done", () => this._calculateDoneness());
+    child.addEventListener("done", () => {
+      if (this.error || this.done || this.aborted) return;
+      this._calculateDoneness();
+    });
     child.addEventListener("abort", () => {
+      log("Child of", this.id, "aborted, deleting", child.id)
       this.children.delete(child);
+      if (this.error || this.done || this.aborted) return;
       this._calculateDonenessNextMicrotask();
     });
     child.addEventListener("error", ([error, errorSource]) => {
-      this._signalError(error, errorSource);
+      this._signalErrorNextMicrotask(error, errorSource);
     });
 
     if (child.done) {
@@ -106,7 +120,15 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   setup = () => {
     log("Setting up before adding", this.id);
     this._aborted = false;
+    this._error = null;
+    this._errorSource = undefined;
   };
+
+  private _signalErrorNextMicrotask = (err: any, source: DoneTracker) => {
+    // see _calculateDonenessNextMicrotask
+    this._signalError(err, source)
+    queueMicrotask(() => this._signalError(err, source));
+  }
 
   private _signalError = (err: any, source: DoneTracker) => {
     this._error = err;

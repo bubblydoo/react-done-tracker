@@ -7,6 +7,7 @@ import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracke
 import { NodeDoneTracker } from "../node-done-tracker";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { TrackComponentDoneProps } from "../track-component-done";
+import { ContextualStoryHelper } from "./ContextualStoryWrapper";
 
 const ImperativeForkLeafDoneTracker = imperativeVisualizeDoneWrapper(
   OrigImperativeForkLeafDoneTracker,
@@ -40,12 +41,13 @@ export default {
     onAbort: action("abort"),
     onError: action("error"),
     onPending: action("pending"),
+    fullscreen: true,
   },
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component!} imperative={true} />
-);
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
+  return <ContextualStoryHelper args={args} component={component} />;
+};
 
 export const Primary = Template.bind({});
 Primary.args = {};

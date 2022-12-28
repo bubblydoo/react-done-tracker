@@ -5,8 +5,8 @@ export const useDoneTrackerSubscription = (doneTracker: DoneTracker, {
   done,
   error,
 }: {
-  done: () => void;
-  error: (err: any, source: DoneTracker) => void;
+  done?: () => void;
+  error?: (err: any, source: DoneTracker) => void;
 }) => {
   useEffect(() => {
     if (!done) return;

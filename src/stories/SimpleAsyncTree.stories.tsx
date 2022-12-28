@@ -3,11 +3,11 @@ import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
-import StoryWrapper from "./StoryWrapper";
 import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
 import { imperativeToContextual } from "../imperative-to-contextual";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { TrackComponentDoneProps } from "../track-component-done";
+import { ContextualStoryHelper } from "./ContextualStoryWrapper";
 
 const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
 const DelayedContainer = imperativeToContextual(
@@ -35,12 +35,13 @@ export default {
     onAbort: action("abort"),
     onError: action("error"),
     onPending: action("pending"),
+    fullscreen: true,
   },
 } as Meta;
 
-const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component!} />
-);
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => {
+  return <ContextualStoryHelper args={args} component={component} />;
+};
 
 export const Primary = Template.bind({});
 Primary.args = {};

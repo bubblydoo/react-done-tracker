@@ -1,4 +1,3 @@
-const path = require('path');
 module.exports = {
   "stories": [
     "../src/**/*.mdx",
@@ -15,5 +14,5 @@ module.exports = {
   },
   "docs": {
     "docsPage": true
-  }
-}
+  },
+};

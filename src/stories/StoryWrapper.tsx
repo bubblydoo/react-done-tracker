@@ -14,7 +14,7 @@ import {
 
 type StoryWrapperProps<T extends ComponentType> = TrackComponentDoneProps<{
   component: T;
-  showForceRefresh?: boolean;
+  hideForceRefresh?: boolean;
   strictMode?: boolean;
   imperative?: boolean;
   style?: any
@@ -26,7 +26,7 @@ type StoryWrapperProps<T extends ComponentType> = TrackComponentDoneProps<{
 
 export default function StoryWrapper<T extends ComponentType<any>>({
   component,
-  showForceRefresh = true,
+  hideForceRefresh = false,
   strictMode = true,
   imperative = false,
   onDone,
@@ -34,6 +34,7 @@ export default function StoryWrapper<T extends ComponentType<any>>({
   onError,
   onPending,
   style,
+  fullscreen,
   ...componentProps
 }: StoryWrapperProps<T>) {
   const forceRefreshRef = useRef<(() => void) | null>(null);
@@ -50,7 +51,7 @@ export default function StoryWrapper<T extends ComponentType<any>>({
   const [status, setStatus] = useState("pending");
 
   const wrapperStyle = {
-    minHeight: "100vh",
+    ...(fullscreen ? { minHeight: "100vh" } : {}),
     minWidth: "100%",
     padding: "16px",
     backgroundColor: {
@@ -64,9 +65,9 @@ export default function StoryWrapper<T extends ComponentType<any>>({
 
   const wrapper = (
     <div style={wrapperStyle}>
-      {showForceRefresh && (
+      {!hideForceRefresh && (
         <button onClick={() => forceRefreshRef?.current?.()}>
-          Refresh done tracker
+          Restart
         </button>
       )}
       <div>
