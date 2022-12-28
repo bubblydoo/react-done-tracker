@@ -46,7 +46,9 @@ export function trackComponentDone<T extends ComponentType<P>, P = any>(
     doneTrackerName?: string;
   } = {}
 ): React.ComponentType<TrackComponentDoneProps<P>> {
-  return React.forwardRef<any, TrackComponentDoneProps<P>>(
+  const displayName = (Component as any).displayName;
+
+  const TrackComponentDone = React.forwardRef<any, TrackComponentDoneProps<P>>(
     function TrackComponentDone(
       { onDone, onAbort, onError, onPending, ...props },
       ref
@@ -93,4 +95,10 @@ export function trackComponentDone<T extends ComponentType<P>, P = any>(
       );
     }
   ) as any; // TODO: fix types
+
+  TrackComponentDone.displayName = displayName
+    ? `TrackComponentDone(${displayName})`
+    : "TrackComponentDone";
+
+  return TrackComponentDone;
 }

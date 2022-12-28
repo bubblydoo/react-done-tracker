@@ -8,7 +8,9 @@ export function visualizeDoneWrapper<
   T extends ElementType,
   P = ComponentPropsWithoutRef<T>
 >(Component: T, doneTrackerName?: string): React.FC<P> {
-  return function VisualizeDoneContextual(props: P) {
+  const displayName = (Component as any).displayName;
+
+  const VisualizeDoneWrapper = (props: P) => {
     const doneTracker = useDoneTrackerContext();
 
     const name = doneTrackerName || (Component as any)?.displayName;
@@ -24,6 +26,12 @@ export function visualizeDoneWrapper<
       </ImperativeDoneVisualizer>
     );
   };
+
+  VisualizeDoneWrapper.displayName = displayName
+    ? `VisualizeDoneWrapper(${displayName})`
+    : "VisualizeDoneWrapper";
+
+  return VisualizeDoneWrapper;
 }
 
 export function imperativeVisualizeDoneWrapper<
@@ -33,10 +41,12 @@ export function imperativeVisualizeDoneWrapper<
   Component: T,
   doneTrackerName?: string
 ): React.FC<ImperativeDoneTrackedProps<P>> {
-  return function VisualizeDoneImperative(
+  const displayName = (Component as any).displayName;
+
+  const ImperativeVisualizeDoneWrapper = (
     props: ImperativeDoneTrackedProps<P>
-  ) {
-    const name = doneTrackerName || (Component as any)?.displayName;
+  ) => {
+    const name = doneTrackerName || displayName;
     const visualizerName = name ? "Visualizer for " + name : "Visualizer";
 
     return (
@@ -50,4 +60,10 @@ export function imperativeVisualizeDoneWrapper<
       </ImperativeDoneVisualizer>
     );
   };
+
+  ImperativeVisualizeDoneWrapper.displayName = displayName
+    ? `ImperativeVisualizeDoneWrapper(${displayName})`
+    : "ImperativeVisualizeDoneWrapper";
+
+  return ImperativeVisualizeDoneWrapper;
 }
