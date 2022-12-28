@@ -86,12 +86,13 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       this._calculateDoneness();
     });
     child.addEventListener("abort", () => {
-      log("Child of", this.id, "aborted, deleting", child.id)
+      log("Child of", this.id, "aborted, deleting", child.id);
       this.children.delete(child);
       if (this.error || this.done || this.aborted) return;
       this._calculateDonenessNextMicrotask();
     });
     child.addEventListener("error", ([err, source]) => {
+      log("Received error", this.id, err, "from", source.id);
       this._signalError(err, source);
     });
 
@@ -120,8 +121,6 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   setup = () => {
     log("Setting up before adding", this.id);
     this._aborted = false;
-    this._error = null;
-    this._errorSource = undefined;
   };
 
   private _signalError = (err: any, source: DoneTracker) => {

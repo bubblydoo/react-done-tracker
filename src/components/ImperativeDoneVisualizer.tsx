@@ -12,6 +12,8 @@ const componentStyle = (dt: DoneTracker): React.CSSProperties => {
     padding: 8,
     paddingTop: 24,
     outline: "2px solid black",
+    display: "inline-block",
+    minWidth: 'calc(100% - 2 * 8px)',
   };
 };
 

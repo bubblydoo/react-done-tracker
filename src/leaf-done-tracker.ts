@@ -66,7 +66,6 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   setup = () => {
     log("Setting up before adding", this.id);
     this._aborted = false;
-    this._error = null;
   };
 
   signalDone = () => {
@@ -76,8 +75,7 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       return;
     }
     if (this.done) {
-      warn("Already done, can't signal done", this.id);
-      return;
+      warn("Already done, still signaling done", this.id);
     }
     if (this.errored) {
       warn("Already errored, can't signal done", this.id);
@@ -89,6 +87,7 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   };
 
   signalError = (err: any) => {
+    log("❌ Signaling errored", this.id);
     if (this.aborted) {
       warn("Already aborted, can't signal error", this.id);
       return;
@@ -98,10 +97,8 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       return;
     }
     if (this.errored) {
-      warn("Already errored, can't signal error", this.id);
-      return;
+      warn("Already errored, still signaling error", this.id);
     }
-    log("❌ Signaling errored", this.id);
     this._error = err;
     this.dispatchEvent("error", err, this);
   };
