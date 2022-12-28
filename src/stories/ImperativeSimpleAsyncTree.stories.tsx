@@ -3,11 +3,12 @@ import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
 import OrigDelayedContainer from "../components/ImperativeDelayedContainer";
 import OrigDelayedComponent from "../components/ImperativeDelayedComponent";
-import StoryWrapper from "./story-wrapper";
+import StoryWrapper from "./StoryWrapper";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
+import { TrackComponentDoneProps } from "../track-component-done";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(OrigDelayedContainer);
 const DelayedComponent = imperativeVisualizeDoneWrapper(OrigDelayedComponent);
@@ -45,8 +46,8 @@ export default {
   },
 } as Meta;
 
-const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component} imperative={true} />
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
+  <StoryWrapper {...args} showForceRefresh={true} component={component!} imperative={true} />
 );
 
 export const Primary = Template.bind({});

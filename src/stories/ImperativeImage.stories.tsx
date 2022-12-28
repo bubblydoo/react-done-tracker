@@ -2,8 +2,9 @@
 import React from "react";
 import { action } from "@storybook/addon-actions";
 import type { StoryFn, Meta } from "@storybook/react";
-import StoryWrapper from "./story-wrapper";
+import StoryWrapper from "./StoryWrapper";
 import Image from "../components/ImperativeImage";
+import { TrackComponentDoneProps } from "../track-component-done";
 
 export default {
   title: 'Imperative API/Image',
@@ -16,8 +17,8 @@ export default {
   },
 } as Meta;
 
-const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} component={component} imperative={true} />
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
+  <StoryWrapper {...args} component={component!} imperative={true} />
 );
 
 export const Primary = Template.bind({});

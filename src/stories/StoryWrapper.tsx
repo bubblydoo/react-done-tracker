@@ -1,27 +1,55 @@
 /* eslint-disable react/display-name */
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { trackComponentDone } from "../track-component-done";
+import React, {
+  ComponentPropsWithRef,
+  ComponentType,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  trackComponentDone,
+  TrackComponentDoneProps,
+} from "../track-component-done";
 
-type Props = any;
+type StoryWrapperProps<T extends ComponentType> = TrackComponentDoneProps<{
+  component: T;
+  showForceRefresh?: boolean;
+  strictMode?: boolean;
+  imperative?: boolean;
+  style?: any
+}> &
+  Omit<
+    ComponentPropsWithRef<T>,
+    "component" | "showForceRefresh" | "strictMode" | "imperative"
+  >;
 
-export default function StoryWrapper({
+export default function StoryWrapper<T extends ComponentType<any>>({
   component,
   showForceRefresh = true,
   strictMode = true,
   imperative = false,
-  // willHaveChildren = undefined,
-  // willBeSignaledDone = undefined,
-  ...props
-}: Props) {
+  onDone,
+  onAbort,
+  onError,
+  onPending,
+  style,
+  ...componentProps
+}: StoryWrapperProps<T>) {
   const forceRefreshRef = useRef<(() => void) | null>(null);
   const C = useMemo(
-    () => trackComponentDone(component, imperative, forceRefreshRef),
+    () =>
+      trackComponentDone<T>(component, {
+        imperative,
+        forceRefreshRef,
+        doneTrackerName: "StoryWrapperRoot",
+      }),
     [component, imperative]
   );
 
   const [status, setStatus] = useState("pending");
 
-  const style = {
+  const wrapperStyle = {
     minHeight: "100vh",
     minWidth: "100%",
     padding: "16px",
@@ -31,12 +59,11 @@ export default function StoryWrapper({
       error: "red",
       aborted: "orange",
     }[status],
+    ...style
   };
 
-  const { onDone, onAbort, onError, onPending } = props;
-
   const wrapper = (
-    <div style={style}>
+    <div style={wrapperStyle}>
       {showForceRefresh && (
         <button onClick={() => forceRefreshRef?.current?.()}>
           Refresh done tracker
@@ -44,7 +71,7 @@ export default function StoryWrapper({
       )}
       <div>
         <C
-          {...props}
+          {...componentProps}
           onDone={useCallback(
             (...args) => {
               console.log("Story wrapper status", "done");

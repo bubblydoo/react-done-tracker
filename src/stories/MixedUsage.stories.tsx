@@ -1,7 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useEffect, useState } from "react";
-import StoryWrapper from "./story-wrapper";
+import StoryWrapper from "./StoryWrapper";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import ImperativeButton from "../components/ImperativeButton";
@@ -17,6 +17,7 @@ import {
 } from "../visualize-wrapper";
 import Image from "../components/Image";
 import DoneTrackerProvider from "../done-tracker-provider";
+import { TrackComponentDoneProps } from "../track-component-done";
 
 const DelayedContainer = imperativeToContextual(
   imperativeVisualizeDoneWrapper(ImperativeDelayedContainer)
@@ -112,8 +113,8 @@ export default {
   },
 } as Meta;
 
-const Template: StoryFn = (args, { component }) => (
-  <StoryWrapper {...args} showForceRefresh={true} component={component} />
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
+  <StoryWrapper {...args} showForceRefresh={true} component={component!} />
 );
 
 export const Primary = Template.bind({});

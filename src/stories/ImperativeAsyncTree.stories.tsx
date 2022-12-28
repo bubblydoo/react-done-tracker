@@ -3,11 +3,12 @@ import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
-import StoryWrapper from "./story-wrapper";
+import StoryWrapper from "./StoryWrapper";
 import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
+import { TrackComponentDoneProps } from "../track-component-done";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(ImperativeDelayedContainer);
 const DelayedComponent = imperativeVisualizeDoneWrapper(ImperativeDelayedComponent);
@@ -52,11 +53,11 @@ export default {
   },
 } as Meta;
 
-const Template: StoryFn = (args, { component }) => (
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
   <StoryWrapper
     {...args}
     showForceRefresh={true}
-    component={component}
+    component={component!}
     imperative={true}
   />
 );

@@ -2,7 +2,7 @@ import { action } from "@storybook/addon-actions";
 import { Meta, StoryFn } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
-import StoryWrapper from "./story-wrapper";
+import StoryWrapper from "./StoryWrapper";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import ImperativeButton from "../components/ImperativeButton";
@@ -12,6 +12,7 @@ import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracke
 import { NodeDoneTracker } from "../node-done-tracker";
 import { DoneTracker } from "../done-tracker-interface";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
+import { TrackComponentDoneProps } from "../track-component-done";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(
   ImperativeDelayedContainer
@@ -117,11 +118,11 @@ export default {
   },
 } as Meta;
 
-const Template: StoryFn = (args, { component }) => (
+const Template: StoryFn<TrackComponentDoneProps> = (args, { component }) => (
   <StoryWrapper
     {...args}
     showForceRefresh={true}
-    component={component}
+    component={component!}
     imperative={true}
   />
 );

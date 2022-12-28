@@ -1,0 +1,18 @@
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+import Image from "../components/Image";
+import StoryWrapper from "./SmallStoryWrapper";
+
+<Meta title="Intro" />
+
+# React Done Tracker
+
+Use this library to detect when things are done!
+
+### Simple example: an image
+
+<Canvas>
+  <Story name="Image">
+    <StoryWrapper component={Image} src={"https://picsum.photos/200/300"} />
+  </Story>
+</Canvas>

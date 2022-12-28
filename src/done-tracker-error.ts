@@ -1,1 +1,3 @@
-export class DoneTrackerError extends Error {}
+export class DoneTrackerError extends Error {
+  name = "DoneTrackerError"
+}
