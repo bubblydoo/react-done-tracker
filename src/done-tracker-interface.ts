@@ -17,6 +17,7 @@ export interface DoneTracker {
   readonly aborted: boolean;
   readonly errored: boolean;
   readonly error: any;
+  readonly errorSource: DoneTracker | undefined;
 
   addEventListener<K extends keyof DoneTrackerEventMap>(event: K, listener: DoneTrackerListener<K>): void;
 

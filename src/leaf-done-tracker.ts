@@ -11,6 +11,7 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   private _done = false;
   private _aborted = false;
   private _error: any = null;
+  private _errorSource: DoneTracker | undefined;
 
   private readonly _createdAt = performance.now();
   private _doneAt: number | null = null;
@@ -41,6 +42,10 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
 
   get error() {
     return this._error;
+  }
+
+  get errorSource() {
+    return this._errorSource;
   }
 
   constructor(name?: string) {
@@ -100,6 +105,7 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       warn("Already errored, still signaling error", this.id);
     }
     this._error = err;
+    this._errorSource = this;
     this.dispatchEvent("error", err, this);
   };
 

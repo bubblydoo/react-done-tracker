@@ -51,6 +51,14 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     return this._error;
   }
 
+  get errorSource() {
+    return this._errorSource;
+  }
+
+  private get isFinalState() {
+    return this.error || this.done || this.aborted;
+  }
+
   constructor(name?: string) {
     super();
     if (name) this._name = name;
@@ -82,17 +90,18 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this.children.add(child);
     log("🍴 Added", this.id, "->", child.id);
     child.addEventListener("done", () => {
-      if (this.error || this.done || this.aborted) return;
+      if (this.isFinalState) return;
       this._calculateDoneness();
     });
     child.addEventListener("abort", () => {
       log("Child of", this.id, "aborted, deleting", child.id);
       this.children.delete(child);
-      if (this.error || this.done || this.aborted) return;
-      this._calculateDonenessNextMicrotask();
+      if (this.isFinalState) return;
+      this._calculateDoneness();
     });
     child.addEventListener("error", ([err, source]) => {
       log("Received error", this.id, err, "from", source.id);
+      if (this.isFinalState) return;
       this._signalError(err, source);
     });
 
