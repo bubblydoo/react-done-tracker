@@ -1,10 +1,5 @@
 import { Decorator } from "@storybook/react";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ImperativeTrackDone } from "../components/ImperativeTrackDone";
 import { TrackDone as ContextualTrackDone } from "../components/TrackDone";
 import { DoneTracker } from "../done-tracker-interface";
@@ -14,6 +9,7 @@ import { TrackComponentDoneProps } from "../track-component-done";
 type StoryWrapperProps = TrackComponentDoneProps<{
   children: any;
   storyArgs: any;
+  storyViewMode: string;
   hideForceRefresh?: boolean;
   disableStrictMode?: boolean;
   imperative?: boolean;
@@ -31,6 +27,7 @@ export default function StoryWrapper(props: StoryWrapperProps) {
     hideForceRefresh,
     children,
     storyArgs,
+    storyViewMode,
   } = props;
 
   const backgroundColor = {
@@ -40,8 +37,16 @@ export default function StoryWrapper(props: StoryWrapperProps) {
     aborted: "orange",
   }[status]!;
 
-  const body = document.querySelector<HTMLElement>(".sb-show-main");
-  if (body) body.style.backgroundColor = backgroundColor;
+  useEffect(() => {
+    if (storyViewMode !== "story") return;
+    const body = document.querySelector<HTMLElement>(".sb-show-main");
+    if (!body) return;
+    const prevColor = body.style.backgroundColor;
+    body.style.backgroundColor = backgroundColor;
+    return () => {
+      body.style.backgroundColor = prevColor;
+    };
+  }, [backgroundColor, storyViewMode]);
 
   const forceRefreshRef = useRef<(() => void) | null>(null);
 
@@ -117,22 +122,33 @@ export default function StoryWrapper(props: StoryWrapperProps) {
 }
 
 export const ContextualStoryDecorator = (
-  wrapperProps: Omit<StoryWrapperProps, "children" | "storyArgs">
+  wrapperProps: Omit<
+    StoryWrapperProps,
+    "children" | "storyArgs" | "storyViewMode"
+  >
 ): Decorator =>
-  function ContextualStoryWrapped(Story, { args }) {
+  function ContextualStoryWrapped(Story, { args, viewMode }) {
     return (
-      <StoryWrapper {...wrapperProps} storyArgs={args}>
+      <StoryWrapper {...wrapperProps} storyArgs={args} storyViewMode={viewMode}>
         {Story()}
       </StoryWrapper>
     );
   };
 
 export const ImperativeStoryDecorator = (
-  wrapperProps: Omit<StoryWrapperProps, "children" | "storyArgs">
+  wrapperProps: Omit<
+    StoryWrapperProps,
+    "children" | "storyArgs" | "storyViewMode"
+  >
 ): Decorator =>
-  function ImperativeStoryWrapped(Story, { args }) {
+  function ImperativeStoryWrapped(Story, { args, viewMode }) {
     return (
-      <StoryWrapper {...wrapperProps} storyArgs={args} imperative={true}>
+      <StoryWrapper
+        {...wrapperProps}
+        storyArgs={args}
+        storyViewMode={viewMode}
+        imperative={true}
+      >
         {(doneTracker: NodeDoneTracker) =>
           // pass doneTracker as an extra arg to Story
           Story({ args: { ...args, doneTracker } })
