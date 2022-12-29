@@ -64,15 +64,6 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
     this.dispatchEvent("abort");
   };
 
-  /**
-   * This function exists because of React strict mode.
-   * The done tracker might already have been aborted during the first render.
-   */
-  setup = () => {
-    log("Setting up before adding", this.id);
-    this._aborted = false;
-  };
-
   signalDone = () => {
     log("✅ Signaling done", this.id);
     if (this.aborted) {

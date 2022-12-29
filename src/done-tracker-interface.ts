@@ -25,11 +25,6 @@ export interface DoneTracker {
 
   add?(child: DoneTracker): void;
   abort(): void;
-  /**
-   * This function exists because of React strict mode.
-   * The done tracker might already have been aborted during the first render.
-   */
-  setup(): void;
 
   log?(): void;
 }

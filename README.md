@@ -156,8 +156,6 @@ assert(parent.done);
 
 Aborting a done tracker (e.g. `child.abort()`) removes it from the parent done tracker.
 
-There are React-specific considerations, mostly to support Strict Mode:
-
 ```tsx
 const child = new LeafDoneTracker();
 const parent = new NodeDoneTracker();
@@ -165,14 +163,7 @@ const parent = new NodeDoneTracker();
 parent.add(child);
 child.abort(); // used when a component is torn down
 
-assert(!parent.done);
-
-// after a done tracker aborts, wait one microtask before deciding if the parent is done
-// we need this because of double renders in React
-
-queueMicrotask(() => {
-  assert(parent.done);
-});
+assert(parent.done);
 ```
 
 Errors are also supported:

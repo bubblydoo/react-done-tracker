@@ -107,7 +107,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
 
     if (child.done) {
       warn("Child was already done when added", child.id);
-      this._calculateDonenessNextMicrotask();
+      this._calculateDoneness();
     }
   };
 
@@ -120,16 +120,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this._aborted = true;
     this.dispatchEvent("abort");
     Array.from(this.children).forEach((child) => !child.done && child.abort());
-    this._calculateDonenessNextMicrotask();
-  };
-
-  /**
-   * This function exists because of React strict mode.
-   * The done tracker might already have been aborted during the first render.
-   */
-  setup = () => {
-    log("Setting up before adding", this.id);
-    this._aborted = false;
+    this._calculateDoneness();
   };
 
   private _signalError = (err: any, source: DoneTracker) => {
@@ -141,13 +132,6 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   setWillHaveChildren = (value: boolean) => {
     this._willHaveChildren = value;
   };
-
-  private _calculateDonenessNextMicrotask() {
-    // Double-renders in React run in the same microtask, so next microtask should be enough
-    // https://github.dev/facebook/react/blob/645ae2686b157c9f80193e1ada75b7e00ef49acf/packages/react-reconciler/src/ReactFiberHooks.js#L527
-    // and https://stackblitz.com/edit/react-gwohwc?file=src%2FApp.js
-    queueMicrotask(() => this._calculateDoneness());
-  }
 
   calculateDoneness() {
     this._calculateDoneness();
