@@ -96,11 +96,54 @@ The node done trackers in the diagram have rounded corners.
 
 This library exposes many utilities to work with done trackers, most of them as React Hooks. Take a look at [Storybook](https://react-done-tracker.vercel.app) for many examples.
 
+### Note about going from done to pending again
+
+A done tracker cannot go from done to pending again. If you want to change something deep inside your tree,
+you should make sure this change is related to a top-level prop change. In that case, you can create a new done tracker when the top-level props change.
+
+In practice, this would look something like this:
+
+```tsx
+function App(props: any) {
+  const forceRefreshRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    forceRefreshRef.current?.();
+  }, Object.entries(props).flat()); // if a prop changes, the done tracker is renewed
+
+  return <TrackDone onDone={/* ... */} forceRefreshRef={forceRefreshRef}>
+    {/* ... */}
+  </TrackDone>
+}
+```
+
+or without `TrackDone`:
+
+```tsx
+function App(props: any) {
+  const [tick, forceRefresh] = useReducer((i: number) => i + 1, 0);
+
+  const doneTracker = useRootDoneTracker(doneTrackerName, [tick]);
+
+  useEffect(() => {
+    forceRefresh();
+  }, Object.entries(props).flat()); // if a prop changes, the done tracker is renewed
+
+  return <DoneTrackerProvider doneTracker={doneTracker}>
+    {/* ... */}
+  </DoneTrackerProvider>
+}
+```
+
 ### How does this compare to Suspense?
 
 Suspense is used for lazy loading data, and does not render anything to the DOM. React Done Tracker is made to wait for things to render to the DOM.
 
 For example, you cannot use Suspense to wait for a slow canvas to render, or for a video to be loaded into a &lt;video&gt; element.
+
+Unlike Suspense, with done trackers you cannot re-suspend from inside the tree, but only by refreshing the
+
+You can easily use Done Trackers and Suspense together, see [this example](https://react-done-tracker.vercel.app?path=/docs/contextual-api-suspense--docs).
 
 ## More examples
 

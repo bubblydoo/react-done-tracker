@@ -19,3 +19,4 @@ export * from './visualize-wrapper';
 export * from './components/TrackDone';
 export * from './components/ImperativeTrackDone';
 export * from './components/ForkLeafDoneTracker';
+export * from './components/DoneTrackedSuspense';
