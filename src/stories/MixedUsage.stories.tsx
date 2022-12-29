@@ -25,7 +25,7 @@ const DelayedComponent = imperativeToContextual(
 );
 const Button = imperativeToContextual(
   imperativeVisualizeDoneWrapper(ImperativeButton),
-  true
+  { dontContextualizeChildren: true }
 );
 
 const status = (dt: DoneTracker) =>

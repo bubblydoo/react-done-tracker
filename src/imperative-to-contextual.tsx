@@ -12,8 +12,14 @@ export function imperativeToContextual<
   P extends {
     children?: ReturnType<ComponentPropsWithoutRef<T>["children"]>;
   } & Omit<ComponentPropsWithoutRef<T>, "children" | "doneTracker">
->(Component: T, dontContextualizeChildren = false) {
-  const displayName = (Component as any).displayName;
+>(
+  Component: T,
+  {
+    dontContextualizeChildren = false,
+    displayName,
+  }: { dontContextualizeChildren?: boolean; displayName?: string } = {}
+) {
+  const componentDisplayName = (Component as any).displayName;
 
   const ImperativeToContextual = React.forwardRef<T, P>(
     function ImperativeToContextual(props, ref) {
@@ -34,9 +40,11 @@ export function imperativeToContextual<
     }
   );
 
-  ImperativeToContextual.displayName = displayName
-    ? `ImperativeToContextual(${displayName})`
-    : "ImperativeToContextual";
+  ImperativeToContextual.displayName =
+    displayName ||
+    (componentDisplayName
+      ? `ImperativeToContextual(${componentDisplayName})`
+      : "ImperativeToContextual");
 
   return ImperativeToContextual;
 }

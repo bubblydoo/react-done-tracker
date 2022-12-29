@@ -16,10 +16,16 @@ import { imperativeToContextual } from "../imperative-to-contextual";
 import { visualizeDoneWrapper } from "../visualize-wrapper";
 
 export const DelayedComponent = imperativeToContextual(
-  ImperativeDelayedComponent
+  ImperativeDelayedComponent,
+  {
+    displayName: "DelayedComponent",
+  }
 );
 export const DelayedContainer = imperativeToContextual(
-  ImperativeDelayedContainer
+  ImperativeDelayedContainer,
+  {
+    displayName: "DelayedContainer",
+  }
 );
 
 <Meta title="Intro" />
@@ -178,7 +184,9 @@ Error handling is built in. For example, an image can have a network error.
 
 ### Errors always bubble to the top
 
-export const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
+export const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer, {
+  displayName: "DoneVisualizer",
+});
 
 ```tsx
 <DoneVisualizer>
