@@ -74,9 +74,12 @@ export default function StoryWrapper(props: StoryWrapperProps) {
             }}
           >
             <span style={{ marginRight: 4, fontSize: 14 }}>
-              Root state: {status}
+              Root state: <span data-testid="root-state">{status}</span>
             </span>
-            <button onClick={() => forceRefreshRef.current?.()}>
+            <button
+              onClick={() => forceRefreshRef.current?.()}
+              data-testid="new-root-done-tracker"
+            >
               🔄 New done tracker
             </button>
           </div>
