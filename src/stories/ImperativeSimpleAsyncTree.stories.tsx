@@ -1,14 +1,13 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import React from "react";
 import OrigDelayedContainer from "../components/ImperativeDelayedContainer";
 import OrigDelayedComponent from "../components/ImperativeDelayedComponent";
-import StoryWrapper, { ContextualStoryDecorator } from "./StoryWrapper";
+import { ImperativeStoryDecorator } from "./StoryWrapper";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import ImperativeDoneVisualizer from "../components/ImperativeDoneVisualizer";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
-import { TrackComponentDoneProps } from "../track-component-done";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(OrigDelayedContainer);
 const DelayedComponent = imperativeVisualizeDoneWrapper(OrigDelayedComponent);
@@ -39,7 +38,7 @@ export default {
   title: "Imperative API/Simple async tree",
   component: Tree,
   decorators: [
-    ContextualStoryDecorator({
+    ImperativeStoryDecorator({
       onDone: action("done"),
       onAbort: action("abort"),
       onError: action("error"),
