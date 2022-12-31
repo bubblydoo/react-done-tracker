@@ -1,29 +1,36 @@
-import { action } from "@storybook/addon-actions";
+import { action as actionFn } from "@storybook/addon-actions";
 import { jest } from "@storybook/jest";
+import { fireEvent } from "@storybook/testing-library";
 
-export const actions = {
-  onDone: action("done"),
-  onAbort: action("abort"),
-  onError: action("error"),
-  onPending: action("pending"),
-};
-
-export function createSpyableActions() {
+export function createSpyableActions<
+  A extends Record<string, ReturnType<typeof actionFn>>
+>(actions: A) {
   const spyableActions: Record<
-    keyof typeof actions,
+    keyof A,
     jest.Mock<void, []>
   > = Object.fromEntries(
-    Object.entries(actions).map(([k, v]) => {
-      const fn = jest.fn(v);
+    Object.entries(actions).map(([k, actionFn]) => {
+      const fn = jest.fn(actionFn);
       // set function name for storybook interaction view
       Object.defineProperty(fn, "name", { value: k });
       return [k as any, fn] as const;
     })
   );
 
-  const actionsMockReset = () => {
-    Object.values(spyableActions).forEach((action) => action.mockReset());
+  const actionsMockClear = () => {
+    Object.values(spyableActions).forEach((action) => action.mockClear());
   };
 
-  return { actions: spyableActions, actionsMockReset };
+  return { actions: spyableActions, actionsMockClear };
 }
+
+export async function doneTrackerUtils(canvas: any) {
+  const stateText = await canvas.findByTestId("root-state");
+  const refreshButton = await canvas.findByTestId("new-root-done-tracker");
+  return {
+    status: () => stateText.innerHTML,
+    refresh: () => fireEvent.click(refreshButton),
+  };
+}
+
+export const delay = (n: number) => new Promise((res) => setTimeout(res, n));

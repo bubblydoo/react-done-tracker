@@ -3,9 +3,15 @@ import { within, fireEvent } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import Button from "../components/Button";
 import { ContextualStoryDecorator } from "./StoryWrapper";
-import { createSpyableActions } from "./common";
+import { createSpyableActions, delay, doneTrackerUtils } from "./common";
+import { action } from "@storybook/addon-actions";
 
-const { actions, actionsMockReset } = createSpyableActions();
+const { actions, actionsMockClear: actionsMockReset } = createSpyableActions({
+  onDone: action("done"),
+  onAbort: action("abort"),
+  onError: action("error"),
+  onPending: action("pending"),
+});
 
 export default {
   title: "Contextual API/Button",
@@ -20,51 +26,48 @@ export const Primary: Meta = {
 export const InteractionTestNotPersisted: Meta = {
   args: { children: "Click me", persistDone: false },
   play: async ({ canvasElement }) => {
-    await Promise.resolve();
-
-    actionsMockReset();
+    await delay(500);
 
     const canvas = within(canvasElement);
+    const { status, refresh } = await doneTrackerUtils(canvas);
+    actionsMockReset();
+
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
-    const text = canvas.getByTestId("root-state");
-    expect(text.innerText).toBe("pending");
+    expect(status()).toBe("pending");
     await Promise.resolve();
     // it is resolved in 1 microtask
-    expect(text.innerText).toBe("done");
-    const refreshButton = canvas.getByTestId("new-root-done-tracker");
-    fireEvent.click(refreshButton);
+    expect(status()).toBe("done");
+    refresh();
     await Promise.resolve();
-    expect(text.innerText).toBe("pending");
+    expect(status()).toBe("pending");
     fireEvent.click(button);
-    expect(text.innerText).toBe("pending");
+    expect(status()).toBe("pending");
     await Promise.resolve();
-    expect(text.innerText).toBe("done");
+    expect(status()).toBe("done");
   },
 };
 
 export const InteractionTestPersisted: Meta = {
   args: { children: "Click me", persistDone: true },
   play: async ({ canvasElement }) => {
-    await Promise.resolve();
-
-    actionsMockReset();
+    await delay(500);
 
     const canvas = within(canvasElement);
-    const text = await canvas.findByTestId("root-state");
-    const refreshButton = await canvas.findByTestId("new-root-done-tracker");
+    const { status, refresh } = await doneTrackerUtils(canvas);
+    actionsMockReset();
 
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
-    expect(text.innerText).toBe("pending");
+    expect(status()).toBe("pending");
     await Promise.resolve();
     // it is resolved in 1 microtask
-    expect(text.innerText).toBe("done");
+    expect(status()).toBe("done");
     expect(actions.onDone).toBeCalledTimes(1);
     actions.onDone.mockReset();
-    fireEvent.click(refreshButton);
+    refresh();
     await Promise.resolve();
-    expect(text.innerText).toBe("done");
+    expect(status()).toBe("done");
     expect(actions.onPending).not.toBeCalled();
     expect(actions.onDone).toBeCalledTimes(1);
   },
