@@ -1,0 +1,28 @@
+diff --git a/dist/cjs/setup-page.js b/dist/cjs/setup-page.js
+index 146013ce23b35dba71fcb1dee5a8d21e157871d9..85ba9a17970633220184f4ed679530a0fd891472 100644
+--- a/dist/cjs/setup-page.js
++++ b/dist/cjs/setup-page.js
+@@ -88,7 +88,8 @@ const setupPage = async page => {
+       }
+ 
+       function safeStringify(obj, replacer, spaces, cycleReplacer) {
+-        return JSON.stringify(obj, serializer(replacer, cycleReplacer), spaces);
++        return "Some error";
++        // return JSON.stringify(obj, serializer(replacer, cycleReplacer), spaces);
+       }
+ 
+       function composeMessage(args) {
+diff --git a/dist/esm/setup-page.js b/dist/esm/setup-page.js
+index b4d9f31190ad885717faa32fac701549acade411..0e69a4754e9b7058345995ab51f1e3b382edf2dc 100644
+--- a/dist/esm/setup-page.js
++++ b/dist/esm/setup-page.js
+@@ -81,7 +81,8 @@ export const setupPage = async page => {
+       }
+ 
+       function safeStringify(obj, replacer, spaces, cycleReplacer) {
+-        return JSON.stringify(obj, serializer(replacer, cycleReplacer), spaces);
++        return "Some error";
++        // return JSON.stringify(obj, serializer(replacer, cycleReplacer), spaces);
+       }
+ 
+       function composeMessage(args) {

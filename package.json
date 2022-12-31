@@ -17,6 +17,7 @@
     "build-storybook": "storybook build",
     "test": "npm run test-storybook",
     "test-storybook": "test-storybook",
+    "test-debug": "cross-env DEBUG=true PWDEBUG=1 npm run test-storybook",
     "prepublishOnly": "npm run build"
   },
   "files": [
@@ -41,6 +42,7 @@
     "@types/react-dom": "^18.0.9",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.29.0",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -48,5 +50,9 @@
     "tsup": "^6.5.0",
     "typescript": "~4.9.3",
     "vite": "^4.0.3"
+  },
+  "packageManager": "yarn@3.3.1",
+  "resolutions": {
+    "@storybook/test-runner@^0.10.0-next.4": "patch:@storybook/test-runner@npm%3A0.10.0-next.4#./.yarn/patches/@storybook-test-runner-npm-0.10.0-next.4-ec2685f2d3.patch"
   }
 }
