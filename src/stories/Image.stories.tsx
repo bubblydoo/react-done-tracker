@@ -65,7 +65,6 @@ export const InteractionTestError: Meta = {
 
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
-    console.log('b');
     actionsMockClear();
 
     await waitFor(() => expect(status()).toBe("error"), { timeout: 1000 });
