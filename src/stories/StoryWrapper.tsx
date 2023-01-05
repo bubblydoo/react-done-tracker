@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import { Decorator } from "@storybook/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ImperativeTrackDone } from "../components/ImperativeTrackDone";
@@ -158,4 +159,10 @@ export const ImperativeStoryDecorator = (
         }
       </StoryWrapper>
     );
+  };
+
+export const RunBeforeRenderDecorator = (fn: () => void): Decorator =>
+  function RunBeforeRenderDecoratorWrapped(Story) {
+    fn();
+    return Story();
   };

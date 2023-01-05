@@ -2,7 +2,7 @@ import type { Meta } from "@storybook/react";
 import { within, fireEvent } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import Button from "../components/Button";
-import { ContextualStoryDecorator } from "./StoryWrapper";
+import { ContextualStoryDecorator, RunBeforeRenderDecorator } from "./StoryWrapper";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import { action } from "@storybook/addon-actions";
 
@@ -16,7 +16,10 @@ const { actions, actionsMockClear } = createSpyableActions({
 export default {
   title: "Contextual API/Button",
   component: Button,
-  decorators: [ContextualStoryDecorator(actions)],
+  decorators: [
+    ContextualStoryDecorator(actions),
+    RunBeforeRenderDecorator(actionsMockClear),
+  ],
 } as Meta;
 
 export const Primary: Meta = {
@@ -30,7 +33,6 @@ export const InteractionTestNotPersisted: Meta = {
 
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
-    actionsMockClear();
 
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
@@ -55,7 +57,6 @@ export const InteractionTestPersisted: Meta = {
 
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
-    actionsMockClear();
 
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
@@ -64,7 +65,7 @@ export const InteractionTestPersisted: Meta = {
     // it is resolved in 1 microtask
     expect(status()).toBe("done");
     expect(actions.onDone).toBeCalledTimes(1);
-    actions.onDone.mockReset();
+    actionsMockClear()
     refresh();
     await Promise.resolve();
     expect(status()).toBe("done");

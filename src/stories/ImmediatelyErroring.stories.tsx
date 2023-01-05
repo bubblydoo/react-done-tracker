@@ -2,7 +2,10 @@ import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 import React from "react";
 import { visualizeDoneWrapper } from "../visualize-wrapper";
-import { ContextualStoryDecorator } from "./StoryWrapper";
+import {
+  ContextualStoryDecorator,
+  RunBeforeRenderDecorator,
+} from "./StoryWrapper";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import { within } from "@storybook/testing-library";
@@ -11,15 +14,16 @@ import { expect } from "@storybook/jest";
 function ImmediatelyErroring() {
   useLeafDoneTracker({
     name: "ImmediatelyErroring",
-    error: "error"
+    error: "error",
   });
 
-  return (
-    <>oops</>
-  );
+  return <>oops</>;
 }
 
-const ImmediatelyErroringVisualizer = visualizeDoneWrapper(ImmediatelyErroring, "ImmediatelyErroring");
+const ImmediatelyErroringVisualizer = visualizeDoneWrapper(
+  ImmediatelyErroring,
+  "ImmediatelyErroring"
+);
 
 const { actions, actionsMockClear } = createSpyableActions({
   onDone: action("done"),
@@ -33,6 +37,7 @@ export default {
   component: ImmediatelyErroringVisualizer,
   decorators: [
     ContextualStoryDecorator(actions),
+    RunBeforeRenderDecorator(actionsMockClear),
   ],
 } as Meta;
 
@@ -44,11 +49,10 @@ export const InteractionTest: Meta = {
 
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
-    actionsMockClear();
 
     expect(status()).toBe("error");
     refresh();
     await delay(500);
     expect(status()).toBe("error");
-  }
-}
+  },
+};
