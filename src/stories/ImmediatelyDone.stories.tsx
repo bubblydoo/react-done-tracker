@@ -51,6 +51,8 @@ export const InteractionTest: Meta = {
     const { status, refresh } = await doneTrackerUtils(canvas);
 
     expect(status()).toBe("done");
+    expect(actions.onPending).not.toBeCalled();
+    expect(actions.onDone).toBeCalled();
     refresh();
     await delay(500);
     expect(status()).toBe("done");
