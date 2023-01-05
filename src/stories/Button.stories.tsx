@@ -6,7 +6,7 @@ import { ContextualStoryDecorator } from "./StoryWrapper";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import { action } from "@storybook/addon-actions";
 
-const { actions, actionsMockClear: actionsMockReset } = createSpyableActions({
+const { actions, actionsMockClear } = createSpyableActions({
   onDone: action("done"),
   onAbort: action("abort"),
   onError: action("error"),
@@ -30,7 +30,7 @@ export const InteractionTestNotPersisted: Meta = {
 
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
-    actionsMockReset();
+    actionsMockClear();
 
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
@@ -55,7 +55,7 @@ export const InteractionTestPersisted: Meta = {
 
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
-    actionsMockReset();
+    actionsMockClear();
 
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
