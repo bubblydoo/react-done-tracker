@@ -109,6 +109,10 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       warn("Child was already done when added", child.id);
       this._calculateDoneness();
     }
+    if (child.error) {
+      warn("Child was already errored when added", child.id);
+      this._signalError(child.error, child.errorSource!);
+    }
   };
 
   abort = () => {
