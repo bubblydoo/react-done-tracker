@@ -1,4 +1,5 @@
 import { BaseDoneTracker } from "./base-done-tracker";
+import { DEBUG } from "./debug";
 import { DoneTracker } from "./done-tracker-interface";
 import { getUniqueId } from "./get-unique-id";
 import { log, warn, debug } from "./log";
@@ -156,13 +157,15 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       (child) => child.done
     ).length;
 
-    console.groupCollapsed(
-      "[Done Tracker]",
-      "🧮 Calculating doneness",
-      this.id
-    );
-    this.log();
-    console.groupEnd();
+    if (DEBUG) {
+      console.groupCollapsed(
+        "[Done Tracker]",
+        "🧮 Calculating doneness",
+        this.id
+      );
+      this.log();
+      console.groupEnd();
+    }
     if (this._done) return;
     if (this._willHaveChildren && this.children.size === 0) {
       log("🚧 Will have children so not done yet", this.id);

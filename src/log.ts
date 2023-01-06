@@ -1,3 +1,11 @@
-export const debug = console.debug.bind(window.console, "[Done Tracker]");
-export const log = console.log.bind(window.console, "[Done Tracker]");
-export const warn = console.warn.bind(window.console, "[Done Tracker]");
+import { DEBUG } from "./debug";
+
+export const debug = DEBUG
+  ? console.debug.bind(window.console, "[Done Tracker]")
+  : () => undefined;
+export const log = DEBUG
+  ? console.log.bind(window.console, "[Done Tracker]")
+  : () => undefined;
+export const warn = DEBUG
+  ? console.warn.bind(window.console, "[Done Tracker]")
+  : () => undefined;

@@ -150,6 +150,14 @@ Unlike Suspense, with done trackers you cannot re-suspend from inside the tree, 
 
 You can easily use Done Trackers and Suspense together, see [this example](https://react-done-tracker.vercel.app?path=/docs/contextual-api-suspense--docs).
 
+## How can I debug this?
+
+Run `window.__debug_react_done_tracker = true` before importing the library, and you will see logs of done tracker events, as well as the state of a done tracker tree when its doneness is being checked.
+
+You can print the state of a done tracker tree to the console with `doneTracker.log()`.
+
+Next to that, the `useDoneTrackerRaw` hook uses `useDebugValue` which displays the done tracker state in React DevTools.
+
 ## More examples
 
 It's best to take a look at [Storybook](https://react-done-tracker.vercel.app) first to get a feeling of how this library can be used.
