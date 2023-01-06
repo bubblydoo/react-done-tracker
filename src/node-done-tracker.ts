@@ -1,9 +1,7 @@
 import { BaseDoneTracker } from "./base-done-tracker";
 import { DoneTracker } from "./done-tracker-interface";
 import { getUniqueId } from "./get-unique-id";
-
-const log = (...args: any[]) => console.log("[Done Tracker]", ...args);
-const warn = (...args: any[]) => console.warn("[Done Tracker]", ...args);
+import { log, warn, debug } from "./log";
 
 /**
  * Keeps track of "doneness" of a component tree
@@ -62,7 +60,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   constructor(name?: string) {
     super();
     if (name) this._name = name;
-    log("Created", performance.now(), this.id);
+    log("🍼 Created", performance.now(), this.id);
   }
 
   add = (child: DoneTracker) => {
@@ -94,13 +92,13 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       this._calculateDoneness();
     });
     child.addEventListener("abort", () => {
-      log("Child of", this.id, "aborted, deleting", child.id);
+      debug("Child of", this.id, "aborted, deleting", child.id);
       this.children.delete(child);
       if (this.isFinalState) return;
       this._calculateDoneness();
     });
     child.addEventListener("error", ([err, source]) => {
-      log("Received error", this.id, err, "from", source.id);
+      log("❌ Received error", this.id, err, "from", source.id);
       if (this.isFinalState) return;
       this._signalError(err, source);
     });
@@ -116,11 +114,11 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   };
 
   abort = () => {
-    log("Signaling aborted", this.id);
     if (this.done) {
       warn("Already done, can't abort", this.id);
       return;
     }
+    log("🗑 Signaling aborted", this.id);
     this._aborted = true;
     this.dispatchEvent("abort");
     Array.from(this.children).forEach((child) => !child.done && child.abort());
@@ -143,15 +141,15 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
 
   private _calculateDoneness() {
     if (this._done) {
-      warn("🧮 Calculating doneness but already done", this.id);
+      log("🧮 Calculating doneness but already done", this.id);
       return;
     }
     if (this._aborted) {
-      warn("🧮 Calculating doneness but aborted", this.id);
+      log("🧮 Calculating doneness but aborted", this.id);
       return;
     }
     if (this._error) {
-      warn("🧮 Calculating doneness but errored", this.id);
+      log("🧮 Calculating doneness but errored", this.id);
       return;
     }
     const nDoneChildren = Array.from(this.children).filter(
@@ -167,7 +165,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     console.groupEnd();
     if (this._done) return;
     if (this._willHaveChildren && this.children.size === 0) {
-      warn("🚧 Will have children so not done yet", this.id);
+      log("🚧 Will have children so not done yet", this.id);
       return;
     }
     const allChildrenDone = nDoneChildren === this.children.size;

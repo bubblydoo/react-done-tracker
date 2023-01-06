@@ -1,9 +1,7 @@
 import { BaseDoneTracker } from "./base-done-tracker";
 import { DoneTracker } from "./done-tracker-interface";
 import { getUniqueId } from "./get-unique-id";
-
-const log = (...args: any[]) => console.log("[Done Tracker]", ...args);
-const warn = (...args: any[]) => console.warn("[Done Tracker]", ...args);
+import { log, warn, debug } from "./log";
 
 export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   private readonly _id = getUniqueId();
@@ -51,39 +49,39 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   constructor(name?: string) {
     super();
     if (name) this._name = name;
-    log("Created", performance.now(), this.id);
+    log("🍼 Created", performance.now(), this.id);
   }
 
   abort = () => {
-    log("Signaling aborted", this.id);
     if (this.done) {
       warn("Already done, can't abort", this.id);
       return;
     }
+    log("🗑 Signaling aborted", this.id);
     this._aborted = true;
     this.dispatchEvent("abort");
   };
 
   signalDone = () => {
-    log("✅ Signaling done", this.id);
     if (this.aborted) {
       warn("Already aborted, can't signal done", this.id);
       return;
     }
     if (this.done) {
-      warn("Already done, still signaling done", this.id);
+      debug("Already done, not signaling done", this.id);
+      return;
     }
     if (this.errored) {
       warn("Already errored, can't signal done", this.id);
       return;
     }
+    log("✅ Signaling done", this.id);
     this._done = true;
     this._doneAt = performance.now();
     this.dispatchEvent("done");
   };
 
   signalError = (err: any) => {
-    log("❌ Signaling errored", this.id);
     if (this.aborted) {
       warn("Already aborted, can't signal error", this.id);
       return;
@@ -93,8 +91,10 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       return;
     }
     if (this.errored) {
-      warn("Already errored, still signaling error", this.id);
+      debug("Already errored, not signaling error", this.id);
+      return;
     }
+    log("❌ Signaling errored", this.id);
     this._error = err;
     this._errorSource = this;
     this.dispatchEvent("error", err, this);
