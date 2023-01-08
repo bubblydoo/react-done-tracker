@@ -3,6 +3,7 @@
     "target": "esnext",
     "lib": ["esnext", "dom", "dom.iterable"],
     "jsx": "react",
+    "declaration": true,
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist",
