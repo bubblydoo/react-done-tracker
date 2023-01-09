@@ -8,7 +8,8 @@
     "strict": true,
     "outDir": "dist",
     "moduleResolution": "node",
-    "incremental": true
+    "incremental": true,
+    "tsBuildInfoFile": "build/.tsbuildinfo"
   },
   "include": ["src/**/*"],
 }
