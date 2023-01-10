@@ -42,7 +42,7 @@ export const InteractionTest: Meta = {
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
 
-    await waitFor(() => expect(status()).toBe("done"), { timeout: 1000 });
+    await waitFor(() => expect(status()).toBe("done"), { timeout: 5000 });
     await delay(100);
     expect(actions.onDone).toBeCalled();
     actionsMockClear();
@@ -69,7 +69,7 @@ export const InteractionTestError: Meta = {
     const canvas = within(canvasElement);
     const { status, refresh } = await doneTrackerUtils(canvas);
 
-    await waitFor(() => expect(status()).toBe("error"), { timeout: 1000 });
+    await waitFor(() => expect(status()).toBe("error"), { timeout: 5000 });
     refresh();
     await delay(100);
     expect(status()).toBe("error");

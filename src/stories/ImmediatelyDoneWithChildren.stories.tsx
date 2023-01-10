@@ -1,0 +1,58 @@
+import { Meta } from "@storybook/react";
+import React from "react";
+import {
+  ContextualStoryDecorator,
+  RunBeforeRenderDecorator,
+} from "./StoryWrapper";
+import { useNodeDoneTracker } from "../use-node-done-tracker";
+import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
+import { createSpyableActions, delay, doneTrackerUtils } from "./common";
+import { action } from "@storybook/addon-actions";
+
+const Tree = () => {
+  const parent = useNodeDoneTracker({ name: "Parent", willHaveChildren: true });
+  useImperativeLeafDoneTracker(parent, { name: "Child 1", done: true });
+  useImperativeLeafDoneTracker(parent, { name: "Child 2", done: false });
+
+  return <>done: {parent.done ? "yes" : "no"}</>;
+};
+
+const { actions, actionsMockClear } = createSpyableActions({
+  onDone: action("done"),
+  onAbort: action("abort"),
+  onError: action("error"),
+  onPending: action("pending"),
+});
+
+export default {
+  title: "Contextual API/Immediately Done With Children",
+  component: Tree,
+  decorators: [
+    ContextualStoryDecorator({ ...actions, disableStrictMode: true }),
+    RunBeforeRenderDecorator(actionsMockClear),
+  ],
+} as Meta;
+
+export const Primary = { args: {} } as Meta;
+
+export const InteractionTest = {
+  args: {},
+  play: async ({ canvasElement }) => {
+    await delay(500);
+
+    const canvas = within(canvasElement);
+    const { status, refresh } = await doneTrackerUtils(canvas);
+
+    expect(status()).toBe("pending");
+    expect(actions.onDone).not.toBeCalled();
+
+    refresh();
+
+    await delay(100);
+
+    expect(status()).toBe("pending");
+    expect(actions.onDone).not.toBeCalled();
+  },
+} as Meta;

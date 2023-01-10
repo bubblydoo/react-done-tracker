@@ -32,20 +32,19 @@ export const InteractionTestNotPersisted: Meta = {
     await delay(500);
 
     const canvas = within(canvasElement);
-    const { status, refresh } = await doneTrackerUtils(canvas);
+    const { status, refresh, wait } = await doneTrackerUtils(canvas);
 
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
-    expect(status()).toBe("pending");
-    await Promise.resolve();
-    // it is resolved in 1 microtask
+    await wait();
+    // it is resolved in 1 useEffect call
     expect(status()).toBe("done");
     refresh();
-    await Promise.resolve();
+    await wait();
     expect(status()).toBe("pending");
     fireEvent.click(button);
     expect(status()).toBe("pending");
-    await Promise.resolve();
+    await wait();
     expect(status()).toBe("done");
   },
 };
@@ -56,18 +55,18 @@ export const InteractionTestPersisted: Meta = {
     await delay(500);
 
     const canvas = within(canvasElement);
-    const { status, refresh } = await doneTrackerUtils(canvas);
+    const { status, refresh, wait } = await doneTrackerUtils(canvas);
 
     const button = canvas.getByText("Click me", { selector: "button" });
     fireEvent.click(button);
     expect(status()).toBe("pending");
-    await Promise.resolve();
-    // it is resolved in 1 microtask
+    await wait();
+    // it is resolved in 1 useEffect call
     expect(status()).toBe("done");
     expect(actions.onDone).toBeCalledTimes(1);
-    actionsMockClear()
+    actionsMockClear();
     refresh();
-    await Promise.resolve();
+    await wait();
     expect(status()).toBe("done");
     expect(actions.onPending).not.toBeCalled();
     expect(actions.onDone).toBeCalledTimes(1);

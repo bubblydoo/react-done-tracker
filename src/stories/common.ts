@@ -30,6 +30,7 @@ export async function doneTrackerUtils(canvas: any) {
   return {
     status: () => stateText.innerHTML,
     refresh: () => fireEvent.click(refreshButton),
+    wait: () => delay(20),
   };
 }
 

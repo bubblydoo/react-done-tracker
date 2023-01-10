@@ -1,7 +1,6 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
@@ -32,14 +31,6 @@ export const useImperativeLeafDoneTracker = (
 
   const localDoneTracker = useDoneTrackerRaw(doneTracker, "leaf", name);
 
-  const check = useCallback(
-    (localDoneTracker: LeafDoneTracker) => {
-      if (done) localDoneTracker.signalDone();
-      if (error) localDoneTracker.signalError(error);
-    },
-    [done, error]
-  );
-
   const prevDoneTracker = useRef<DoneTracker>();
 
   useMemo(() => {
@@ -49,10 +40,14 @@ export const useImperativeLeafDoneTracker = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localDoneTracker, reset]);
 
-  // useLayoutEffect is used so the doneness can be detected before first paint
-  useLayoutEffect(() => check(localDoneTracker), [check, localDoneTracker]);
+  // we cannot use useLayoutEffect here because it might run in the same microtask as the render,
+  // which would fail the ImmediatelyDoneWithChildren test
+
   // useEffect is used because the leaf might not be added to the parent yet
-  useEffect(() => check(localDoneTracker), [check, localDoneTracker]);
+  useEffect(() => {
+    if (done) localDoneTracker.signalDone();
+    if (error) localDoneTracker.signalError(error);
+  }, [done, error, localDoneTracker]);
 
   return localDoneTracker;
 };

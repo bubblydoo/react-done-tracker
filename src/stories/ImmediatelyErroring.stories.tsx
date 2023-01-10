@@ -53,8 +53,11 @@ export const InteractionTest: Meta = {
     expect(status()).toBe("error");
     expect(actions.onPending).not.toBeCalled();
     expect(actions.onError).toBeCalled();
+    actionsMockClear();
     refresh();
     await delay(500);
     expect(status()).toBe("error");
+    expect(actions.onPending).not.toBeCalled();
+    expect(actions.onError).toBeCalled();
   },
 };

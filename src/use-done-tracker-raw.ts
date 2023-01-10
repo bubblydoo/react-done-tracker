@@ -77,7 +77,8 @@ export function useDoneTrackerRaw<
     }`
   );
 
-  // like in useDoneTrackerSubscription, use useLayoutEffect because useEffect is too slow
+  // use useLayoutEffect because useEffect is too slow
+  // TODO: could we use useEffect here?
   useLayoutEffect(() => {
     increaseRefs(localDoneTracker);
     doneTracker.add(localDoneTracker);
