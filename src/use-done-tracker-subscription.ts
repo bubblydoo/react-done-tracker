@@ -1,15 +1,38 @@
 import { useEffect } from "react";
 import { DoneTracker } from "./done-tracker-interface";
 
-export const useDoneTrackerSubscription = (doneTracker: DoneTracker, {
-  done,
-  error,
-  pending
-}: {
-  done?: () => void;
-  error?: (err: any, source: DoneTracker) => void;
-  pending?: () => void;
-}) => {
+export const useDoneTrackerSubscription = (
+  doneTracker: DoneTracker,
+  {
+    done,
+    error,
+    pending,
+  }: {
+    done?: () => void;
+    error?: (err: any, source: DoneTracker) => void;
+    pending?: () => void;
+  }
+) => {
+  useEffect(() => {
+    let ignore = false;
+    // this queueMicrotask is needed because in Strict Mode
+    // we sometimes see pending -> done -> pending -> done
+    // (e.g. rarely in the ImmediatelyDone story)
+    // (this also occurs with useLayoutEffect)
+    // also it skips pending when it's within 1 microtask which
+    // can be desirable
+    queueMicrotask(() => {
+      if (ignore) return;
+      if (doneTracker.aborted || doneTracker.errored || doneTracker.done)
+        return;
+      pending?.();
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [doneTracker, pending]);
+
   // we cannot use useLayoutEffect here because
   // it has to be the same as in useImperativeDoneTracker
 
@@ -28,9 +51,4 @@ export const useDoneTrackerSubscription = (doneTracker: DoneTracker, {
     doneTracker.addEventListener("error", fn);
     return () => doneTracker.removeEventListener("error", fn);
   }, [doneTracker, error]);
-
-  useEffect(() => {
-    if (doneTracker.aborted || doneTracker.errored || doneTracker.done) return;
-    pending?.();
-  }, [doneTracker, pending]);
 };

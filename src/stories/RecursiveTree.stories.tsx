@@ -33,7 +33,6 @@ function RecursiveElement(props: {
     return (
       <ForkNodeDoneTracker
         key={i}
-        willHaveChildren={props.depth > 1}
         name={`FDT ${props.depth}#${i}`}
       >
         <div style={{ marginLeft: 8 }}>

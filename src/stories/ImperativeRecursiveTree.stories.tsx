@@ -34,7 +34,6 @@ function RecursiveElement(props: {
       <ImperativeForkNodeDoneTracker
         key={i}
         doneTracker={props.doneTracker}
-        willHaveChildren={props.depth > 1}
         name={`FDT ${props.depth}#${i}`}
       >
         {(doneTracker) => (

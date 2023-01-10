@@ -16,7 +16,7 @@ export default function DelayedContainer(props: Props) {
   const doneTracker = useNodeDoneTracker({ name: "Delayed Container" });
   const childrenDoneTracker = useImperativeNodeDoneTracker(doneTracker, {
     name: "Delayed Container Children",
-    willHaveChildren: true,
+    skip: delaying,
   });
   const delayDoneTracker = useImperativeLeafDoneTracker(doneTracker, {
     name: "Delayed Container Delay",

@@ -12,7 +12,7 @@ import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import { action } from "@storybook/addon-actions";
 
 const Tree = () => {
-  const parent = useNodeDoneTracker({ name: "Parent", willHaveChildren: true });
+  const parent = useNodeDoneTracker({ name: "Parent" });
   useImperativeLeafDoneTracker(parent, { name: "Child 1", done: true });
   useImperativeLeafDoneTracker(parent, { name: "Child 2", done: false });
 
@@ -27,10 +27,10 @@ const { actions, actionsMockClear } = createSpyableActions({
 });
 
 export default {
-  title: "Contextual API/Immediately Done With Children",
+  title: "Tests/Immediately Done With Children",
   component: Tree,
   decorators: [
-    ContextualStoryDecorator({ ...actions, disableStrictMode: true }),
+    ContextualStoryDecorator(actions),
     RunBeforeRenderDecorator(actionsMockClear),
   ],
 } as Meta;

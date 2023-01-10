@@ -342,7 +342,7 @@ function DelayedContainer(props: Props) {
 
   const doneTracker = useNodeDoneTracker();
   const childrenDoneTracker = useImperativeNodeDoneTracker(doneTracker, {
-    willHaveChildren: true,
+    skip: delaying,
   });
   const delayDoneTracker = useImperativeLeafDoneTracker(doneTracker, {
     done: !delaying,

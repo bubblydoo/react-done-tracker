@@ -248,10 +248,7 @@ Contextual API:
 import { TrackDone, DoneTrackerProvider, useNodeDoneTracker } from "react-done-tracker";
 
 function Tap({ children }) {
-  const doneTracker = useNodeDoneTracker({
-    name: "Tap",
-    willHaveChildren: true
-  });
+  const doneTracker = useNodeDoneTracker({ name: "Tap" });
 
   return (
     <div style={{ background: doneTracker.done ? "green" : "black" }}>

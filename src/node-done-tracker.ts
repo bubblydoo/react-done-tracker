@@ -17,7 +17,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   private _aborted = false;
   private _error: any = null;
   private _errorSource: DoneTracker | undefined;
-  private _willHaveChildren: boolean | null = null;
+  public skip = false;
 
   private readonly _createdAt = performance.now();
   private _doneAt: number | null = null;
@@ -65,9 +65,6 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   }
 
   add = (child: DoneTracker) => {
-    if (this._willHaveChildren === false) {
-      warn("Ensured not to have children", this.id, "->", child.id);
-    }
     if (this.done) {
       warn(
         "Parent already done while adding child",
@@ -105,7 +102,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     });
 
     if (child.done) {
-      warn("Child was already done when added", child.id);
+      debug("Child was already done when added", child.id);
       this._calculateDoneness();
     }
     if (child.error) {
@@ -130,10 +127,6 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this._error = err;
     this._errorSource = source;
     this.dispatchEvent("error", err, source);
-  };
-
-  setWillHaveChildren = (value: boolean) => {
-    this._willHaveChildren = value;
   };
 
   calculateDoneness = () => {
@@ -167,16 +160,14 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       console.groupEnd();
     }
     if (this._done) return;
-    if (this._willHaveChildren && this.children.size === 0) {
-      log("🚧 Will have children so not done yet", this.id);
+    if (this.skip) {
+      log("🚧 Skipped so not done yet", this.id);
       return;
     }
     const allChildrenDone = nDoneChildren === this.children.size;
     if (!allChildrenDone) return;
     this._done = true;
     this._doneAt = performance.now();
-    // this._doneAt = performance.now();
-    // this._doneMethod = 'children';
     log("✅ All done", this.id, "in", this._doneAt - this._createdAt, "ms");
     this.dispatchEvent("done");
   }
@@ -191,7 +182,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       this.id,
       this.done ? "done" : "not done",
       `${nDoneChildren}/${this.children.size}`,
-      this._willHaveChildren ? "(ensured children)" : "(not ensured children)"
+      this.skip ? "(skipped)" : "(not skipped)"
     );
     console.groupCollapsed("Inspect");
     console.log(this);

@@ -1,20 +1,21 @@
-import { useEffect } from "react";
 import { DoneTrackerError } from "./done-tracker-error";
 import { NodeDoneTracker } from "./node-done-tracker";
 import { useDoneTrackerRaw } from "./use-done-tracker-raw";
+import { useTemporarilySkipNodeDoneTracker } from "./use-temporarily-skip-node-done-tracker";
 
 export const useImperativeNodeDoneTracker = (
   doneTracker: NodeDoneTracker,
   {
     name,
-    willHaveChildren,
+    skip = false,
   }: {
     name?: string;
     /**
      * If the children are not always registered within one `useEffect` after creating this done tracker,
-     * turn on this flag
+     * use this flag.
+     * When the children are rendered/registered, change it to false.
      */
-    willHaveChildren?: boolean;
+    skip?: boolean;
   } = {}
 ) => {
   if (!doneTracker)
@@ -24,18 +25,7 @@ export const useImperativeNodeDoneTracker = (
 
   const localDoneTracker = useDoneTrackerRaw(doneTracker, "node", name);
 
-  // temporarily require children to prevent aborts from setting the node to done
-  localDoneTracker.setWillHaveChildren(true);
-
-  useEffect(() => {
-    // if the children are delayed, use willHaveChildren
-    if (willHaveChildren) return;
-    queueMicrotask(() => {
-      // if at this point the node doesn't have children, it will be done
-      localDoneTracker.setWillHaveChildren(false);
-      localDoneTracker.calculateDoneness();
-    });
-  }, [localDoneTracker, willHaveChildren]);
+  useTemporarilySkipNodeDoneTracker(localDoneTracker, skip);
 
   return localDoneTracker;
 };

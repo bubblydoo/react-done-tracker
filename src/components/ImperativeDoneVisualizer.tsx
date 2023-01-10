@@ -38,8 +38,7 @@ export default function ImperativeDoneVisualizer({
   children?: (doneTracker: NodeDoneTracker) => any;
 }>) {
   const localDoneTracker = useImperativeNodeDoneTracker(doneTracker, {
-    name: name || "Visualizer",
-    willHaveChildren: true
+    name: name || "Visualizer"
   });
 
   const childrenComponents = children?.(localDoneTracker);
