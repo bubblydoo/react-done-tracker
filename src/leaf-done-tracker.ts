@@ -100,7 +100,7 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
     this.dispatchEvent("error", err, this);
   };
 
-  log() {
+  log = () => {
     console.group("Done Tracker:", this.id, this.done ? "done" : "not done");
     console.groupCollapsed("Inspect");
     console.log(this);

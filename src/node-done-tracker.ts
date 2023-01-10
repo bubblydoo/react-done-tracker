@@ -136,11 +136,11 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this._willHaveChildren = value;
   };
 
-  calculateDoneness() {
+  calculateDoneness = () => {
     this._calculateDoneness();
   }
 
-  private _calculateDoneness() {
+  private _calculateDoneness = () => {
     if (this._done) {
       log("🧮 Calculating doneness but already done", this.id);
       return;
@@ -181,7 +181,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this.dispatchEvent("done");
   }
 
-  log() {
+  log = () => {
     const nDoneChildren = Array.from(this.children)
       .map((child) => child.done)
       .filter(Boolean).length;
