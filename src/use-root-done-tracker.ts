@@ -8,5 +8,9 @@ export const useRootDoneTracker = (name = "Root", deps: any[] = []) => {
 
   useTemporarilySkipNodeDoneTracker(doneTracker, false);
 
+  // uncomment when we want to
+  // calculate doneness excessively
+  // doneTracker.calculateDoneness();
+
   return doneTracker;
 };

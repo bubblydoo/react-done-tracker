@@ -27,5 +27,9 @@ export const useImperativeNodeDoneTracker = (
 
   useTemporarilySkipNodeDoneTracker(localDoneTracker, skip);
 
+  // uncomment when we want to
+  // calculate doneness excessively
+  // localDoneTracker.calculateDoneness();
+
   return localDoneTracker;
 };

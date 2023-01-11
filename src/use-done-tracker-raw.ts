@@ -1,6 +1,6 @@
 import {
   useDebugValue,
-  useLayoutEffect,
+  useEffect,
   useMemo,
   useReducer,
   useRef,
@@ -77,9 +77,10 @@ export function useDoneTrackerRaw<
     }`
   );
 
-  // use useLayoutEffect because useEffect is too slow
-  // TODO: could we use useEffect here?
-  useLayoutEffect(() => {
+  // we also cannot use useLayoutEffect here, because it is too fast!
+  // it fails many of the tests when calculateDoneness is run on every render
+  // (to test, uncomment the "calculate doneness excessively" lines)
+  useEffect(() => {
     increaseRefs(localDoneTracker);
     doneTracker.add(localDoneTracker);
 
