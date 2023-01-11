@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { DoneTracker } from "./done-tracker-interface";
+import { queueMicrotaskOrAsap } from "./queue-microtask-or-asap";
 
 export const useDoneTrackerSubscription = (
   doneTracker: DoneTracker,
@@ -21,7 +22,7 @@ export const useDoneTrackerSubscription = (
     // (this also occurs with useLayoutEffect)
     // also it skips pending when it's within 1 microtask which
     // can be desirable
-    queueMicrotask(() => {
+    queueMicrotaskOrAsap(() => {
       if (ignore) return;
       if (doneTracker.aborted || doneTracker.errored || doneTracker.done)
         return;

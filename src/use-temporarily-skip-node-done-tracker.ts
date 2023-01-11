@@ -1,5 +1,6 @@
 import { useMemo, useEffect } from "react";
 import { NodeDoneTracker } from "./node-done-tracker";
+import { queueMicrotaskOrAsap } from "./queue-microtask-or-asap";
 
 export const useTemporarilySkipNodeDoneTracker = (doneTracker: NodeDoneTracker, skip: boolean) => {
   useMemo(() => {
@@ -12,7 +13,7 @@ export const useTemporarilySkipNodeDoneTracker = (doneTracker: NodeDoneTracker, 
     if (skip) return;
     // queueMicrotask is needed to make sure this runs
     // after all the possibly aborted children (which also use useEffect)
-    queueMicrotask(() => {
+    queueMicrotaskOrAsap(() => {
       doneTracker.skip = false;
       doneTracker.calculateDoneness();
     });

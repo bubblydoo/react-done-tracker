@@ -9,6 +9,7 @@ import { DoneTrackerError } from "./done-tracker-error";
 import { DoneTracker } from "./done-tracker-interface";
 import { LeafDoneTracker } from "./leaf-done-tracker";
 import { NodeDoneTracker } from "./node-done-tracker";
+import { queueMicrotaskOrAsap } from "./queue-microtask-or-asap";
 
 /**
  * Keeps track of number of how many times a done tracker has been added in an effect.
@@ -106,7 +107,7 @@ export function useDoneTrackerRaw<
       // Double-renders in React run in the same microtask, so queueMicrotask should be enough
       // https://github.dev/facebook/react/blob/645ae2686b157c9f80193e1ada75b7e00ef49acf/packages/react-reconciler/src/ReactFiberHooks.js#L527
       // and https://stackblitz.com/edit/react-gwohwc?file=src%2FApp.js
-      queueMicrotask(() => {
+      queueMicrotaskOrAsap(() => {
         const references = decreaseRefs(localDoneTracker);
 
         if (!localDoneTracker.done && references <= 0) {
