@@ -150,13 +150,47 @@ Unlike Suspense, with done trackers you cannot re-suspend from inside the tree, 
 
 You can easily use Done Trackers and Suspense together, see [this example](https://react-done-tracker.vercel.app?path=/docs/contextual-api-suspense--docs).
 
-## How can I debug this?
+### How can I debug this?
 
 Run `window.__debug_react_done_tracker = true` before importing the library, and you will see logs of done tracker events, as well as the state of a done tracker tree when its doneness is being checked.
 
 You can print the state of a done tracker tree to the console with `doneTracker.log()`.
 
 Next to that, the `useDoneTrackerRaw` hook uses `useDebugValue` which displays the done tracker state in React DevTools.
+
+### What if I have a node that doesn't render all its children immediately?
+
+In this case you can add `skip: true` to the `useNodeDoneTracker` call until the children have been added.
+
+e.g.
+
+```tsx
+const Tree = () => {
+  const [delaying, setDelaying] = useState(true);
+  useLeafDoneTracker({
+    name: "Async operation",
+    done: !delaying,
+    reset: () => setDelaying(true),
+  });
+  const subtreeDoneTracker = useNodeDoneTracker({
+    name: "Subtree",
+    skip: delaying,
+  });
+
+  useEffect(() => {
+    if (!delaying) return;
+    const timeoutId = setTimeout(() => setDelaying(false), 2000);
+    return () => clearTimeout(timeoutId);
+  }, [delaying]);
+
+  if (delaying) return <>Delaying...</>;
+  return (
+    <DoneTrackerProvider doneTracker={subtreeDoneTracker}>
+      <DelayedComponent delay={1000} />
+    </DoneTrackerProvider>
+  );
+}
+```
 
 ## More examples
 
