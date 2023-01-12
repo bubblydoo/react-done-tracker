@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { DoneTrackerProvider } from "../done-tracker-provider";
-import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import React from "react";
@@ -18,7 +18,7 @@ export default function DelayedContainer(props: Props) {
     name: "Delayed Container Children",
     skip: delaying,
   });
-  const delayDoneTracker = useImperativeLeafDoneTracker(doneTracker, {
+  const delayDoneTracker = useImperativeDoneTracker(doneTracker, {
     name: "Delayed Container Delay",
     done: !delaying,
   });

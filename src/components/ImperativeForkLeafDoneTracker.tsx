@@ -1,6 +1,6 @@
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
 import { LeafDoneTracker } from "../leaf-done-tracker";
-import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 
 export default function ImperativeForkLeafDoneTracker({
   children,
@@ -8,10 +8,10 @@ export default function ImperativeForkLeafDoneTracker({
   ...args
 }: ImperativeDoneTrackedProps<
   { children: (doneTracker: LeafDoneTracker) => any } & Parameters<
-    typeof useImperativeLeafDoneTracker
+    typeof useImperativeDoneTracker
   >[1]
 >) {
-  const doneTracker = useImperativeLeafDoneTracker(parentDoneTracker, {
+  const doneTracker = useImperativeDoneTracker(parentDoneTracker, {
     name: "ForkLeafDoneTracker",
     ...args,
   });

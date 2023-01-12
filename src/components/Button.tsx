@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 
 type Props = JSX.IntrinsicElements["button"] & {
   persistDone?: boolean;
@@ -12,7 +12,7 @@ export default function Button({
 }: Props) {
   const [done, setDone] = useState(false);
 
-  const dt = useLeafDoneTracker({
+  const dt = useDoneTracker({
     name: "Button",
     done,
   });

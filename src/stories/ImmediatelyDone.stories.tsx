@@ -6,13 +6,13 @@ import {
   ContextualStoryDecorator,
   RunBeforeRenderDecorator,
 } from "./StoryWrapper";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import { within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 
 function ImmediatelyDone() {
-  useLeafDoneTracker({
+  useDoneTracker({
     name: "ImmediatelyDone",
     done: true,
   });

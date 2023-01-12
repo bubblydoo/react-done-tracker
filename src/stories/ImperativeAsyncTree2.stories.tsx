@@ -8,7 +8,7 @@ import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent
 import ImperativeButton from "../components/ImperativeButton";
 import Image from "../components/ImperativeImage";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
-import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { DoneTracker } from "../done-tracker-interface";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
@@ -33,7 +33,7 @@ const OrigContainerWithImageDelayingChildren = (
 ) => {
   console.log("delayed component", props.doneTracker.id);
   const nodeDoneTracker = useImperativeNodeDoneTracker(props.doneTracker);
-  const localDoneTracker = useImperativeLeafDoneTracker(nodeDoneTracker, {
+  const localDoneTracker = useImperativeDoneTracker(nodeDoneTracker, {
     name: "Local",
   });
   const imageDoneTracker = useImperativeNodeDoneTracker(nodeDoneTracker, {

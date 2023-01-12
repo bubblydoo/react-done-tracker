@@ -2,7 +2,7 @@ import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 import React from "react";
 import { ContextualStoryDecorator } from "./StoryWrapper";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 import { useState } from "react";
 import Image from "../components/Image";
 import { useEffect } from "react";
@@ -16,7 +16,7 @@ function PropDelayer<T>({
 }: { children: (props: Omit<T, "children"> | null) => any } & T) {
   const [usedProps, setUsedProps] = useState<Omit<T, "children"> | null>(null);
 
-  useLeafDoneTracker({
+  useDoneTracker({
     name: "Async op",
     done: JSON.stringify(usedProps) === JSON.stringify(props),
   });

@@ -16,12 +16,12 @@ npm i react-done-tracker
 ## Example
 
 ```tsx
-import { TrackDone, useLeafDoneTracker } from "react-done-tracker";
+import { TrackDone, useDoneTracker } from "react-done-tracker";
 
 function Image({ src }: { src: string }) {
   const [loadedSrc, setLoadedSrc] = useState();
 
-  useLeafDoneTracker({
+  useDoneTracker({
     done: loadedSrc === src,
   });
 
@@ -61,8 +61,8 @@ If you use this library, every async action corresponds to one done tracker.
 
 There are two types of done trackers:
 
-- Nodes
-- Leafs
+- Leafs (from `useDoneTracker`)
+- Nodes (when `useNodeDoneTracker`)
 
 The rules are quite simple:
 
@@ -128,7 +128,7 @@ e.g.
 ```tsx
 const Tree = () => {
   const [delaying, setDelaying] = useState(true);
-  useLeafDoneTracker({
+  useDoneTracker({
     name: "Async operation",
     done: !delaying,
   });
@@ -203,6 +203,8 @@ child2.signalDone();
 
 assert(parent.done);
 ```
+
+When using `useDoneTracker`, you obtain a `LeafDoneTracker`.
 
 Aborting a done tracker (e.g. `child.abort()`) removes it from the parent done tracker.
 

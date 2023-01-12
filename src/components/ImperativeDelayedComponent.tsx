@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
-import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 
 export default function ImperativeDelayedComponent(
   props: ImperativeDoneTrackedProps<{ delay: number }>
 ) {
   const [delaying, setDelaying] = useState(true);
 
-  const doneTracker = useImperativeLeafDoneTracker(props.doneTracker, {
+  const doneTracker = useImperativeDoneTracker(props.doneTracker, {
     name: "DelayedComponent",
     done: !delaying,
   });

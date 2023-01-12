@@ -50,7 +50,7 @@ function Image({ src }: { src: string }) {
   const [loadedSrc, setLoadedSrc] = useState();
 
   // the component is done when the loaded source is the requested source
-  useLeafDoneTracker({
+  useDoneTracker({
     done: loadedSrc === src,
   });
 
@@ -79,7 +79,7 @@ because the requested image is still loaded.
 function DelayedComponent() {
   const [delaying, setDelaying] = useState(true);
 
-  const doneTracker = useLeafDoneTracker({
+  const doneTracker = useDoneTracker({
     done: !delaying,
   });
 
@@ -229,7 +229,7 @@ Let's implement a done-tracked button with both APIs:
 export default function Button({ children, ...props }: Props) {
   const [done, setDone] = useState(false);
 
-  useLeafDoneTracker({
+  useDoneTracker({
     name: "Button",
     done,
   });
@@ -269,7 +269,7 @@ export default function ImperativeButton({
 }: Props) {
   const [done, setDone] = useState(false);
 
-  useImperativeLeafDoneTracker(parentDoneTracker, {
+  useImperativeDoneTracker(parentDoneTracker, {
     name: "Button",
     done,
   });
@@ -339,7 +339,7 @@ Because it's easy to use the Done Tracker from the context and use it imperative
 function DelayedContainer(props: Props) {
   const [delaying, setDelaying] = useState(true);
 
-  const delayDoneTracker = useLeafDoneTracker({
+  const delayDoneTracker = useDoneTracker({
     done: !delaying,
   });
   const childrenDoneTracker = useNodeDoneTracker({

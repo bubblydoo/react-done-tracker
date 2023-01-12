@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
 import { NodeDoneTracker } from "../node-done-tracker";
-import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 
 export default function ImperativeDelayedContainer(
@@ -12,7 +12,7 @@ export default function ImperativeDelayedContainer(
 ) {
   const [delaying, setDelaying] = useState(true);
 
-  const delayDoneTracker = useImperativeLeafDoneTracker(props.doneTracker, {
+  const delayDoneTracker = useImperativeDoneTracker(props.doneTracker, {
     name: "DelayedContainer Delay",
     done: !delaying,
   });

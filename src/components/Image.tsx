@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 
 type Props = JSX.IntrinsicElements["img"];
 
@@ -12,7 +12,7 @@ export default function Image(props: Props) {
   // we need to keep track of this, because img.complete is true even when errored
   const erroredSrc = useRef<string | undefined>();
 
-  useLeafDoneTracker({
+  useDoneTracker({
     name: "Image",
     done: todo === done,
     error: todo === erroredSrc.current ? error : undefined,

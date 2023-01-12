@@ -1,6 +1,6 @@
 import React, { Suspense, useCallback, useLayoutEffect, useState } from "react";
 import { SuspenseProps } from "react";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 
 function RunInUseEffect({
   onEffect,
@@ -18,7 +18,7 @@ function RunInUseEffect({
 export function DoneTrackedSuspense({ fallback, children }: SuspenseProps) {
   const [done, setDone] = useState(false);
 
-  useLeafDoneTracker({ name: "DoneTrackedSuspense", done });
+  useDoneTracker({ name: "DoneTrackedSuspense", done });
 
   return (
     <Suspense

@@ -3,7 +3,7 @@ import { DoneTrackerError } from "./done-tracker-error";
 import { NodeDoneTracker } from "./node-done-tracker";
 import { useDoneTrackerRaw } from "./use-done-tracker-raw";
 
-export const useImperativeLeafDoneTracker = (
+export const useImperativeDoneTracker = (
   doneTracker: NodeDoneTracker,
   {
     name,
@@ -17,7 +17,7 @@ export const useImperativeLeafDoneTracker = (
 ) => {
   if (!doneTracker)
     throw new DoneTrackerError(
-      "Falsy doneTracker passed to useImperativeLeafDoneTracker"
+      "Falsy doneTracker passed to useImperativeDoneTracker"
     );
 
   const localDoneTracker = useDoneTrackerRaw(doneTracker, "leaf", name);

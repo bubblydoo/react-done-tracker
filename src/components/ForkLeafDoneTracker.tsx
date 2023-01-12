@@ -1,13 +1,13 @@
 import { LeafDoneTracker } from "../leaf-done-tracker";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 
 export function ForkLeafDoneTracker({
   children,
   ...args
 }: { children: (doneTracker: LeafDoneTracker) => any } & Parameters<
-  typeof useLeafDoneTracker
+  typeof useDoneTracker
 >[0]) {
-  const doneTracker = useLeafDoneTracker({
+  const doneTracker = useDoneTracker({
     name: "ForkLeafDoneTracker",
     ...args,
   });

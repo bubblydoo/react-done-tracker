@@ -3,13 +3,13 @@ import { Meta } from "@storybook/react";
 import React, { useEffect, useState } from "react";
 import { visualizeDoneWrapper } from "../visualize-wrapper";
 import { ContextualStoryDecorator } from "./StoryWrapper";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 
 function Buttons({ persistDone = false }) {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<any>();
 
-  const dt = useLeafDoneTracker({
+  const dt = useDoneTracker({
     name: "Buttons",
     done,
     error,

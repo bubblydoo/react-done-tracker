@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
-import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 
 type Props = ImperativeDoneTrackedProps<JSX.IntrinsicElements["img"]>;
 
@@ -13,7 +13,7 @@ export default function Image({
   const [done, setDone] = useState<string>();
   const [error, setError] = useState<any>();
 
-  useImperativeLeafDoneTracker(parentDoneTracker, {
+  useImperativeDoneTracker(parentDoneTracker, {
     name: "Image",
     done: todo === done,
     error

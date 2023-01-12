@@ -5,7 +5,7 @@ import {
   RunBeforeRenderDecorator,
 } from "./StoryWrapper";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
-import { useImperativeLeafDoneTracker } from "../use-imperative-leaf-done-tracker";
+import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 import { within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
@@ -13,8 +13,8 @@ import { action } from "@storybook/addon-actions";
 
 const Tree = () => {
   const parent = useNodeDoneTracker({ name: "Parent" });
-  useImperativeLeafDoneTracker(parent, { name: "Child 1", done: true });
-  useImperativeLeafDoneTracker(parent, { name: "Child 2", done: false });
+  useImperativeDoneTracker(parent, { name: "Child 1", done: true });
+  useImperativeDoneTracker(parent, { name: "Child 2", done: false });
 
   return <>done: {parent.done ? "yes" : "no"}</>;
 };

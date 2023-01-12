@@ -2,7 +2,7 @@ import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 import React from "react";
 import { ContextualStoryDecorator, RunBeforeRenderDecorator } from "./StoryWrapper";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 import { useState } from "react";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { DoneTrackerProvider } from "../done-tracker-provider";
@@ -20,7 +20,7 @@ const { actions, actionsMockClear } = createSpyableActions({
 
 const Tree = () => {
   const [delaying, setDelaying] = useState(true);
-  useLeafDoneTracker({
+  useDoneTracker({
     name: "Async op",
     done: !delaying,
   });

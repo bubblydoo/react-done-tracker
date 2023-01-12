@@ -4,7 +4,7 @@ import React from "react";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import { imperativeToContextual } from "../imperative-to-contextual";
 import { ContextualStoryDecorator } from "./StoryWrapper";
-import { useLeafDoneTracker } from "../use-leaf-done-tracker";
+import { useDoneTracker } from "../use-done-tracker";
 import { useState } from "react";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { DoneTrackerProvider } from "../done-tracker-provider";
@@ -15,7 +15,7 @@ const DelayedComponent = imperativeToContextual(ImperativeDelayedComponent);
 
 const Tree = () => {
   const [delaying, setDelaying] = useState(true);
-  const asyncOpDoneTracker = useLeafDoneTracker({
+  const asyncOpDoneTracker = useDoneTracker({
     name: "Async op",
     done: !delaying,
   });
