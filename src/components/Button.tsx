@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 
 type Props = JSX.IntrinsicElements["button"] & {
@@ -12,13 +12,14 @@ export default function Button({
 }: Props) {
   const [done, setDone] = useState(false);
 
-  useLeafDoneTracker({
+  const dt = useLeafDoneTracker({
     name: "Button",
     done,
-    reset: () => {
-      if (!persistDone) setDone(false);
-    },
   });
+
+  useEffect(() => {
+    if (!persistDone) setDone(false);
+  }, [dt, persistDone]);
 
   return (
     <button

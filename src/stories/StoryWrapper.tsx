@@ -10,6 +10,7 @@ type StoryWrapperProps = TrackComponentDoneProps<{
   children: any;
   storyArgs: any;
   storyViewMode: string;
+  recreateDoneTrackerOnPropsChange?: boolean;
   hideForceRefresh?: boolean;
   disableStrictMode?: boolean;
   imperative?: boolean;
@@ -24,6 +25,7 @@ export default function StoryWrapper(props: StoryWrapperProps) {
     onError,
     onPending,
     disableStrictMode,
+    recreateDoneTrackerOnPropsChange,
     hideForceRefresh,
     children,
     storyArgs,
@@ -56,6 +58,7 @@ export default function StoryWrapper(props: StoryWrapperProps) {
 
   // reset done tracker when component args change
   useEffect(() => {
+    if (!recreateDoneTrackerOnPropsChange) return;
     forceRefreshRef.current?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, Object.entries(storyArgs).flat());

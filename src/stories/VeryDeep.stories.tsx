@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { visualizeDoneWrapper } from "../visualize-wrapper";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
@@ -9,17 +9,18 @@ function Buttons({ persistDone = false }) {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<any>();
 
-  useLeafDoneTracker({
+  const dt = useLeafDoneTracker({
     name: "Buttons",
     done,
     error,
-    reset: () => {
-      if (!persistDone) {
-        setDone(false);
-        setError(undefined);
-      }
-    },
   });
+
+  useEffect(() => {
+    if (!persistDone) {
+      setDone(false);
+      setError(undefined);
+    }
+  }, [dt, persistDone]);
 
   return (
     <>

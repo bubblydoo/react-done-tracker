@@ -1,8 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import { Meta } from "@storybook/react";
 import React from "react";
-import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
-import { imperativeToContextual } from "../imperative-to-contextual";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 import { useState } from "react";
@@ -10,39 +8,52 @@ import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { DoneTrackerProvider } from "../done-tracker-provider";
 import Image from "../components/Image";
 import { useEffect } from "react";
+import { visualizeDoneWrapper } from "../visualize-wrapper";
 
-const DelayedComponent = imperativeToContextual(ImperativeDelayedComponent);
+// Through the context, the done tracker travels faster than the props
 
-const Tree = () => {
-  const [delaying, setDelaying] = useState(true);
+function PropDelayer<T>({
+  children,
+  ...props
+}: { children: (props: Omit<T, "children"> | null) => any } & T) {
+  const [usedProps, setUsedProps] = useState<Omit<T, "children"> | null>(null);
+
   const asyncOpDoneTracker = useLeafDoneTracker({
     name: "Async op",
-    done: !delaying,
+    done: JSON.stringify(usedProps) === JSON.stringify(props),
   });
   const subtreeDoneTracker = useNodeDoneTracker({
     name: "Subtree",
-    skip: delaying
+    skip: !asyncOpDoneTracker.done,
   });
 
-  useEffect(() => setDelaying(true), [asyncOpDoneTracker]);
-
   useEffect(() => {
-    if (!delaying) return;
-    const timeoutId = setTimeout(() => setDelaying(false), 2000);
+    const timeoutId = setTimeout(() => setUsedProps(props), 2500);
     return () => clearTimeout(timeoutId);
-  }, [delaying]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, Object.values(props));
 
-  if (delaying) return <>Delaying...</>;
   return (
     <DoneTrackerProvider doneTracker={subtreeDoneTracker}>
-      <DelayedComponent delay={1000} />
-      <Image src={"https://picsum.photos/100/100"} />
+      {usedProps && children(usedProps)}
     </DoneTrackerProvider>
+  );
+}
+
+const PropDelayerVisualized: typeof PropDelayer = visualizeDoneWrapper(
+  PropDelayer
+) as any;
+
+const Tree = (props: { src: string }) => {
+  return (
+    <PropDelayerVisualized src={props.src}>
+      {(delayedProps) => <Image src={delayedProps?.src} />}
+    </PropDelayerVisualized>
   );
 };
 
 export default {
-  title: "Contextual API/Using skip",
+  title: "Contextual API/Prop delayer",
   component: Tree,
   decorators: [
     ContextualStoryDecorator({
@@ -54,4 +65,8 @@ export default {
   ],
 } as Meta;
 
-export const Primary = { args: {} };
+export const Primary = {
+  args: {
+    src: "https://picsum.photos/200",
+  },
+};

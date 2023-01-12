@@ -12,19 +12,16 @@ export default function ImperativeDelayedContainer(
 ) {
   const [delaying, setDelaying] = useState(true);
 
-  const nodeDoneTracker = useImperativeNodeDoneTracker(props.doneTracker, {
-    name: "DelayedContainer Node"
-  });
-
-  const delayDoneTracker = useImperativeLeafDoneTracker(nodeDoneTracker, {
+  const delayDoneTracker = useImperativeLeafDoneTracker(props.doneTracker, {
     name: "DelayedContainer Delay",
     done: !delaying,
-    reset: () => setDelaying(true),
   });
 
-  const childrenDoneTracker = useImperativeNodeDoneTracker(nodeDoneTracker, {
+  useEffect(() => setDelaying(true), [delayDoneTracker]);
+
+  const childrenDoneTracker = useImperativeNodeDoneTracker(props.doneTracker, {
     name: "DelayedContainer Children",
-    skip: !delayDoneTracker.done,
+    skip: !delaying,
   });
 
   const [start, setStart] = useState<number>(Infinity);
@@ -62,11 +59,11 @@ export default function ImperativeDelayedContainer(
   return (
     <>
       <div>
-        {delayDoneTracker.done
+        {!delaying
           ? "Done"
           : `Loading: ${!left ? "Loading" : format(left)}s left`}
       </div>
-      <div>{delayDoneTracker.done && childrenComponents}</div>
+      <div>{!delaying && childrenComponents}</div>
     </>
   );
 }

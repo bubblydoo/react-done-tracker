@@ -53,11 +53,13 @@ export function useDoneTrackerRaw<
       doneTracker.addEventListener("done", rerender);
       doneTracker.addEventListener("abort", rerender);
       doneTracker.addEventListener("error", rerender);
+      doneTracker.addEventListener("reset", rerender);
 
       unsubscribeFromPrevious.current = () => {
         doneTracker.removeEventListener("done", rerender);
         doneTracker.removeEventListener("abort", rerender);
         doneTracker.removeEventListener("error", rerender);
+        doneTracker.removeEventListener("reset", rerender);
       };
       return doneTracker as any;
     },

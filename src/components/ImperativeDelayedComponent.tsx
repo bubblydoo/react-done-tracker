@@ -10,8 +10,9 @@ export default function ImperativeDelayedComponent(
   const doneTracker = useImperativeLeafDoneTracker(props.doneTracker, {
     name: "DelayedComponent",
     done: !delaying,
-    reset: () => setDelaying(true),
   });
+
+  useEffect(() => setDelaying(true), [doneTracker]);
 
   const [start, setStart] = useState<number>(Infinity);
   const [left, setLeft] = useState<number>(Infinity);

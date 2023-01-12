@@ -81,8 +81,9 @@ function DelayedComponent() {
 
   const doneTracker = useLeafDoneTracker({
     done: !delaying,
-    reset: () => setDelaying(true),
   });
+
+  useEffect(() => setDelaying(true), [doneTracker]);
 
   // some countdown logic...
 
@@ -231,7 +232,6 @@ export default function Button({ children, ...props }: Props) {
   useLeafDoneTracker({
     name: "Button",
     done,
-    reset: () => setDone(false),
   });
 
   return (
@@ -272,7 +272,6 @@ export default function ImperativeButton({
   useImperativeLeafDoneTracker(parentDoneTracker, {
     name: "Button",
     done,
-    reset: () => setDone(false),
   });
 
   return (
@@ -340,13 +339,11 @@ Because it's easy to use the Done Tracker from the context and use it imperative
 function DelayedContainer(props: Props) {
   const [delaying, setDelaying] = useState(true);
 
-  const doneTracker = useNodeDoneTracker();
-  const childrenDoneTracker = useImperativeNodeDoneTracker(doneTracker, {
-    skip: delaying,
-  });
-  const delayDoneTracker = useImperativeLeafDoneTracker(doneTracker, {
+  const delayDoneTracker = useLeafDoneTracker({
     done: !delaying,
-    reset: () => setDelaying(false),
+  });
+  const childrenDoneTracker = useNodeDoneTracker({
+    skip: delaying,
   });
 
   useEffect(() => {

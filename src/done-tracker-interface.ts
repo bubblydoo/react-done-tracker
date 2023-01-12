@@ -1,7 +1,8 @@
 export interface DoneTrackerEventMap {
   "done": [],
   "abort": [],
-  "error": [any, DoneTracker]
+  "error": [any, DoneTracker],
+  "reset": []
 }
 
 export type DoneTrackerListener<K extends keyof DoneTrackerEventMap> = (data: DoneTrackerEventMap[K]) => any
@@ -25,6 +26,7 @@ export interface DoneTracker {
 
   add?(child: DoneTracker): void;
   abort(): void;
+  reset(): void;
 
   log?(): void;
 }

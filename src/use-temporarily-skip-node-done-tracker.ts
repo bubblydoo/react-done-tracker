@@ -15,7 +15,7 @@ export const useTemporarilySkipNodeDoneTracker = (doneTracker: NodeDoneTracker, 
     // after all the possibly aborted children (which also use useEffect)
     queueMicrotaskOrAsap(() => {
       doneTracker.skip = false;
-      doneTracker.calculateDoneness();
+      doneTracker.checkAndDispatchState();
     });
   }, [doneTracker, skip]);
 }

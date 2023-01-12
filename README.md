@@ -48,14 +48,14 @@ A done tracker is very simple. It has 4 states: `Pending`, `Done`, `Errored` and
 ```mermaid
 stateDiagram-v2
     [*] --> Pending
-    Pending --> Done
-    Pending --> Errored
-    Pending --> Aborted
+    Pending --> Done: done
+    Done --> Pending: reset
+    Pending --> Errored: error
+    Errored --> Pending: reset
+    Pending --> Aborted: abort
 ```
 
 If you use this library, every async action corresponds to one done tracker.
-
-Once a done tracker is done, errored or aborted, it cannot change its state anymore. If the props of a component change, (e.g. an image src changes), a new done tracker should be made.
 
 ### How do you change the state of a done tracker?
 
@@ -101,52 +101,13 @@ The node done trackers in the diagram have rounded corners.
 
 This library exposes many utilities to work with done trackers, most of them as React Hooks. Take a look at [Storybook](https://react-done-tracker.vercel.app) for many examples.
 
-### Note about going from done to pending again
-
-A done tracker cannot go from done to pending again. If you want to change something deep inside your tree,
-you should make sure this change is related to a top-level prop change. In that case, you can create a new done tracker when the top-level props change.
-
-In practice, this would look something like this:
-
-```tsx
-function App(props: any) {
-  const forceRefreshRef = useRef<(() => void) | null>(null);
-
-  useEffect(() => {
-    forceRefreshRef.current?.();
-  }, Object.entries(props).flat()); // if a prop changes, the done tracker is renewed
-
-  return <TrackDone onDone={/* ... */} forceRefreshRef={forceRefreshRef}>
-    {/* ... */}
-  </TrackDone>
-}
-```
-
-or without `TrackDone`:
-
-```tsx
-function App(props: any) {
-  const [tick, forceRefresh] = useReducer((i: number) => i + 1, 0);
-
-  const doneTracker = useRootDoneTracker(doneTrackerName, [tick]);
-
-  useEffect(() => {
-    forceRefresh();
-  }, Object.entries(props).flat()); // if a prop changes, the done tracker is renewed
-
-  return <DoneTrackerProvider doneTracker={doneTracker}>
-    {/* ... */}
-  </DoneTrackerProvider>
-}
-```
-
 ### How does this compare to Suspense?
 
 Suspense is used for lazy loading data, and does not render anything to the DOM. React Done Tracker is made to wait for things to render to the DOM.
 
 For example, you cannot use Suspense to wait for a slow canvas to render, or for a video to be loaded into a &lt;video&gt; element.
 
-Unlike Suspense, with done trackers you cannot re-suspend from inside the tree, but only by refreshing the root done tracker.
+Like Suspense, you can also re-suspend from inside the tree.
 
 You can easily use Done Trackers and Suspense together, see [this example](https://react-done-tracker.vercel.app?path=/docs/contextual-api-suspense--docs).
 
@@ -170,7 +131,6 @@ const Tree = () => {
   useLeafDoneTracker({
     name: "Async operation",
     done: !delaying,
-    reset: () => setDelaying(true),
   });
   const subtreeDoneTracker = useNodeDoneTracker({
     name: "Subtree",

@@ -25,7 +25,22 @@ export const useImperativeNodeDoneTracker = (
 
   const localDoneTracker = useDoneTrackerRaw(doneTracker, "node", name);
 
+  // if (localDoneTracker.done && skip) {
+  //   (localDoneTracker as any)._done = false;
+  //   localDoneTracker.skip = true;
+  // }
+
   useTemporarilySkipNodeDoneTracker(localDoneTracker, skip);
+
+  // if (localDoneTracker.done && skip) {
+  //   warn(
+  //     "Node done tracker",
+  //     localDoneTracker.id,
+  //     "is already done, but its hook is now receiving skip:",
+  //     skip,
+  //     "When going back to a loading state, also supply a new done tracker."
+  //   );
+  // }
 
   // uncomment when we want to
   // calculate doneness excessively

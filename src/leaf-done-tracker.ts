@@ -100,6 +100,18 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
     this.dispatchEvent("error", err, this);
   };
 
+  reset = () => {
+    if (this.aborted) {
+      warn("Already aborted, can't repend", this.id);
+      return;
+    }
+    log("🔄 Reset", this.id);
+    this._done = false;
+    this._error = null;
+    this._errorSource = undefined;
+    this.dispatchEvent("reset");
+  };
+
   log = () => {
     console.group("Done Tracker:", this.id, this.done ? "done" : "not done");
     console.groupCollapsed("Inspect");

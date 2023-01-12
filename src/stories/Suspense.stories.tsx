@@ -28,7 +28,7 @@ function SuspenseDemo() {
   return (
     <>
       <button onClick={() => setDataId((i) => i + 1)}>New data id</button>
-      <DoneTrackedSuspense fallback={<div>Loading data for {dataId}...</div>} key={dataId}>
+      <DoneTrackedSuspense fallback={<div>Loading data for {dataId}...</div>}>
         <SuspendingComponent dataId={dataId} />
       </DoneTrackedSuspense>
     </>

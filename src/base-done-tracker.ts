@@ -10,6 +10,7 @@ export class BaseDoneTracker
   doneListeners: DoneTrackerListener<"done">[] = [];
   abortListeners: DoneTrackerListener<"abort">[] = [];
   errorListeners: DoneTrackerListener<"error">[] = [];
+  resetListeners: DoneTrackerListener<"reset">[] = [];
 
   addEventListener: DoneTracker["addEventListener"] = (event, listener) => {
     if (event === "done") {
@@ -18,6 +19,8 @@ export class BaseDoneTracker
       this.abortListeners.push(listener as any);
     } else if (event === "error") {
       this.errorListeners.push(listener as any);
+    } else if (event === "reset") {
+      this.resetListeners.push(listener as any);
     }
   };
 
@@ -37,6 +40,11 @@ export class BaseDoneTracker
         this.errorListeners.indexOf(listener as any),
         1
       );
+    } else if (event === "reset") {
+      this.resetListeners.splice(
+        this.resetListeners.indexOf(listener as any),
+        1
+      );
     }
   };
 
@@ -50,6 +58,8 @@ export class BaseDoneTracker
       this.abortListeners.forEach((fn) => fn(arg as any));
     } else if (event === "error") {
       this.errorListeners.forEach((fn) => fn(arg as any));
+    } else if (event === "reset") {
+      this.resetListeners.forEach((fn) => fn(arg as any));
     }
   }
 }

@@ -52,4 +52,11 @@ export const useDoneTrackerSubscription = (
     doneTracker.addEventListener("error", fn);
     return () => doneTracker.removeEventListener("error", fn);
   }, [doneTracker, error]);
+
+  useEffect(() => {
+    if (!pending) return;
+    const fn = () => pending();
+    doneTracker.addEventListener("reset", fn);
+    return () => doneTracker.removeEventListener("reset", fn);
+  }, [doneTracker, pending]);
 };

@@ -16,7 +16,6 @@ export default function Image(props: Props) {
     name: "Image",
     done: todo === done,
     error: todo === erroredSrc.current ? error : undefined,
-    reset: () => setDone(undefined),
   });
 
   const ref = useRef<HTMLImageElement>();

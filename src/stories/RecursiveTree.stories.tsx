@@ -25,6 +25,9 @@ function RecursiveElement(props: {
             <button onClick={() => doneTracker.signalError("error")}>
               ❌ Error
             </button>
+            <button onClick={() => doneTracker.reset()}>
+              🔄 Reset
+            </button>
           </>
         )}
       </ForkLeafDoneTracker>

@@ -46,8 +46,10 @@ const OrigContainerWithImageDelayingChildren = (props: {
   const localDoneTracker = useImperativeLeafDoneTracker(doneTracker, {
     name: "Local",
     done: !delaying,
-    reset: () => setDelaying(true),
   });
+
+  useEffect(() => setDelaying(true), [localDoneTracker]);
+
   const imageDoneTracker = useImperativeNodeDoneTracker(doneTracker, {
     name: "Image",
   });

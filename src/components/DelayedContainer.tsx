@@ -21,7 +21,6 @@ export default function DelayedContainer(props: Props) {
   const delayDoneTracker = useImperativeLeafDoneTracker(doneTracker, {
     name: "Delayed Container Delay",
     done: !delaying,
-    reset: () => setDelaying(true),
   });
 
   const [start, setStart] = useState<number>(Infinity);

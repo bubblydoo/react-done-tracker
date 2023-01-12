@@ -66,48 +66,56 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
 
   add = (child: DoneTracker) => {
     if (this.done) {
-      warn(
+      log(
         "Parent already done while adding child",
         this.id,
         "while adding",
-        child.id
+        child.id,
+        "resetting parent"
       );
-      return;
+      this.reset();
     }
-    if (this.error) {
-      warn(
+    if (this.errored) {
+      log(
         "Parent already errored while adding child",
         this.id,
         "while adding",
-        child.id
+        child.id,
+        "resetting parent",
+        this,
+        child
       );
-      return;
+      this.reset();
     }
     this.children.add(child);
     log("🍴 Added", this.id, "->", child.id);
     child.addEventListener("done", () => {
       if (this.isFinalState) return;
-      this._calculateDoneness();
+      this.checkAndDispatchState();
     });
     child.addEventListener("abort", () => {
       debug("Child of", this.id, "aborted, deleting", child.id);
       this.children.delete(child);
       if (this.isFinalState) return;
-      this._calculateDoneness();
+      this.checkAndDispatchState();
     });
     child.addEventListener("error", ([err, source]) => {
       log("❌ Received error", this.id, err, "from", source.id);
       if (this.isFinalState) return;
-      this._signalError(err, source);
+      this.checkAndDispatchState();
+    });
+    child.addEventListener("reset", () => {
+      debug("Child of", this.id, "resetted");
+      this.reset();
     });
 
     if (child.done) {
       debug("Child was already done when added", child.id);
-      this._calculateDoneness();
+      this.checkAndDispatchState();
     }
     if (child.error) {
-      warn("Child was already errored when added", child.id);
-      this._signalError(child.error, child.errorSource!);
+      debug("Child was already errored when added", child.id);
+      this.checkAndDispatchState();
     }
   };
 
@@ -120,35 +128,44 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this._aborted = true;
     this.dispatchEvent("abort");
     Array.from(this.children).forEach((child) => !child.done && child.abort());
-    this._calculateDoneness();
+    this.checkAndDispatchState();
   };
 
-  private _signalError = (err: any, source: DoneTracker) => {
-    this._error = err;
-    this._errorSource = source;
-    this.dispatchEvent("error", err, source);
-  };
-
-  calculateDoneness = () => {
-    this._calculateDoneness();
-  }
-
-  private _calculateDoneness = () => {
-    if (this._done) {
-      log("🧮 Calculating doneness but already done", this.id);
+  reset = () => {
+    if (this.aborted) {
+      warn("Already aborted, can't repend", this.id);
       return;
     }
-    if (this._aborted) {
-      log("🧮 Calculating doneness but aborted", this.id);
+    log("🔄 Reset", this.id);
+    this._done = false;
+    this._error = null;
+    this._errorSource = undefined;
+    this.dispatchEvent("reset");
+  };
+
+  /**
+   * We go through the children and check if they are done or errored.
+   * If so, we save this state locally.
+   * Then we dispatch that state to the parent done tracker,
+   * which will in turn also check and dispatch their state.
+   */
+  checkAndDispatchState = () => {
+    if (this.skip) {
+      log("🚧 Not checking state because skipped", this.id);
+      return;
+    }
+    if (this._done) {
+      log("🧮 Not checking state because already done", this.id);
       return;
     }
     if (this._error) {
-      log("🧮 Calculating doneness but errored", this.id);
+      log("🧮 Not checking state because already errored", this.id);
       return;
     }
-    const nDoneChildren = Array.from(this.children).filter(
-      (child) => child.done
-    ).length;
+    if (this._aborted) {
+      log("🧮 Not checking state because aborted", this.id);
+      return;
+    }
 
     if (DEBUG) {
       console.groupCollapsed(
@@ -159,18 +176,27 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       this.log();
       console.groupEnd();
     }
-    if (this._done) return;
-    if (this.skip) {
-      log("🚧 Skipped so not done yet", this.id);
+
+    const children = Array.from(this.children);
+
+    const erroredChild = children.find((child) => child.errored);
+
+    if (erroredChild) {
+      this._error = erroredChild.error;
+      this._errorSource = erroredChild.errorSource;
+      log("❌ Errored", this.id);
+      this.dispatchEvent("error", this.error, this.errorSource!);
       return;
     }
+
+    const nDoneChildren = children.filter((child) => child.done).length;
     const allChildrenDone = nDoneChildren === this.children.size;
     if (!allChildrenDone) return;
     this._done = true;
     this._doneAt = performance.now();
     log("✅ All done", this.id, "in", this._doneAt - this._createdAt, "ms");
     this.dispatchEvent("done");
-  }
+  };
 
   log = () => {
     const nDoneChildren = Array.from(this.children)
@@ -191,5 +217,5 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       child.log?.();
     }
     console.groupEnd();
-  }
+  };
 }

@@ -1,15 +1,17 @@
-import React, { Suspense, useCallback, useState } from "react";
-import { SuspenseProps, useLayoutEffect } from "react";
+import React, { Suspense, useCallback, useLayoutEffect, useState } from "react";
+import { SuspenseProps } from "react";
 import { useLeafDoneTracker } from "../use-leaf-done-tracker";
 
-function DetectDoneWrapper({
-  onLoad,
+function RunInUseEffect({
+  onEffect,
   children,
 }: {
-  onLoad: () => void;
+  onEffect: () => void;
   children: any;
 }) {
-  useLayoutEffect(() => onLoad(), [onLoad]);
+  // have to use useLayoutEffect because useEffect doesn't run when unsuspended
+  // e.g. rendered (useEffect fires) -> suspended -> rendered (useEffect does not fire)
+  useLayoutEffect(() => onEffect(), [onEffect]);
   return children;
 }
 
@@ -19,10 +21,16 @@ export function DoneTrackedSuspense({ fallback, children }: SuspenseProps) {
   useLeafDoneTracker({ name: "DoneTrackedSuspense", done });
 
   return (
-    <Suspense fallback={fallback}>
-      <DetectDoneWrapper onLoad={useCallback(() => setDone(true), [])}>
+    <Suspense
+      fallback={
+        <RunInUseEffect onEffect={useCallback(() => setDone(false), [])}>
+          {fallback}
+        </RunInUseEffect>
+      }
+    >
+      <RunInUseEffect onEffect={useCallback(() => setDone(true), [])}>
         {children}
-      </DetectDoneWrapper>
+      </RunInUseEffect>
     </Suspense>
   );
 }
