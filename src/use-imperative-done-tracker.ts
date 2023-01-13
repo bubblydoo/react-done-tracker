@@ -27,10 +27,10 @@ export const useImperativeDoneTracker = (
 
   // useEffect is used because the leaf might not be added to the parent yet
   useEffect(() => {
-    if (done) {
-      localDoneTracker.signalDone();
-    } else if (error) {
+    if (error) {
       localDoneTracker.signalError(error);
+    } else if (done) {
+      localDoneTracker.signalDone();
     } else if (localDoneTracker.done || localDoneTracker.errored) {
       localDoneTracker.reset();
     }
