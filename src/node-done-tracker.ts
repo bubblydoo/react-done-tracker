@@ -91,6 +91,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     log("🍴 Added", this.id, "->", child.id);
     child.addEventListener("done", () => {
       if (this.isFinalState) return;
+      debug("Received done", this.id, "from", child.id);
       this.checkAndDispatchState();
     });
     child.addEventListener("abort", () => {
@@ -133,7 +134,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
 
   reset = () => {
     if (this.aborted) {
-      warn("Already aborted, can't repend", this.id);
+      warn("Already aborted, can't reset", this.id);
       return;
     }
     log("🔄 Reset", this.id);
