@@ -21,6 +21,8 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
 
   private readonly _createdAt = performance.now();
   private _doneAt: number | null = null;
+  private _erroredAt: number | null = null;
+  private _pendingAt: number = performance.now();
 
   get id() {
     return this._name ? `${this._id}:${this._name}` : this._id;
@@ -52,6 +54,22 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
 
   get errorSource() {
     return this._errorSource;
+  }
+
+  get createdAt() {
+    return this._createdAt;
+  }
+
+  get doneAt() {
+    return this._doneAt;
+  }
+
+  get erroredAt() {
+    return this._erroredAt;
+  }
+
+  get pendingAt() {
+    return this._pendingAt;
   }
 
   private get isFinalState() {
@@ -125,7 +143,13 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       warn("Already done, can't abort", this.id);
       return;
     }
-    log("🗑 Signaling aborted", this.id);
+    log(
+      "🗑 Aborted",
+      this.id,
+      "after",
+      performance.now() - this._createdAt,
+      "ms"
+    );
     this._aborted = true;
     this.dispatchEvent("abort");
     Array.from(this.children).forEach((child) => !child.done && child.abort());
@@ -137,7 +161,14 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       warn("Already aborted, can't reset", this.id);
       return;
     }
-    log("🔄 Reset", this.id);
+    this._pendingAt = performance.now();
+    log(
+      "🔄 Reset",
+      this.id,
+      "after",
+      this._pendingAt - (this._doneAt || this._erroredAt || this._createdAt),
+      "ms"
+    );
     this._done = false;
     this._error = null;
     this._errorSource = undefined;
@@ -185,7 +216,8 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     if (erroredChild) {
       this._error = erroredChild.error;
       this._errorSource = erroredChild.errorSource;
-      log("❌ Errored", this.id);
+      this._erroredAt = performance.now();
+      log("❌ Errored", this.id, "after", this._erroredAt - this._pendingAt, "ms");
       this.dispatchEvent("error", this.error, this.errorSource!);
       return;
     }
@@ -195,7 +227,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     if (!allChildrenDone) return;
     this._done = true;
     this._doneAt = performance.now();
-    log("✅ All done", this.id, "in", this._doneAt - this._createdAt, "ms");
+    log("✅ All done", this.id, "after", this._doneAt - this._pendingAt, "ms");
     this.dispatchEvent("done");
   };
 
@@ -214,7 +246,10 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     console.groupCollapsed("Inspect");
     console.log(this);
     console.groupEnd();
-    for (const child of Array.from(this.children)) {
+    const children = Array.from(this.children).sort(
+      (a, b) => a.createdAt - b.createdAt
+    );
+    for (const child of children) {
       child.log?.();
     }
     console.groupEnd();

@@ -13,6 +13,8 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
 
   private readonly _createdAt = performance.now();
   private _doneAt: number | null = null;
+  private _erroredAt: number | null = null;
+  private _pendingAt: number = performance.now();
 
   get id() {
     return this._name ? `${this._id}:${this._name}` : this._id;
@@ -46,6 +48,22 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
     return this._errorSource;
   }
 
+  get createdAt() {
+    return this._createdAt;
+  }
+
+  get doneAt() {
+    return this._doneAt;
+  }
+
+  get erroredAt() {
+    return this._erroredAt;
+  }
+
+  get pendingAt() {
+    return this._pendingAt;
+  }
+
   constructor(name?: string) {
     super();
     if (name) this._name = name;
@@ -57,7 +75,13 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       warn("Already done, can't abort", this.id);
       return;
     }
-    log("🗑 Signaling aborted", this.id);
+    log(
+      "🗑 Signaling aborted",
+      this.id,
+      "after",
+      performance.now() - this._createdAt,
+      "ms"
+    );
     this._aborted = true;
     this.dispatchEvent("abort");
   };
@@ -75,9 +99,9 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       warn("Already errored, can't signal done", this.id);
       return;
     }
-    log("✅ Signaling done", this.id);
-    this._done = true;
     this._doneAt = performance.now();
+    log("✅ Signaling done", this.id, "after", this._doneAt - this._pendingAt, "ms");
+    this._done = true;
     this.dispatchEvent("done");
   };
 
@@ -94,7 +118,8 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       debug("Already errored, not signaling error", this.id);
       return;
     }
-    log("❌ Signaling errored", this.id);
+    this._erroredAt = performance.now();
+    log("❌ Signaling errored", this.id, "after", this._erroredAt - this._pendingAt, "ms");
     this._error = err;
     this._errorSource = this;
     this.dispatchEvent("error", err, this);
@@ -105,7 +130,14 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
       warn("Already aborted, can't repend", this.id);
       return;
     }
-    log("🔄 Reset", this.id);
+    this._pendingAt = performance.now();
+    log(
+      "🔄 Reset",
+      this.id,
+      "after",
+      this._pendingAt - (this._doneAt || this._erroredAt || this._createdAt),
+      "ms"
+    );
     this._done = false;
     this._error = null;
     this._errorSource = undefined;

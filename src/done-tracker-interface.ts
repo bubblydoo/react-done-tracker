@@ -20,6 +20,11 @@ export interface DoneTracker {
   readonly error: any;
   readonly errorSource: DoneTracker | undefined;
 
+  readonly createdAt: number;
+  readonly doneAt: number | null;
+  readonly erroredAt: number | null;
+  readonly pendingAt: number;
+
   addEventListener<K extends keyof DoneTrackerEventMap>(event: K, listener: DoneTrackerListener<K>): void;
 
   removeEventListener<K extends keyof DoneTrackerEventMap>(event: K, listener: DoneTrackerListener<K>): void;
