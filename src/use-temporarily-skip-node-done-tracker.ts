@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from "react";
-import { debug } from "./log";
+import { alwaysWarn, debug } from "./log";
 import { NodeDoneTracker } from "./node-done-tracker";
 import { queueMicrotaskOrAsap } from "./queue-microtask-or-asap";
 
@@ -17,6 +17,7 @@ export const useTemporarilySkipNodeDoneTracker = (
       // turn on skip when skip becomes true
       // TODO: verify if this is really necessary (do we need to turn on skip again on repending?)
       // and add a test case for it
+      debug("Setting skip because it became true", doneTracker.id);
       doneTracker.skip = true;
     }
   }, [doneTracker, skip]);
@@ -24,9 +25,22 @@ export const useTemporarilySkipNodeDoneTracker = (
   useEffect(() => {
     // if the children are delayed, use the skip option
     if (skip) {
-      // reset when skip becomes true
-      // TODO: verify if this is really necessary and add a test case for it
-      doneTracker.reset();
+      const diff = doneTracker.doneAt && performance.now() - doneTracker.doneAt;
+      if (diff && diff < 100) {
+        alwaysWarn(
+          "Done tracker",
+          doneTracker.id,
+          `was done and then reset again in ${diff}ms.`,
+          "This is very fast and likely imperceptible, and unlikely to be desired.",
+          "Make sure you're not using any slow hooks."
+        );
+      }
+      if (doneTracker.done || doneTracker.errored) {
+        // reset when skip becomes true
+        // TODO: verify if this is really necessary and add a test case for it
+        debug("Resetting because skip became true", doneTracker.id);
+        doneTracker.reset();
+      }
       return;
     }
     // queueMicrotask is needed to make sure this runs

@@ -1,3 +1,5 @@
+import { alwaysWarn } from "./log";
+
 /**
  * This is basically just `queueMicrotask`,
  * but in some environments (e.g. sometimes in Storybook in an iframe),
@@ -18,7 +20,7 @@ export const queueMicrotaskOrAsap: typeof queueMicrotask = (fn) => {
     clearTimeout(timeoutId);
     const diff = +new Date() - start;
     if (diff > 750) {
-      console.warn(`[Done Tracker] queueMicrotask took ${diff}ms`);
+      alwaysWarn(`queueMicrotask took ${diff}ms`);
     }
     if (ignore) return;
     ignore = true;

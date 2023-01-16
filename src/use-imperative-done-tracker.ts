@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { DoneTrackerError } from "./done-tracker-error";
+import { debug } from "./log";
 import { NodeDoneTracker } from "./node-done-tracker";
 import { useDoneTrackerRaw } from "./use-done-tracker-raw";
 
@@ -31,8 +32,12 @@ export const useImperativeDoneTracker = (
       localDoneTracker.signalError(error);
     } else if (done) {
       localDoneTracker.signalDone();
-    } else if (localDoneTracker.done || localDoneTracker.errored) {
-      localDoneTracker.reset();
+    } else {
+      // if pending and already done, reset
+      if (localDoneTracker.done || localDoneTracker.errored) {
+        debug("Resetting because error and done both falsy", localDoneTracker.id)
+        localDoneTracker.reset();
+      }
     }
   }, [done, error, localDoneTracker]);
 

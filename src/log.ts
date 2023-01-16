@@ -9,3 +9,4 @@ export const log = DEBUG
 export const warn = DEBUG
   ? console.warn.bind(window.console, "[Done Tracker]")
   : () => undefined;
+export const alwaysWarn = console.warn.bind(window.console, "[Done Tracker]");

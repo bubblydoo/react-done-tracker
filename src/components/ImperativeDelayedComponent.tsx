@@ -3,7 +3,7 @@ import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
 import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 
 export default function ImperativeDelayedComponent(
-  props: ImperativeDoneTrackedProps<{ delay: number }>
+  props: ImperativeDoneTrackedProps<{ delay: number, persist?: true }>
 ) {
   const [delaying, setDelaying] = useState(true);
 
@@ -12,7 +12,7 @@ export default function ImperativeDelayedComponent(
     done: !delaying,
   });
 
-  useEffect(() => setDelaying(true), [doneTracker]);
+  useEffect(() => props.persist ? undefined : setDelaying(true), [doneTracker, props.persist]);
 
   const [start, setStart] = useState<number>(Infinity);
   const [left, setLeft] = useState<number>(Infinity);

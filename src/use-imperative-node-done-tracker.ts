@@ -11,6 +11,9 @@ export const useImperativeNodeDoneTracker = (
   }: {
     name?: string;
     /**
+     * Use skip when the children of this tree are not yet rendered or
+     * if they are not yet correctly rendered (e.g. rendered with outdated props).
+     *
      * If the children are not always registered within one `useEffect` after creating this done tracker,
      * use this flag.
      * When the children are rendered/registered, change it to false.

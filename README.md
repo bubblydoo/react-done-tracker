@@ -264,6 +264,19 @@ function App() {
 }
 ```
 
+### Make a done tracked hook
+
+```tsx
+// from @tanstack/react-query
+const useQueryDoneTracked = doneTrackHook(useQuery, { isDone: (result) => !result.isLoading });
+
+// from react-async-hook
+const useAsyncDoneTracked = doneTrackHook(
+  useAsync,
+  { isDone: (result, args) => !result.loading && isEqual(result.currentParams, args[1]) }
+);
+```
+
 ### Visualize the state of a subtree
 
 Contextual API:
@@ -294,3 +307,100 @@ import { ForkLeafDoneTracker } from "react-done-tracker";
   )}
 </ForkLeafDoneTracker>
 ```
+
+## Caveats
+
+### Slow hooks
+
+Slow hooks are hooks that don't update their loading state immediately.
+
+For example:
+
+```tsx
+const useSlow = (input: any) => {
+  const [output, setOutput] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      setOutput(input);
+    }, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [input]);
+
+  // (this hook could be fixed by using `loading = loading || input !== output`)
+  return [output, loading] as const;
+};
+
+const Component = (props: { value: any }) => {
+  const [slowState, loading] = useSlow(props.value);
+
+  useDoneTracker({
+    name: "Loading",
+    done: !loading
+  });
+
+  return <>
+    <LoadSomething value={props.value} />
+    <div>{slowState}</div>
+  </>
+}
+```
+
+In this case, `useSlow2` is a slow hook, because the loading variable is delayed.
+
+This can lead to problems in this case:
+- a new value comes in through the props
+- LoadSomething signals done immediately
+- this causes the root done tracker to recalculate its state
+- the Loading done tracker is done, because the loading variable is delayed
+- the root done tracker is done
+- the useEffect runs
+- the Loading done tracker resets
+- the root done tracker is pending again
+
+We can fix it by making sure the loading state in `useSlow` is accurate:
+
+```ts
+const actualLoading = loading || input !== output;
+
+return [output, actualLoading] as const;
+```
+
+From experience I know that there are a few slow hooks in the wild, like `react-async-hook`.
+
+This library also provides utility functions to fix these kinds of "misbehaving" hooks:
+
+```ts
+import isDeepEqual from "fast-deep-equal";
+
+// compare input and output to know if the hook is done (preferred)
+// this is not always possible, because the result and args are not always easily comparable
+const useAsyncFixed = doneTrackHook(
+  useAsync,
+  { isDone: (result, args) => isDeepEqual(result.currentParams, args[1]) }
+);
+
+// wait 2 extra useEffect cycles on each change (less preferred)
+const useAsyncFixed = doneTrackSlowHookWithEffectsDelay(
+  useAsync,
+  {
+    waitEffects: 2,
+    argsEqual: (a, b) => isDeepEqual(a[1], b[1]),
+  }
+);
+
+// wait 100ms on each args change (not preferred, very dirty)
+const useAsyncFixed = doneTrackSlowHookWithDelay(
+  useAsync,
+  {
+    delay: 100,
+    argsEqual: (a, b) => isDeepEqual(a[1], b[1]),
+  }
+);
+```
+
+You will likely never see this problem unless you heavily use this library, but it is worth being aware of.
+A warning will be logged when the time between done and reset is very short, in order to debug the root cause.
