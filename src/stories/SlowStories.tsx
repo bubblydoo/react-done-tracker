@@ -4,6 +4,8 @@ import { useDoneTracker } from "../use-done-tracker";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { doneTrackSlowHookWithDelay, doneTrackSlowHookWithEffectsDelay } from "../slow-hooks-util";
 import { doneTrackHook } from "../hooks-util";
+import { useFiber } from "its-fine";
+import { didHooksChange } from "../fiber-utils";
 
 /**
  * This hook is "slow" because its loading state isn't updated immediately!
@@ -221,6 +223,38 @@ export const TreeFixedWithDelay = () => {
           <ImmediatelyDone>
             very slow (2 useEffects delay): {passed}
           </ImmediatelyDone>
+        )}
+      </LoadAndPass>
+    </>
+  );
+};
+
+
+export const TreeFixedWithFiber = () => {
+  const [passed, setPassed] = useState(1);
+
+  // this hook is "slow" because its loading state isn't updated immediately!
+  const [slow1] = useSlow(passed);
+  const [slow2] = useSlow(slow1);
+  const [slow3] = useSlow(slow2);
+  const [slow4] = useSlow(slow3);
+  const [slow5, slow5Loading] = useSlow(slow4);
+
+  useDoneTracker({ name: "e", done: !slow5Loading });
+
+  return (
+    <>
+      <input
+        onChange={(e) => setPassed(+e.target.value)}
+        value={passed}
+        type="number"
+      ></input>
+      <LoadAndPass passToChildren={passed} loading={false}>
+        {(passed) => <ImmediatelyDone>immediate: {passed}</ImmediatelyDone>}
+      </LoadAndPass>
+      <LoadAndPass passToChildren={slow5} loading={slow5Loading}>
+        {(passed) => (
+          <ImmediatelyDone>very very slow: {passed}</ImmediatelyDone>
         )}
       </LoadAndPass>
     </>

@@ -46,10 +46,14 @@ export const useTemporarilySkipNodeDoneTracker = (
     // queueMicrotask is needed to make sure this runs
     // after the double render and thus
     // after all the possibly aborted/reset children (which also use useEffect)
+    let ignore = false;
     queueMicrotaskOrAsap(() => {
+      if (ignore) return;
       debug("Unsetting skip", doneTracker.id);
       doneTracker.skip = false;
       doneTracker.checkAndDispatchState();
     });
+
+    return () => { ignore = true; }
   }, [doneTracker, skip]);
 };
