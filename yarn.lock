@@ -3533,9 +3533,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/test-runner@npm:0.10.0-next.4":
-  version: 0.10.0-next.4
-  resolution: "@storybook/test-runner@npm:0.10.0-next.4"
+"@storybook/test-runner@npm:^0.10.0-next.4":
+  version: 0.10.0-next.8
+  resolution: "@storybook/test-runner@npm:0.10.0-next.8"
   dependencies:
     "@babel/core": ^7.20.7
     "@babel/generator": ^7.20.7
@@ -3551,6 +3551,7 @@ __metadata:
     can-bind-to-host: ^1.1.1
     commander: ^9.0.0
     expect-playwright: ^0.8.0
+    glob: ^8.1.0
     jest: ^28.0.0
     jest-circus: ^28.0.0
     jest-environment-node: ^28.0.0
@@ -3568,46 +3569,7 @@ __metadata:
     ts-dedent: ^2.0.0
   bin:
     test-storybook: bin/test-storybook.js
-  checksum: 35f2721a43ce446de77b6d6f460b7d5caf86880065b3d48c31e0a10f05eab14d3d1b1b2e52812a92551c70793555ac526bc8a1189428f321acbbebeabe880388
-  languageName: node
-  linkType: hard
-
-"@storybook/test-runner@patch:@storybook/test-runner@npm%3A0.10.0-next.4#./.yarn/patches/@storybook-test-runner-npm-0.10.0-next.4-ec2685f2d3.patch::locator=react-done-tracker%40workspace%3A.":
-  version: 0.10.0-next.4
-  resolution: "@storybook/test-runner@patch:@storybook/test-runner@npm%3A0.10.0-next.4#./.yarn/patches/@storybook-test-runner-npm-0.10.0-next.4-ec2685f2d3.patch::version=0.10.0-next.4&hash=3e7e4e&locator=react-done-tracker%40workspace%3A."
-  dependencies:
-    "@babel/core": ^7.20.7
-    "@babel/generator": ^7.20.7
-    "@babel/preset-env": ^7.20.2
-    "@babel/preset-react": ^7.18.6
-    "@babel/preset-typescript": ^7.18.6
-    "@babel/template": ^7.20.7
-    "@babel/types": ^7.20.7
-    "@storybook/core-common": next
-    "@storybook/csf": next
-    "@storybook/csf-tools": next
-    "@storybook/store": next
-    can-bind-to-host: ^1.1.1
-    commander: ^9.0.0
-    expect-playwright: ^0.8.0
-    jest: ^28.0.0
-    jest-circus: ^28.0.0
-    jest-environment-node: ^28.0.0
-    jest-junit: ^14.0.0
-    jest-playwright-preset: ^2.0.0
-    jest-runner: ^28.0.0
-    jest-serializer-html: ^7.1.0
-    jest-watch-typeahead: ^2.0.0
-    node-fetch: ^2
-    playwright: ^1.14.0
-    read-pkg-up: ^7.0.1
-    regenerator-runtime: ^0.13.9
-    semver: ^7.3.7
-    tempy: ^1.0.1
-    ts-dedent: ^2.0.0
-  bin:
-    test-storybook: bin/test-storybook.js
-  checksum: 48ef4fc68a085b37ca3d4cdce93509820f4bc6aff6d67e09d83df0a50acfe54a05762ab70f23080207b53356da98b215f5463e263581ef622700dd3af7c8e0f1
+  checksum: 5281fee90014b8fc667bb25635b99d02f184ead096cc569060a589176cc6c33d14195f1523e5d7f49c70e7d47cfe156a5a5f31fd2fe8272a39ed5953813045b3
   languageName: node
   linkType: hard
 
@@ -7609,6 +7571,19 @@ __metadata:
     minimatch: ^5.0.1
     once: ^1.3.0
   checksum: 50bcdea19d8e79d8de5f460b1939ffc2b3299eac28deb502093fdca22a78efebc03e66bf54f0abc3d3d07d8134d19a32850288b7440d77e072aa55f9d33b18c5
+  languageName: node
+  linkType: hard
+
+"glob@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "glob@npm:8.1.0"
+  dependencies:
+    fs.realpath: ^1.0.0
+    inflight: ^1.0.4
+    inherits: 2
+    minimatch: ^5.0.1
+    once: ^1.3.0
+  checksum: 92fbea3221a7d12075f26f0227abac435de868dd0736a17170663783296d0dd8d3d532a5672b4488a439bf5d7fb85cdd07c11185d6cd39184f0385cbdfb86a47
   languageName: node
   linkType: hard
 
