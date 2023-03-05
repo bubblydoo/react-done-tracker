@@ -28,7 +28,7 @@ export async function doneTrackerUtils(canvas: any) {
   const stateText = await canvas.findByTestId("root-state");
   const refreshButton = await canvas.findByTestId("new-root-done-tracker");
   return {
-    status: () => stateText.innerHTML,
+    status: () => stateText.innerHTML as string,
     refresh: () => fireEvent.click(refreshButton),
     wait: () => delay(20),
   };

@@ -21,7 +21,7 @@ export default function ImperativeDelayedContainer(
 
   const childrenDoneTracker = useImperativeNodeDoneTracker(props.doneTracker, {
     name: "DelayedContainer Children",
-    skip: !delaying,
+    skip: delaying,
   });
 
   const [start, setStart] = useState<number>(Infinity);
