@@ -1,12 +1,12 @@
 import { DEBUG } from "./debug";
 
 export const debug = DEBUG
-  ? console.debug.bind(window.console, "[Done Tracker]")
+  ? console.debug.bind(console, "[Done Tracker]")
   : () => undefined;
 export const log = DEBUG
-  ? console.log.bind(window.console, "[Done Tracker]")
+  ? console.log.bind(console, "[Done Tracker]")
   : () => undefined;
 export const warn = DEBUG
-  ? console.warn.bind(window.console, "[Done Tracker]")
+  ? console.warn.bind(console, "[Done Tracker]")
   : () => undefined;
-export const alwaysWarn = console.warn.bind(window.console, "[Done Tracker]");
+export const alwaysWarn = console.warn.bind(console, "[Done Tracker]");
