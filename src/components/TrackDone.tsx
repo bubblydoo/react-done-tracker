@@ -70,7 +70,6 @@ export function ForkedTrackDone({
   );
 }
 
-
 export function TrackDone({
   children,
   forceRefreshRef,
@@ -86,7 +85,17 @@ export function TrackDone({
   const hasDoneTrackerParent = !!useContext(DoneTrackerContext);
 
   if (hasDoneTrackerParent) {
-    return <ForkedTrackDone name={doneTrackerName}>{children}</ForkedTrackDone>;
+    return (
+      <ForkedTrackDone
+        name={doneTrackerName}
+        forceRefreshRef={forceRefreshRef}
+        onDone={onDone}
+        onError={onError}
+        onPending={onPending}
+      >
+        {children}
+      </ForkedTrackDone>
+    );
   }
 
   return (
