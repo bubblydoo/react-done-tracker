@@ -72,6 +72,7 @@ export function ForkedTrackDone({
 
 export function TrackDone({
   children,
+  forceRoot = false,
   forceRefreshRef,
   doneTrackerName = "Root",
   onDone,
@@ -79,12 +80,13 @@ export function TrackDone({
   onPending,
 }: TrackComponentDoneProps<{
   children: any;
+  forceRoot: boolean;
   forceRefreshRef?: MutableRefObject<(() => void) | null>;
   doneTrackerName?: string;
 }>) {
   const hasDoneTrackerParent = !!useContext(DoneTrackerContext);
 
-  if (hasDoneTrackerParent) {
+  if (hasDoneTrackerParent && !forceRoot) {
     return (
       <ForkedTrackDone
         name={doneTrackerName}
