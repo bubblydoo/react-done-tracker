@@ -40,7 +40,6 @@ export const useDoneTrackerSubscription = (
   useEffect(() => {
     if (!done) return;
     const fn = () => done();
-    if (doneTracker.done) done();
     doneTracker.addEventListener("done", fn);
     return () => doneTracker.removeEventListener("done", fn);
   }, [doneTracker, done]);
