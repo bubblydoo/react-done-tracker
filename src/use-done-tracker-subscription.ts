@@ -8,10 +8,12 @@ export const useDoneTrackerSubscription = (
     done,
     error,
     pending,
+    change,
   }: {
     done?: () => void;
     error?: (err: any, source: DoneTracker) => void;
     pending?: () => void;
+    change?: () => void;
   }
 ) => {
   useEffect(() => {
@@ -58,4 +60,11 @@ export const useDoneTrackerSubscription = (
     doneTracker.addEventListener("reset", fn);
     return () => doneTracker.removeEventListener("reset", fn);
   }, [doneTracker, pending]);
+
+  useEffect(() => {
+    if (!change) return;
+    const fn = () => change();
+    doneTracker.addEventListener("change", fn);
+    return () => doneTracker.removeEventListener("change", fn);
+  }, [doneTracker, change]);
 };

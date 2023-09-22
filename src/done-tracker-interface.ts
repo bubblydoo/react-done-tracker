@@ -2,7 +2,8 @@ export interface DoneTrackerEventMap {
   "done": [],
   "abort": [],
   "error": [any, DoneTracker],
-  "reset": []
+  "reset": [],
+  "change": [],
 }
 
 export type DoneTrackerListener<K extends keyof DoneTrackerEventMap> = (data: DoneTrackerEventMap[K]) => any

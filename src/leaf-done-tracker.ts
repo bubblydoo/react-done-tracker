@@ -125,6 +125,15 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
     this.dispatchEvent("error", err, this);
   };
 
+  signalChange = () => {
+    if (this.aborted) {
+      warn("Already aborted, can't signal change", this.id);
+      return;
+    }
+    log("🌀 Signaling changed", this.id, "after");
+    this.dispatchEvent("change");
+  };
+
   reset = () => {
     if (this.aborted) {
       warn("Already aborted, can't repend", this.id);
