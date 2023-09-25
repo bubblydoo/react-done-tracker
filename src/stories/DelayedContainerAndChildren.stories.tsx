@@ -21,6 +21,7 @@ const { actions, actionsMockClear } = createSpyableActions({
   onAbort: action("abort"),
   onError: action("error"),
   onPending: action("pending"),
+  onChange: action("change"),
 });
 
 export default {

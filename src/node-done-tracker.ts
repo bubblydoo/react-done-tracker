@@ -129,6 +129,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     });
     child.addEventListener("change", () => {
       debug("Child of", this.id, "changed");
+      if (!this.done) return;
       this.dispatchEvent("change");
     });
 

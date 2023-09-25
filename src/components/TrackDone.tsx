@@ -13,6 +13,7 @@ export function TrackDoneRoot({
   onDone,
   onError,
   onPending,
+  onChange,
 }: TrackComponentDoneProps<{
   children: any;
   forceRefreshRef?: MutableRefObject<(() => void) | null>;
@@ -29,6 +30,7 @@ export function TrackDoneRoot({
     done: onDone,
     error: onError,
     pending: onPending,
+    change: onChange,
   });
 
   return (
@@ -44,6 +46,7 @@ export function ForkedTrackDone({
   onDone,
   onError,
   onPending,
+  onChange,
   forceRefreshRef,
 }: TrackComponentDoneProps<{
   name: string;
@@ -61,6 +64,7 @@ export function ForkedTrackDone({
     done: onDone,
     error: onError,
     pending: onPending,
+    change: onChange,
   });
 
   return (
@@ -78,9 +82,10 @@ export function TrackDone({
   onDone,
   onError,
   onPending,
+  onChange,
 }: TrackComponentDoneProps<{
   children: any;
-  forceRoot: boolean;
+  forceRoot?: boolean;
   forceRefreshRef?: MutableRefObject<(() => void) | null>;
   doneTrackerName?: string;
 }>) {
@@ -94,6 +99,7 @@ export function TrackDone({
         onDone={onDone}
         onError={onError}
         onPending={onPending}
+        onChange={onChange}
       >
         {children}
       </ForkedTrackDone>
@@ -107,6 +113,7 @@ export function TrackDone({
       onDone={onDone}
       onError={onError}
       onPending={onPending}
+      onChange={onChange}
     >
       {children}
     </TrackDoneRoot>
