@@ -19,7 +19,6 @@ export * from './visualize-wrapper';
 export * from './hooks-util';
 export * from './slow-hooks-util';
 export * from './use-done-tracker-raw';
-export * from './use-signal-change';
 export * from './components/TrackDone';
 export * from './components/ImperativeTrackDone';
 export * from './components/ForkLeafDoneTracker';

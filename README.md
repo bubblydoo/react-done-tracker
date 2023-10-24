@@ -326,12 +326,6 @@ useDoneTrackerSubscription(doneTracker, {
 });
 ```
 
-As a shorthand, you can use `useSignalChange`, which will create a new done tracker:
-
-```tsx
-useSignalChange("Dep watcher", [dep]);
-```
-
 The `change` event is not part of the "core" of this library. It was added because it's commonly needed.
 
 ## Caveats
