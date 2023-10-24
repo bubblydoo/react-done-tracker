@@ -18,6 +18,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   private _error: any = null;
   private _errorSource: DoneTracker | undefined;
   public skip = false;
+  public preventChangePropagation = false;
 
   private readonly _createdAt = performance.now();
   private _doneAt: number | null = null;
@@ -130,6 +131,7 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     child.addEventListener("change", () => {
       debug("Child of", this.id, "changed");
       if (!this.done) return;
+      if (this.preventChangePropagation) return;
       this.dispatchEvent("change");
     });
 

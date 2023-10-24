@@ -8,6 +8,7 @@ export const useImperativeNodeDoneTracker = (
   {
     name,
     skip = false,
+    preventChangePropagation = false
   }: {
     name?: string;
     /**
@@ -19,6 +20,7 @@ export const useImperativeNodeDoneTracker = (
      * When the children are rendered/registered, change it to false.
      */
     skip?: boolean;
+    preventChangePropagation?: boolean;
   } = {}
 ) => {
   if (!doneTracker)
@@ -27,6 +29,7 @@ export const useImperativeNodeDoneTracker = (
     );
 
   const localDoneTracker = useDoneTrackerRaw(doneTracker, "node", name);
+  if (preventChangePropagation) localDoneTracker.preventChangePropagation = true;
 
   useTemporarilySkipNodeDoneTracker(localDoneTracker, skip);
   // uncomment when we want to
