@@ -1,6 +1,6 @@
 {
   "name": "react-done-tracker",
-  "version": "0.0.15-beta.3",
+  "version": "0.0.15-beta.4",
   "description": "Keep track of when your React tree is done loading",
   "type": "module",
   "main": "./dist/index.js",

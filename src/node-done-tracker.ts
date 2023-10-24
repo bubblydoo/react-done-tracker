@@ -126,6 +126,8 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     });
     child.addEventListener("reset", () => {
       debug("Child of", this.id, "resetted");
+      const canReset = this.done || this.error;
+      if (!canReset) return;
       this.reset();
     });
     child.addEventListener("change", () => {
