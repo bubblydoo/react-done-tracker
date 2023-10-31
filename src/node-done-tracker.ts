@@ -18,12 +18,13 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
   private _error: any = null;
   private _errorSource: DoneTracker | undefined;
   public skip = false;
-  public preventChangePropagation = false;
 
   private readonly _createdAt = performance.now();
   private _doneAt: number | null = null;
   private _erroredAt: number | null = null;
   private _pendingAt: number = performance.now();
+
+  public preventChangePropagation = false;
 
   get id() {
     return this._name ? `${this._id}:${this._name}` : this._id;
@@ -130,12 +131,14 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       if (!canReset) return;
       this.reset();
     });
-    child.addEventListener("change", () => {
-      debug("Child of", this.id, "changed");
-      if (!this.done) return;
-      if (this.preventChangePropagation) return;
-      this.dispatchEvent("change");
-    });
+    if (!child.preventChangePropagation) {
+      child.addEventListener("change", () => {
+        debug("Child of", this.id, "changed");
+        if (!this.done) return;
+        // needs to be available for useDoneTrackerSubscription
+        this.dispatchEvent("change");
+      });
+    }
 
     if (child.done) {
       debug("Child was already done when added", child.id);

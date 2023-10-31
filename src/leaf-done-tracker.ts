@@ -16,6 +16,8 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   private _erroredAt: number | null = null;
   private _pendingAt: number = performance.now();
 
+  public preventChangePropagation = false;
+
   get id() {
     return this._name ? `${this._id}:${this._name}` : this._id;
   }
