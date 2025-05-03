@@ -8,7 +8,7 @@ import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const ForkNodeDoneTracker = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker)
+  imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker),
 );
 
 function RecursiveElement(props: {
@@ -25,19 +25,14 @@ function RecursiveElement(props: {
             <button onClick={() => doneTracker.signalError("error")}>
               ❌ Error
             </button>
-            <button onClick={() => doneTracker.reset()}>
-              🔄 Reset
-            </button>
+            <button onClick={() => doneTracker.reset()}>🔄 Reset</button>
           </>
         )}
       </ForkLeafDoneTracker>
     );
   const els = new Array(props.count).fill(0).map((x, i) => {
     return (
-      <ForkNodeDoneTracker
-        key={i}
-        name={`FDT ${props.depth}#${i}`}
-      >
+      <ForkNodeDoneTracker key={i} name={`FDT ${props.depth}#${i}`}>
         <div style={{ marginLeft: 8 }}>
           <RecursiveElement count={props.count} depth={props.depth - 1}>
             {props.children}
@@ -91,6 +86,5 @@ export default {
     }),
   ],
 } as Meta;
-
 
 export const Primary = { args: {} };

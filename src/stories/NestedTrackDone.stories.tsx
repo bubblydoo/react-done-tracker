@@ -10,7 +10,7 @@ import { TrackDone } from "../components/TrackDone";
 
 const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
 const DelayedComponent = visualizeDoneWrapper(
-  imperativeToContextual(ImperativeDelayedComponent)
+  imperativeToContextual(ImperativeDelayedComponent),
 );
 
 const Tree = () => {
@@ -22,7 +22,7 @@ const Tree = () => {
         </DoneVisualizer>
         <TrackDone>
           <DoneVisualizer name={"Sub 2"}>
-              <DelayedComponent delay={1000} />
+            <DelayedComponent delay={1000} />
           </DoneVisualizer>
         </TrackDone>
       </TrackDone>
@@ -40,8 +40,8 @@ export default {
       onError: action("error"),
       onPending: action("pending"),
       onChange: action("change"),
-    })
-  ]
+    }),
+  ],
 } as Meta;
 
 export const Primary = { args: {} };

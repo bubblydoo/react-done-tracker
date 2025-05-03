@@ -1,16 +1,15 @@
 import { action as actionFn } from "@storybook/addon-actions";
-import { jest } from "@storybook/jest";
-import { fireEvent } from "@storybook/testing-library";
+import * as test from "@storybook/test";
 
 export function createSpyableActions<
   A extends Record<string, ReturnType<typeof actionFn>>
 >(actions: A) {
   const spyableActions: Record<
     keyof A,
-    jest.Mock<void, []>
+    test.Mock
   > = Object.fromEntries(
     Object.entries(actions).map(([k, actionFn]) => {
-      const fn = jest.fn(actionFn);
+      const fn = test.fn(actionFn);
       // set function name for storybook interaction view
       Object.defineProperty(fn, "name", { value: k });
       return [k as any, fn] as const;
@@ -29,7 +28,7 @@ export async function doneTrackerUtils(canvas: any) {
   const refreshButton = await canvas.findByTestId("new-root-done-tracker");
   return {
     status: () => stateText.innerHTML as string,
-    refresh: () => fireEvent.click(refreshButton),
+    refresh: () => test.fireEvent.click(refreshButton),
     wait: () => delay(20),
   };
 }

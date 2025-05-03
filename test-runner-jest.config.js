@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
-const { getJestConfig } = require('@storybook/test-runner');
+import { getJestConfig } from '@storybook/test-runner';
 
-module.exports = {
+export default {
   // The default configuration comes from @storybook/test-runner
   ...getJestConfig(),
   /** Add your own overrides below

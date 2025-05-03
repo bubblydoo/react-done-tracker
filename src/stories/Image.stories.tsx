@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { Meta } from "@storybook/react";
-import { waitFor, within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { waitFor, within } from "@storybook/test";
+import { expect } from "@storybook/test";
 import Image from "../components/Image";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import {

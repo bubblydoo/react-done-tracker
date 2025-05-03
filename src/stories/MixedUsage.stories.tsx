@@ -18,14 +18,14 @@ import { DoneTrackerProvider } from "../done-tracker-provider";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const DelayedContainer = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(ImperativeDelayedContainer)
+  imperativeVisualizeDoneWrapper(ImperativeDelayedContainer),
 );
 const DelayedComponent = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(ImperativeDelayedComponent)
+  imperativeVisualizeDoneWrapper(ImperativeDelayedComponent),
 );
 const Button = imperativeToContextual(
   imperativeVisualizeDoneWrapper(ImperativeButton),
-  { dontContextualizeChildren: true }
+  { dontContextualizeChildren: true },
 );
 
 const status = (dt: DoneTracker) =>
@@ -85,7 +85,7 @@ const OrigContainerWithImageDelayingChildren = (props: {
 };
 
 const ContainerWithImageDelayingChildren = visualizeDoneWrapper(
-  OrigContainerWithImageDelayingChildren
+  OrigContainerWithImageDelayingChildren,
 );
 
 const Tree = (props: { imageSrc: string }) => {

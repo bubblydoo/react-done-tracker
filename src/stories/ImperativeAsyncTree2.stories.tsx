@@ -14,10 +14,10 @@ import { DoneTracker } from "../done-tracker-interface";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(
-  ImperativeDelayedContainer
+  ImperativeDelayedContainer,
 );
 const DelayedComponent = imperativeVisualizeDoneWrapper(
-  ImperativeDelayedComponent
+  ImperativeDelayedComponent,
 );
 const Button = imperativeVisualizeDoneWrapper(ImperativeButton);
 
@@ -29,7 +29,7 @@ const OrigContainerWithImageDelayingChildren = (
     delay: number;
     src: string;
     children?: (doneTracker: NodeDoneTracker) => any;
-  }>
+  }>,
 ) => {
   console.log("delayed component", props.doneTracker.id);
   const nodeDoneTracker = useImperativeNodeDoneTracker(props.doneTracker);
@@ -72,7 +72,7 @@ const OrigContainerWithImageDelayingChildren = (
 
 const ContainerWithImageDelayingChildren = imperativeVisualizeDoneWrapper(
   OrigContainerWithImageDelayingChildren,
-  "ContainerWithImageDelayingChildren"
+  "ContainerWithImageDelayingChildren",
 );
 
 const Tree = (props: { doneTracker: NodeDoneTracker; imageSrc: string }) => {

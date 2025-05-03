@@ -10,10 +10,16 @@ import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
 const DelayedContainer = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(ImperativeDelayedContainer, "DelayedContainer")
+  imperativeVisualizeDoneWrapper(
+    ImperativeDelayedContainer,
+    "DelayedContainer",
+  ),
 );
 const DelayedComponent = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(ImperativeDelayedComponent, "DelayedComponent")
+  imperativeVisualizeDoneWrapper(
+    ImperativeDelayedComponent,
+    "DelayedComponent",
+  ),
 );
 
 const Tree = () => {

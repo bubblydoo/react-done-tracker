@@ -9,8 +9,12 @@ import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracke
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { TrackComponentDoneProps } from "../track-component-done";
 
-const ImperativeForkNodeDoneTracker = imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker);
-const ImperativeForkLeafDoneTracker = imperativeVisualizeDoneWrapper(OrigImperativeForkLeafDoneTracker);
+const ImperativeForkNodeDoneTracker = imperativeVisualizeDoneWrapper(
+  OrigImperativeForkNodeDoneTracker,
+);
+const ImperativeForkLeafDoneTracker = imperativeVisualizeDoneWrapper(
+  OrigImperativeForkLeafDoneTracker,
+);
 
 function RecursiveElement(props: {
   count: number;
@@ -24,7 +28,9 @@ function RecursiveElement(props: {
         {(doneTracker) => (
           <>
             <button onClick={() => doneTracker.signalDone()}>✅ Done</button>
-            <button onClick={() => doneTracker.signalError('error')}>❌ Error</button>
+            <button onClick={() => doneTracker.signalError("error")}>
+              ❌ Error
+            </button>
           </>
         )}
       </ImperativeForkLeafDoneTracker>
@@ -85,7 +91,7 @@ const Tree = (props: { doneTracker: NodeDoneTracker }) => {
 };
 
 export default {
-  title: 'Imperative API/Recursive tree',
+  title: "Imperative API/Recursive tree",
   component: Tree,
   decorators: [
     ImperativeStoryDecorator({

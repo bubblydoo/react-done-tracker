@@ -6,8 +6,8 @@ import {
 } from "./StoryWrapper";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
-import { within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { within } from "@storybook/test";
+import { expect } from "@storybook/test";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import { action } from "@storybook/addon-actions";
 

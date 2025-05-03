@@ -1,14 +1,17 @@
 import React from "react";
 import { action } from "@storybook/addon-actions";
-import { ContextualStoryDecorator, RunBeforeRenderDecorator } from "./StoryWrapper";
+import {
+  ContextualStoryDecorator,
+  RunBeforeRenderDecorator,
+} from "./StoryWrapper";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import ImperativeDelayedContainer from "../components/ImperativeDelayedContainer";
 import { imperativeToContextual } from "../imperative-to-contextual";
 import { visualizeDoneWrapper } from "../visualize-wrapper";
 import { Meta } from "@storybook/react";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { expect } from "@storybook/jest";
-import { within } from "@storybook/testing-library";
+import { expect } from "@storybook/test";
+import { within } from "@storybook/test";
 
 const DelayedComponent = imperativeToContextual(ImperativeDelayedComponent);
 const DelayedContainer = imperativeToContextual(ImperativeDelayedContainer);
@@ -29,7 +32,7 @@ export default {
   component: DelayedContainer,
   decorators: [
     ContextualStoryDecorator(actions),
-    RunBeforeRenderDecorator(actionsMockClear)
+    RunBeforeRenderDecorator(actionsMockClear),
   ],
 };
 
@@ -72,5 +75,5 @@ export const InteractionTest: Meta = {
     await delay(2000);
     expect(status()).toBe("done");
     expect(actions.onDone).toHaveBeenCalledTimes(1);
-  }
+  },
 };

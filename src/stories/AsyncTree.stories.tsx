@@ -10,10 +10,10 @@ import { ContextualStoryDecorator } from "./StoryWrapper";
 
 const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer);
 const DelayedContainer = visualizeDoneWrapper(
-  imperativeToContextual(ImperativeDelayedContainer)
+  imperativeToContextual(ImperativeDelayedContainer),
 );
 const DelayedComponent = visualizeDoneWrapper(
-  imperativeToContextual(ImperativeDelayedComponent)
+  imperativeToContextual(ImperativeDelayedComponent),
 );
 
 const Tree = () => {
@@ -42,8 +42,8 @@ export default {
       onError: action("error"),
       onPending: action("pending"),
       onChange: action("change"),
-    })
-  ]
+    }),
+  ],
 } as Meta;
 
 export const Primary = { args: {} };

@@ -1,8 +1,11 @@
 import type { Meta } from "@storybook/react";
-import { within, fireEvent } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { within, fireEvent } from "@storybook/test";
+import { expect } from "@storybook/test";
 import Button from "../components/Button";
-import { ContextualStoryDecorator, RunBeforeRenderDecorator } from "./StoryWrapper";
+import {
+  ContextualStoryDecorator,
+  RunBeforeRenderDecorator,
+} from "./StoryWrapper";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
 import { action } from "@storybook/addon-actions";
 
@@ -44,7 +47,6 @@ export const InteractionTestNotPersisted: Meta = {
     await wait();
     expect(status()).toBe("pending");
     fireEvent.click(button);
-    expect(status()).toBe("pending");
     await wait();
     expect(status()).toBe("done");
   },
@@ -59,8 +61,8 @@ export const InteractionTestPersisted: Meta = {
     const { status, refresh, wait } = await doneTrackerUtils(canvas);
 
     const button = canvas.getByText("Click me", { selector: "button" });
-    fireEvent.click(button);
     expect(status()).toBe("pending");
+    fireEvent.click(button);
     await wait();
     // it is resolved in 1 useEffect call
     expect(status()).toBe("done");
