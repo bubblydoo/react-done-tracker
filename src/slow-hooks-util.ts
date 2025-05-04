@@ -17,18 +17,13 @@ export function doneTrackSlowHookWithDelay<
     const inputRef = useRef<number>(0);
 
     const equalizedArgsRef = useRef<Args>(args);
-    const equalizedArgs = useMemo(() => {
-      if (!options.argsEqual?.(equalizedArgsRef.current, args))
-        equalizedArgsRef.current = args;
-      return equalizedArgsRef.current;
-    }, [args]);
 
-    const input = useMemo(() => {
-      inputRef.current++;
-      return inputRef.current;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, equalizedArgs);
+    if (!options.argsEqual?.(equalizedArgsRef.current, args)) {
+      inputRef.current++
+      equalizedArgsRef.current = args;
+    }
 
+    const input = inputRef.current;
     const [output, setOutput] = useState<number | null>(null);
 
     useEffect(() => {
@@ -37,9 +32,7 @@ export function doneTrackSlowHookWithDelay<
         options.delay
       );
       return () => clearTimeout(timeoutId);
-    }, [input]);
-
-    console.log({ output, input });
+    }, [inputRef.current]);
 
     useDoneTracker({
       name:
@@ -68,18 +61,13 @@ export function doneTrackSlowHookWithEffectsDelay<
     const result = useHook(...args);
 
     const equalizedArgsRef = useRef<Args>(args);
-    const equalizedArgs = useMemo(() => {
-      if (!options.argsEqual?.(equalizedArgsRef.current, args))
-        equalizedArgsRef.current = args;
-      return equalizedArgsRef.current;
-    }, [args]);
 
     const effectsCounter = useNEffectsLater(options.waitEffects);
 
-    useMemo(() => {
+    if (!options.argsEqual?.(equalizedArgsRef.current, args)) {
+      equalizedArgsRef.current = args;
       effectsCounter.reset();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, equalizedArgs);
+    }
 
     useDoneTracker({
       name:
@@ -103,9 +91,12 @@ const useNEffectsLater = (n: number) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => outputRef.current === n ? rerender() : undefined, [outputRef.current, n])
 
-  console.log({ i: outputRef.current, n });
-
-  return { done: outputRef.current >= n, reset: useCallback(() => outputRef.current = 0, []) };
+  return {
+    get done() {
+      return outputRef.current >= n
+    },
+    reset: useCallback(() => outputRef.current = 0, [])
+  };
 };
 
 // const useNEffectsLater = (input: number, n: number) => {

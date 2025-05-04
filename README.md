@@ -403,11 +403,11 @@ const useAsyncFixed = doneTrackHook(
   { isDone: (result, args) => isDeepEqual(result.currentParams, args[1]) }
 );
 
-// wait 2 extra useEffect cycles on each change (less preferred)
+// wait 1 extra useEffect cycle on each change (less preferred)
 const useAsyncFixed = doneTrackSlowHookWithEffectsDelay(
   useAsync,
   {
-    waitEffects: 2,
+    waitEffects: 1,
     argsEqual: (a, b) => isDeepEqual(a[1], b[1]),
   }
 );

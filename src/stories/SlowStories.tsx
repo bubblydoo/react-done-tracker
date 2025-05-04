@@ -35,14 +35,14 @@ const useSlowFixed = doneTrackHook(useSlow, {
 
 const useSlowFixedWithDelay = doneTrackSlowHookWithDelay(useSlow, {
   delay: 100,
-  argsEqual: (a, b) => a === b,
+  argsEqual: (a, b) => a[0] === b[0],
 });
 
 const useSlowFixedWithEffectsDelay = doneTrackSlowHookWithEffectsDelay(
   useSlow,
   {
-    waitEffects: 2,
-    argsEqual: (a, b) => a === b,
+    waitEffects: 1,
+    argsEqual: (a, b) => a[0] === b[0],
   }
 );
 
