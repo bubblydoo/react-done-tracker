@@ -16,10 +16,10 @@
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "yarn test-storybook",
+    "test": "pnpm test-storybook",
     "test-storybook": "test-storybook",
-    "test-debug": "cross-env DEBUG=true PWDEBUG=1 yarn test-storybook",
-    "prepublishOnly": "yarn build"
+    "test-debug": "cross-env DEBUG=true PWDEBUG=1 pnpm test-storybook",
+    "prepublishOnly": "pnpm build"
   },
   "files": [
     "dist/**/*",
@@ -56,5 +56,12 @@
     "typescript": "~5.8.3",
     "vite": "^6.3.4"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "pnpm@10.4.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "esbuild",
+      "playwright"
+    ]
+  }
 }
