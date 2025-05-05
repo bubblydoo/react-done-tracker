@@ -44,13 +44,13 @@ export default {
   title: "Intro",
 };
 
-export const Image_ = {
+export const ImageStory = {
   render: () => <Image src={"https://picsum.photos/200"} />,
   name: "Image",
   decorators: [ContextualStoryDecorator(actions)],
 };
 
-export const DelayedComponent_ = {
+export const DelayedComponentStory = {
   render: () => <DelayedComponent delay={3000} />,
   name: "Delayed Component",
   decorators: [ContextualStoryDecorator(actions)],
@@ -102,7 +102,7 @@ export const ContextualButton = {
   decorators: [ContextualStoryDecorator(actions)],
 };
 
-export const ImperativeButton_ = {
+export const ImperativeButtonStory = {
   render: ({ doneTracker }: { doneTracker: NodeDoneTracker }) => (
     <ImperativeButton doneTracker={doneTracker}>✅ Done</ImperativeButton>
   ),

@@ -1,6 +1,7 @@
 import { Canvas, Meta, Story, Source } from "@storybook/blocks";
 import { action } from "@storybook/addon-actions";
 import * as IntroStories from './Intro.stories';
+import * as DelayedContainerStories from './DelayedContainer.stories';
 
 import Image from "../components/Image";
 import Button from "../components/Button";
@@ -69,9 +70,7 @@ Once the image is loaded, it is done.
 If you refresh the done tracker, it will immediately be done again,
 because the requested image is still loaded.
 
-<Canvas>
-  <Story of={IntroStories.Image_} />
-</Canvas>
+<Canvas of={IntroStories.ImageStory} />
 
 ### Simple example: a component that needs some time
 
@@ -93,18 +92,14 @@ function DelayedComponent() {
 
 When you refresh this done tracker, it will become pending again, because we have restarted the countdown.
 
-<Canvas>
-  <Story of={IntroStories.DelayedComponent_} />
-</Canvas>
+<Canvas of={IntroStories.DelayedComponentStory} />
 
 ### Multiple components that need time
 
 Internally, this library keeps track of the doneness of components with a tree.
 This makes it easy to add multiple children with different loading states.
 
-<Canvas>
-  <Story of={IntroStories.MultipleDelayedComponents} />
-</Canvas>
+<Canvas of={IntroStories.MultipleDelayedComponents} />
 
 ### A HOC that visualizes doneness
 
@@ -118,9 +113,7 @@ export const VisualizedDelayedComponent =
 const VisualizedDelayedComponent = visualizeDoneWrapper(DelayedComponent);
 ```
 
-<Canvas>
-  <Story of={IntroStories.VisualizedMultipleDelayedComponents} />
-</Canvas>
+<Canvas of={IntroStories.VisualizedMultipleDelayedComponents} />
 
 ### A container that needs time, with children that need time as well
 
@@ -134,11 +127,9 @@ export const VisualizedDelayedContainer =
   visualizeDoneWrapper(DelayedContainer);
 ```
 
-<Canvas>
-  <Story of={IntroStories.ContainerAndChildren} />
-</Canvas>
+<Canvas of={IntroStories.ContainerAndChildren} />
 
-### Done-tracked components can have errors
+### Done-tracked componenwts can have errors
 
 Error handling is built in. For example, an image can have a network error.
 
@@ -146,9 +137,7 @@ Error handling is built in. For example, an image can have a network error.
 <Image src={"https://example.qwkeinasc"} />
 ```
 
-<Canvas>
-  <Story of={IntroStories.ImageError} />
-</Canvas>
+<Canvas of={IntroStories.ImageError} />
 
 ### Errors always bubble to the top
 
@@ -167,9 +156,7 @@ export const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer, {
 </DoneVisualizer>
 ```
 
-<Canvas>
-  <Story of={IntroStories.ErrorInATree} />
-</Canvas>
+<Canvas of={IntroStories.ErrorInATree} />
 
 ### We have a Contextual API and an Imperative API
 
@@ -205,9 +192,7 @@ function App() {
 }
 ```
 
-<Canvas>
-  <Story of={IntroStories.ContextualButton} />
-</Canvas>
+<Canvas of={IntroStories.ContextualButton} />
 
 #### Imperative API:
 
@@ -240,9 +225,7 @@ function App() {
 }
 ```
 
-<Canvas>
-  <Story of={IntroStories.ImperativeButton_} />
-</Canvas>
+<Canvas of={IntroStories.ImperativeButtonStory} />
 
 ### In some cases the Imperative API is easier to use...
 
@@ -259,9 +242,7 @@ Because it's easy to use the Done Tracker from the context and use it imperative
 </ForkLeafDoneTracker>
 ```
 
-<Canvas>
-  <Story of={IntroStories.ForkedButtons} />
-</Canvas>
+<Canvas of={IntroStories.ForkedButtons} />
 
 ### Adding a done-tracked container of other done-tracked components
 
@@ -291,8 +272,4 @@ function DelayedContainer(props: Props) {
 }
 ```
 
-<Canvas>
-  {/* <Story id="contextual-api-delayed-container--primary" /> is deprecated, please migrate it to <Story of={referenceToStory} /> see: https://storybook.js.org/migration-guides/7.0 */}
-
-  <Story id="contextual-api-delayed-container--primary" />
-</Canvas>
+<Canvas of={DelayedContainerStories.Primary} />
