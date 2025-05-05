@@ -16,6 +16,12 @@ jobs:
           cache: 'pnpm'
       - run: pnpm i
       - run: pnpm build
-      - run: pnpm test
+      - name: Run tests in development
+        run: |
+          pnpx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "pnpm storybook" \
+            "pnpx wait-on tcp:6006 && pnpm test-storybook"
+      - name: Run tests in production
+        run: pnpm test
         env:
           TARGET_URL: "${{ github.event.deployment_status.target_url }}"
