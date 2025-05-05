@@ -3,7 +3,6 @@ import {
   useEffect,
   useMemo,
   useReducer,
-  useRef,
 } from "react";
 import { DoneTrackerError } from "./done-tracker-error";
 import { DoneTracker } from "./done-tracker-interface";
@@ -40,33 +39,33 @@ export function useDoneTrackerRaw<
     );
   }
 
-  const [, rerender] = useReducer((i: number) => i + 1, 0);
-
-  const unsubscribeFromPrevious = useRef<() => void>();
 
   const localDoneTracker = useMemo<D>(
     () => {
-      unsubscribeFromPrevious.current?.();
-
-      const doneTracker =
-        type === "node" ? new NodeDoneTracker(name) : new LeafDoneTracker(name);
-      doneTracker.addEventListener("done", rerender);
-      doneTracker.addEventListener("abort", rerender);
-      doneTracker.addEventListener("error", rerender);
-      doneTracker.addEventListener("reset", rerender);
-
-      unsubscribeFromPrevious.current = () => {
-        doneTracker.removeEventListener("done", rerender);
-        doneTracker.removeEventListener("abort", rerender);
-        doneTracker.removeEventListener("error", rerender);
-        doneTracker.removeEventListener("reset", rerender);
-      };
-      return doneTracker as any;
+      const localDoneTracker = type === "node" ? new NodeDoneTracker(name) : new LeafDoneTracker(name);
+      return localDoneTracker as any as D;
     },
     // doneTracker needs to be in here!
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [name, type, doneTracker]
   );
+
+  // rerender when the done tracker changes state
+  const [, rerender] = useReducer((i: number) => i + 1, 0);
+
+  useEffect(() => {
+    localDoneTracker.addEventListener("done", rerender);
+    localDoneTracker.addEventListener("abort", rerender);
+    localDoneTracker.addEventListener("error", rerender);
+    localDoneTracker.addEventListener("reset", rerender);
+
+    return () => {
+      localDoneTracker.removeEventListener("done", rerender);
+      localDoneTracker.removeEventListener("abort", rerender);
+      localDoneTracker.removeEventListener("error", rerender);
+      localDoneTracker.removeEventListener("reset", rerender);
+    };
+  }, [localDoneTracker]);
 
   useDebugValue(
     `Doneness of ${name}: ${
