@@ -7,8 +7,8 @@ import { imperativeToContextual } from "../imperative-to-contextual";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 const { actions, actionsMockClear } = createSpyableActions({
   onDone: action("done"),
@@ -19,7 +19,7 @@ const { actions, actionsMockClear } = createSpyableActions({
 });
 
 const ForkNodeDoneTracker = imperativeToContextual(
-  imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker)
+  imperativeVisualizeDoneWrapper(OrigImperativeForkNodeDoneTracker),
 );
 
 function RecursiveElement(props: {
@@ -32,11 +32,22 @@ function RecursiveElement(props: {
       <ForkLeafDoneTracker>
         {(doneTracker) => (
           <>
-            <button onClick={() => doneTracker.signalDone()} data-testid="done-button">✅ Done</button>
-            <button onClick={() => doneTracker.signalError("error")} data-testid="error-button">
+            <button
+              onClick={() => doneTracker.signalDone()}
+              data-testid="done-button"
+            >
+              ✅ Done
+            </button>
+            <button
+              onClick={() => doneTracker.signalError("error")}
+              data-testid="error-button"
+            >
               ❌ Error
             </button>
-            <button onClick={() => doneTracker.reset()} data-testid="reset-button">
+            <button
+              onClick={() => doneTracker.reset()}
+              data-testid="reset-button"
+            >
               🔄 Reset
             </button>
           </>
@@ -45,10 +56,7 @@ function RecursiveElement(props: {
     );
   const els = new Array(props.count).fill(0).map((x, i) => {
     return (
-      <ForkNodeDoneTracker
-        key={i}
-        name={`FDT ${props.depth}#${i}`}
-      >
+      <ForkNodeDoneTracker key={i} name={`FDT ${props.depth}#${i}`}>
         <div style={{ marginLeft: 8 }}>
           <RecursiveElement count={props.count} depth={props.depth - 1}>
             {props.children}
@@ -79,9 +87,7 @@ const Tree = () => {
 export default {
   title: "Tests/Reset",
   component: Tree,
-  decorators: [
-    ContextualStoryDecorator(actions),
-  ],
+  decorators: [ContextualStoryDecorator(actions)],
   play: async ({ canvasElement }) => {
     await delay(500);
 
@@ -94,14 +100,14 @@ export default {
 
     for (let i = 0; i < 2; i++) {
       actionsMockClear();
-      (await canvas.findAllByTestId("done-button")).forEach(e => e.click());
+      (await canvas.findAllByTestId("done-button")).forEach((e) => e.click());
       await delay(500);
       expect(status()).toBe("done");
       expect(actions.onDone).toBeCalledTimes(1);
       expect(actions.onPending).not.toBeCalled();
 
       actionsMockClear();
-      (await canvas.findAllByTestId("reset-button")).forEach(e => e.click());
+      (await canvas.findAllByTestId("reset-button")).forEach((e) => e.click());
       await delay(500);
       expect(status()).toBe("pending");
       expect(actions.onPending).toBeCalledTimes(1);
@@ -109,6 +115,5 @@ export default {
     }
   },
 } as Meta;
-
 
 export const Primary = { args: {} };

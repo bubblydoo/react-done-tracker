@@ -10,10 +10,10 @@ import { NodeDoneTracker } from "../node-done-tracker";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(
-  ImperativeDelayedContainer
+  ImperativeDelayedContainer,
 );
 const DelayedComponent = imperativeVisualizeDoneWrapper(
-  ImperativeDelayedComponent
+  ImperativeDelayedComponent,
 );
 
 const Tree = (props: { doneTracker: NodeDoneTracker }) => {

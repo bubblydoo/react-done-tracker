@@ -30,12 +30,15 @@ function PropDelayer<T>({
   if (usedProps) return children(usedProps);
 }
 
-const PropDelayerVisualized: typeof PropDelayer = visualizeDoneWrapper(PropDelayer);
+const PropDelayerVisualized: typeof PropDelayer =
+  visualizeDoneWrapper(PropDelayer);
 
 const Tree = (props: { src: string }) => {
-  return <PropDelayerVisualized src={props.src}>
-    {(delayedProps) => <Image src={delayedProps?.src} />}
-  </PropDelayerVisualized>;
+  return (
+    <PropDelayerVisualized src={props.src}>
+      {(delayedProps) => <Image src={delayedProps?.src} />}
+    </PropDelayerVisualized>
+  );
 };
 
 // It's recommended to use a subtree because it will cause less resets

@@ -5,3 +5,4 @@ export const parameters = {
   controls: { exclude: /(?:^on[A-Z].*|doneTracker|fullscreen|children)/ },
   layout: 'fullscreen'
 }
+export const tags = ['autodocs'];

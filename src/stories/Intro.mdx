@@ -1,5 +1,6 @@
-import { Canvas, Meta, Story, Source } from "@storybook/addon-docs";
+import { Canvas, Meta, Story, Source } from "@storybook/blocks";
 import { action } from "@storybook/addon-actions";
+import * as IntroStories from './Intro.stories';
 
 import Image from "../components/Image";
 import Button from "../components/Button";
@@ -28,7 +29,7 @@ export const DelayedContainer = imperativeToContextual(
   }
 );
 
-<Meta title="Intro" />
+<Meta of={IntroStories} />
 
 export const actions = {
   onDone: action("done"),
@@ -69,9 +70,7 @@ If you refresh the done tracker, it will immediately be done again,
 because the requested image is still loaded.
 
 <Canvas>
-  <Story name="Image" decorators={[ContextualStoryDecorator(actions)]}>
-    <Image src={"https://picsum.photos/200"} />
-  </Story>
+  <Story of={IntroStories.Image_} />
 </Canvas>
 
 ### Simple example: a component that needs some time
@@ -95,12 +94,7 @@ function DelayedComponent() {
 When you refresh this done tracker, it will become pending again, because we have restarted the countdown.
 
 <Canvas>
-  <Story
-    name="Delayed Component"
-    decorators={[ContextualStoryDecorator(actions)]}
-  >
-    <DelayedComponent delay={3000} />
-  </Story>
+  <Story of={IntroStories.DelayedComponent_} />
 </Canvas>
 
 ### Multiple components that need time
@@ -109,14 +103,7 @@ Internally, this library keeps track of the doneness of components with a tree.
 This makes it easy to add multiple children with different loading states.
 
 <Canvas>
-  <Story
-    name="Multiple Delayed Components"
-    decorators={[ContextualStoryDecorator(actions)]}
-  >
-    <DelayedComponent delay={3000} />
-    <DelayedComponent delay={4000} />
-    <DelayedComponent delay={5000} />
-  </Story>
+  <Story of={IntroStories.MultipleDelayedComponents} />
 </Canvas>
 
 ### A HOC that visualizes doneness
@@ -132,14 +119,7 @@ const VisualizedDelayedComponent = visualizeDoneWrapper(DelayedComponent);
 ```
 
 <Canvas>
-  <Story
-    name="Visualized Multiple Delayed Components"
-    decorators={[ContextualStoryDecorator(actions)]}
-  >
-    <VisualizedDelayedComponent delay={3000} />
-    <VisualizedDelayedComponent delay={4000} />
-    <VisualizedDelayedComponent delay={5000} />
-  </Story>
+  <Story of={IntroStories.VisualizedMultipleDelayedComponents} />
 </Canvas>
 
 ### A container that needs time, with children that need time as well
@@ -155,19 +135,7 @@ export const VisualizedDelayedContainer =
 ```
 
 <Canvas>
-  <Story
-    name="Container and children"
-    decorators={[ContextualStoryDecorator(actions)]}
-  >
-    <VisualizedDelayedContainer delay={3000}>
-      <VisualizedDelayedComponent delay={3000} />
-      <VisualizedDelayedComponent delay={4000} />
-    </VisualizedDelayedContainer>
-    <VisualizedDelayedContainer delay={5000}>
-      <VisualizedDelayedComponent delay={3000} />
-      <VisualizedDelayedComponent delay={4000} />
-    </VisualizedDelayedContainer>
-  </Story>
+  <Story of={IntroStories.ContainerAndChildren} />
 </Canvas>
 
 ### Done-tracked components can have errors
@@ -179,9 +147,7 @@ Error handling is built in. For example, an image can have a network error.
 ```
 
 <Canvas>
-  <Story name="Image error" decorators={[ContextualStoryDecorator(actions)]}>
-    <Image src={"https://example.qwkeinasc"} />
-  </Story>
+  <Story of={IntroStories.ImageError} />
 </Canvas>
 
 ### Errors always bubble to the top
@@ -202,19 +168,7 @@ export const DoneVisualizer = imperativeToContextual(ImperativeDoneVisualizer, {
 ```
 
 <Canvas>
-  <Story
-    name="Error in a tree"
-    decorators={[ContextualStoryDecorator(actions)]}
-  >
-    <DoneVisualizer>
-      <Image src={"https://example.qwkeinasc"} />
-      <Image src={"https://picsum.photos/100/100"} />
-    </DoneVisualizer>
-    <DoneVisualizer>
-      <Image src={"https://picsum.photos/101/100"} />
-      <Image src={"https://picsum.photos/102/100"} />
-    </DoneVisualizer>
-  </Story>
+  <Story of={IntroStories.ErrorInATree} />
 </Canvas>
 
 ### We have a Contextual API and an Imperative API
@@ -252,12 +206,7 @@ function App() {
 ```
 
 <Canvas>
-  <Story
-    name="Contextual button"
-    decorators={[ContextualStoryDecorator(actions)]}
-  >
-    <Button>✅ Done</Button>
-  </Story>
+  <Story of={IntroStories.ContextualButton} />
 </Canvas>
 
 #### Imperative API:
@@ -292,14 +241,7 @@ function App() {
 ```
 
 <Canvas>
-  <Story
-    name="Imperative button"
-    decorators={[ImperativeStoryDecorator(actions)]}
-  >
-    {({ doneTracker }) => (
-      <ImperativeButton doneTracker={doneTracker}>✅ Done</ImperativeButton>
-    )}
-  </Story>
+  <Story of={IntroStories.ImperativeButton_} />
 </Canvas>
 
 ### In some cases the Imperative API is easier to use...
@@ -318,20 +260,7 @@ Because it's easy to use the Done Tracker from the context and use it imperative
 ```
 
 <Canvas>
-  <Story name="Forked buttons" decorators={[ContextualStoryDecorator(actions)]}>
-    <DoneVisualizer>
-      <ForkLeafDoneTracker>
-        {(doneTracker) => (
-          <>
-            <button onClick={() => doneTracker.signalDone()}>✅ Done</button>
-            <button onClick={() => doneTracker.signalError("error")}>
-              ❌ Error
-            </button>
-          </>
-        )}
-      </ForkLeafDoneTracker>
-    </DoneVisualizer>
-  </Story>
+  <Story of={IntroStories.ForkedButtons} />
 </Canvas>
 
 ### Adding a done-tracked container of other done-tracked components
@@ -363,5 +292,7 @@ function DelayedContainer(props: Props) {
 ```
 
 <Canvas>
+  {/* <Story id="contextual-api-delayed-container--primary" /> is deprecated, please migrate it to <Story of={referenceToStory} /> see: https://storybook.js.org/migration-guides/7.0 */}
+
   <Story id="contextual-api-delayed-container--primary" />
 </Canvas>

@@ -22,7 +22,7 @@ const useSlow = (input: any) => {
     const timeoutId = setTimeout(() => {
       setLoading(false);
       setOutput(input);
-    }, 1000);
+    }, 500);
     return () => clearTimeout(timeoutId);
   }, [input]);
 
@@ -35,14 +35,14 @@ const useSlowFixed = doneTrackHook(useSlow, {
 
 const useSlowFixedWithDelay = doneTrackSlowHookWithDelay(useSlow, {
   delay: 100,
-  argsEqual: (a, b) => a === b,
+  argsEqual: (a, b) => a[0] === b[0],
 });
 
 const useSlowFixedWithEffectsDelay = doneTrackSlowHookWithEffectsDelay(
   useSlow,
   {
-    waitEffects: 2,
-    argsEqual: (a, b) => a === b,
+    waitEffects: 1,
+    argsEqual: (a, b) => a[0] === b[0],
   }
 );
 
@@ -94,11 +94,10 @@ export const Tree = () => {
 
   return (
     <>
-      <input
-        onChange={(e) => setPassed(+e.target.value)}
-        value={passed}
-        type="number"
-      ></input>
+      <div>current: {passed}</div>
+      <button onClick={() => setPassed(passed => passed + 1)}>
+        increment
+      </button>
       <LoadAndPass passToChildren={passed} loading={false}>
         {(passed) => <ImmediatelyDone>immediate: {passed}</ImmediatelyDone>}
       </LoadAndPass>
@@ -129,11 +128,10 @@ export const TreeFixed = () => {
 
   return (
     <>
-      <input
-        onChange={(e) => setPassed(+e.target.value)}
-        value={passed}
-        type="number"
-      ></input>
+      <div>current: {passed}</div>
+      <button onClick={() => setPassed(passed => passed + 1)}>
+        increment
+      </button>
       <LoadAndPass passToChildren={passed} loading={false}>
         {(passed) => <ImmediatelyDone>immediate: {passed}</ImmediatelyDone>}
       </LoadAndPass>
@@ -165,11 +163,10 @@ export const TreeFixedWithEffectsDelay = () => {
 
   return (
     <>
-      <input
-        onChange={(e) => setPassed(+e.target.value)}
-        value={passed}
-        type="number"
-      ></input>
+      <div>current: {passed}</div>
+      <button onClick={() => setPassed(passed => passed + 1)}>
+        increment
+      </button>
       <LoadAndPass passToChildren={passed} loading={false}>
         {(passed) => <ImmediatelyDone>immediate: {passed}</ImmediatelyDone>}
       </LoadAndPass>
@@ -200,11 +197,10 @@ export const TreeFixedWithDelay = () => {
 
   return (
     <>
-      <input
-        onChange={(e) => setPassed(+e.target.value)}
-        value={passed}
-        type="number"
-      ></input>
+      <div>current: {passed}</div>
+      <button onClick={() => setPassed(passed => passed + 1)}>
+        increment
+      </button>
       <LoadAndPass passToChildren={passed} loading={false}>
         {(passed) => <ImmediatelyDone>immediate: {passed}</ImmediatelyDone>}
       </LoadAndPass>

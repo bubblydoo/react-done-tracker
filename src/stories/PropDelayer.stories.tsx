@@ -41,7 +41,7 @@ function PropDelayer<T>({
 }
 
 const PropDelayerVisualized: typeof PropDelayer = visualizeDoneWrapper(
-  PropDelayer
+  PropDelayer,
 ) as any;
 
 const Tree = (props: { src: string }) => {

@@ -21,7 +21,7 @@ const Tree = () => {
   });
   const subtreeDoneTracker = useNodeDoneTracker({
     name: "Subtree",
-    skip: delaying
+    skip: delaying,
   });
 
   useEffect(() => setDelaying(true), [asyncOpDoneTracker]);

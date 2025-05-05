@@ -8,8 +8,8 @@ import {
 } from "./StoryWrapper";
 import { useDoneTracker } from "../use-done-tracker";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 function ImmediatelyErroring() {
   useDoneTracker({
@@ -22,7 +22,7 @@ function ImmediatelyErroring() {
 
 const ImmediatelyErroringVisualizer = visualizeDoneWrapper(
   ImmediatelyErroring,
-  "ImmediatelyErroring"
+  "ImmediatelyErroring",
 );
 
 const { actions, actionsMockClear } = createSpyableActions({

@@ -6,11 +6,9 @@ module.exports = {
     options: {}
   },
   docs: {
-    docsPage: true,
-    autodocs: true,
     source: {
       type: 'dynamic',
       excludeDecorators: true,
-    },
+    }
   },
 };

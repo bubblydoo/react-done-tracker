@@ -32,7 +32,7 @@ const Input = (props: { doneTracker: NodeDoneTracker }) => {
 };
 
 export default {
-  title: 'Imperative API/Input',
+  title: "Imperative API/Input",
   component: Input,
   decorators: [
     ImperativeStoryDecorator({
@@ -46,4 +46,3 @@ export default {
 } as Meta;
 
 export const Primary = { args: {} };
-

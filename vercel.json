@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "yarn build-storybook",
-  "devCommand": "yarn storybook",
-  "installCommand": "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true yarn",
+  "buildCommand": "pnpm build-storybook",
+  "devCommand": "pnpm storybook",
+  "installCommand": "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true pnpm i",
   "framework": null,
   "outputDirectory": "./storybook-static"
 }
