@@ -57,23 +57,41 @@ export const DelayedComponentStory = {
 };
 
 export const MultipleDelayedComponents = {
-  render: () => <DelayedComponent delay={3000} />,
+  render: () => (
+    <>
+      <DelayedComponent delay={3000} />
+      <DelayedComponent delay={4000} />
+      <DelayedComponent delay={5000} />
+    </>
+  ),
   name: "Multiple Delayed Components",
   decorators: [ContextualStoryDecorator(actions)],
 };
 
 export const VisualizedMultipleDelayedComponents = {
-  render: () => <VisualizedDelayedComponent delay={3000} />,
+  render: () => (
+    <>
+      <VisualizedDelayedComponent delay={3000} />
+      <VisualizedDelayedComponent delay={4000} />
+      <VisualizedDelayedComponent delay={5000} />
+    </>
+  ),
   name: "Visualized Multiple Delayed Components",
   decorators: [ContextualStoryDecorator(actions)],
 };
 
 export const ContainerAndChildren = {
   render: () => (
-    <VisualizedDelayedContainer delay={3000}>
-      <VisualizedDelayedComponent delay={3000} />
-      <VisualizedDelayedComponent delay={4000} />
-    </VisualizedDelayedContainer>
+    <>
+      <VisualizedDelayedContainer delay={3000}>
+        <VisualizedDelayedComponent delay={3000} />
+        <VisualizedDelayedComponent delay={4000} />
+      </VisualizedDelayedContainer>
+      <VisualizedDelayedContainer delay={5000}>
+        <VisualizedDelayedComponent delay={3000} />
+        <VisualizedDelayedComponent delay={4000} />
+      </VisualizedDelayedContainer>
+    </>
   ),
   name: "Container and children",
   decorators: [ContextualStoryDecorator(actions)],
@@ -87,10 +105,16 @@ export const ImageError = {
 
 export const ErrorInATree = {
   render: () => (
-    <DoneVisualizer>
-      <Image src={"https://example.qwkeinasc"} />
-      <Image src={"https://picsum.photos/100/100"} />
-    </DoneVisualizer>
+    <>
+      <DoneVisualizer>
+        <Image src={"https://example.qwkeinasc"} />
+        <Image src={"https://picsum.photos/100/100"} />
+      </DoneVisualizer>
+      <DoneVisualizer>
+        <Image src={"https://picsum.photos/101/100"} />
+        <Image src={"https://picsum.photos/102/100"} />
+      </DoneVisualizer>
+    </>
   ),
   name: "Error in a tree",
   decorators: [ContextualStoryDecorator(actions)],
