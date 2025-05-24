@@ -1,20 +1,27 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
 import { getJestConfig } from '@storybook/test-runner';
 
+// The default Jest configuration comes from @storybook/test-runner
+const testRunnerConfig = getJestConfig();
+
+/**
+ * @type {import('@jest/types').Config.InitialOptions}
+ */
 export default {
-  // The default configuration comes from @storybook/test-runner
-  ...getJestConfig(),
-  /** Add your own overrides below
+  ...testRunnerConfig,
+  /** Add your own overrides below, and make sure
+   *  to merge testRunnerConfig properties with your own
    * @see https://jestjs.io/docs/configuration
    */
   testEnvironmentOptions: {
+    ...testRunnerConfig.testEnvironmentOptions,
     'jest-playwright': {
-      browser: 'chromium',
+      ...testRunnerConfig.testEnvironmentOptions['jest-playwright'],
+      // eslint-disable-next-line no-undef
       launchOptions: process.env.DEBUG ? {
+        ...testRunnerConfig.testEnvironmentOptions['jest-playwright'].launchOptions,
         headless: false,
         devtools: true,
       } : {}
     }
-  }
+  },
 };

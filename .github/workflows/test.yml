@@ -18,12 +18,11 @@ jobs:
       - run: pnpm build
       - name: Run tests in development
         run: |
-          pnpx playwright install-deps
-          pnpx playwright install
+          pnpx playwright install --with-deps firefox chromium webkit
           pnpx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "pnpm storybook" \
-            "pnpx wait-on tcp:6006 && pnpm test-storybook"
+            "pnpx wait-on tcp:6006 && pnpm test-storybook --browsers firefox chromium webkit"
       - name: Run tests in production
-        run: pnpm test
+        run: pnpm test-storybook --browsers firefox chromium webkit
         env:
           TARGET_URL: "${{ github.event.deployment_status.target_url }}"
