@@ -18,6 +18,7 @@ jobs:
       - run: pnpm build
       - name: Run tests in development
         run: |
+          pnpx playwright install-deps
           pnpx playwright install
           pnpx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "pnpm storybook" \
