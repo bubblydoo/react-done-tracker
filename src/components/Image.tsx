@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useDoneTracker } from "../use-done-tracker";
 
-type Props = JSX.IntrinsicElements["img"];
+type Props = React.JSX.IntrinsicElements["img"];
 
 export default function Image(props: Props) {
   const todo = props.src;
@@ -10,7 +10,7 @@ export default function Image(props: Props) {
   const [error, setError] = useState<any>(null);
 
   // we need to keep track of this, because img.complete is true even when errored
-  const erroredSrc = useRef<string | undefined>();
+  const erroredSrc = useRef<string | undefined>(undefined);
 
   useDoneTracker({
     name: "Image",
@@ -18,7 +18,7 @@ export default function Image(props: Props) {
     error: todo === erroredSrc.current ? error : undefined,
   });
 
-  const ref = useRef<HTMLImageElement>();
+  const ref = useRef<HTMLImageElement>(null);
 
   return (
     <img

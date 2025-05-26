@@ -24,7 +24,7 @@ export function TrackDoneRoot({
     forceRefreshRef.current = () => rerender();
   }
 
-  const doneTracker = useRootDoneTracker(doneTrackerName, [tick]);
+  const doneTracker = useRootDoneTracker(doneTrackerName, false, [tick]);
 
   useDoneTrackerSubscription(doneTracker, {
     done: onDone,

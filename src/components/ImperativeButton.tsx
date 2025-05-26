@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
 import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 
-type Props = ImperativeDoneTrackedProps<JSX.IntrinsicElements["button"]> & {
+type Props = ImperativeDoneTrackedProps<React.JSX.IntrinsicElements["button"]> & {
   persistDone?: boolean;
 };
 

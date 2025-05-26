@@ -3,7 +3,10 @@ import * as test from "@storybook/test";
 
 export function createSpyableActions<
   A extends Record<string, ReturnType<typeof actionFn>>
->(actions: A) {
+>(actions: A): {
+  actions: Record<keyof A, test.Mock>;
+  actionsMockClear: () => void;
+} {
   const spyableActions: Record<
     keyof A,
     test.Mock

@@ -9,7 +9,8 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "incremental": true,
-    "tsBuildInfoFile": "build/.tsbuildinfo"
+    "tsBuildInfoFile": "build/.tsbuildinfo",
+    "skipLibCheck": true
   },
   "include": ["src/**/*", "test/**/*"],
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDoneTracker } from "../use-done-tracker";
 
-type Props = JSX.IntrinsicElements["button"] & {
+type Props = React.JSX.IntrinsicElements["button"] & {
   persistDone?: boolean;
 };
 

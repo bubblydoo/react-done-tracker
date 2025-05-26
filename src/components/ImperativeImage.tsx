@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
 import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 
-type Props = ImperativeDoneTrackedProps<JSX.IntrinsicElements["img"]>;
+type Props = ImperativeDoneTrackedProps<React.JSX.IntrinsicElements["img"]>;
 
 export default function Image({
   doneTracker: parentDoneTracker,
@@ -20,9 +20,9 @@ export default function Image({
   });
 
   // we need to keep track of this, because img.complete is true even when errored
-  const erroredSrc = useRef<string | undefined>();
+  const erroredSrc = useRef<string | undefined>(undefined);
 
-  const ref = useRef<HTMLImageElement>();
+  const ref = useRef<HTMLImageElement>(null);
 
   return (
     <img

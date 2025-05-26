@@ -24,17 +24,18 @@ export function imperativeToContextual<
   const ImperativeToContextual = React.forwardRef<T, P>(
     function ImperativeToContextual(props, ref) {
       const doneTracker = useDoneTrackerContext();
+      const children = 'children' in props ? props.children : undefined;
       const childrenFn = useCallback(
         (doneTracker: NodeDoneTracker) => (
           <DoneTrackerContext.Provider value={doneTracker}>
-            {props.children}
+            {children}
           </DoneTrackerContext.Provider>
         ),
-        [props.children]
+        [children]
       );
       return (
         <Component {...(props as any)} doneTracker={doneTracker} ref={ref}>
-          {dontContextualizeChildren ? props.children : childrenFn}
+          {dontContextualizeChildren ? children : childrenFn}
         </Component>
       );
     }
