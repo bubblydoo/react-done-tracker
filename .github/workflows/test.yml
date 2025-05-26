@@ -1,4 +1,4 @@
-name: Storybook Tests
+name: Vitest & Storybook Tests
 on: deployment_status
 jobs:
   test:
@@ -16,6 +16,8 @@ jobs:
           cache: 'pnpm'
       - run: pnpm i
       - run: pnpm build
+      - name: Run vitest tests
+        run: pnpm test-vitest
       - name: Run tests in development
         run: |
           pnpx playwright install --with-deps firefox chromium webkit
