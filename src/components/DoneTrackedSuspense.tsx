@@ -1,36 +1,50 @@
-import React, { Suspense, useCallback, useLayoutEffect, useState } from "react";
+import React, {
+  Suspense as OrigSuspense,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { SuspenseProps } from "react";
 import { useDoneTracker } from "../use-done-tracker";
 
-function RunInUseEffect({
-  onEffect,
-  children,
-}: {
-  onEffect: () => void;
-  children: any;
-}) {
+export function DoneTrackedSuspense(props: SuspenseProps) {
+  const { loaded, SuspenseWithState } = useSuspenseWithState();
+
+  useDoneTracker({ name: "DoneTrackedSuspense", done: loaded });
+
+  return <SuspenseWithState {...props} />;
+}
+
+function RunInUseEffect({ onEffect }: { onEffect: () => void }) {
   // have to use useLayoutEffect because useEffect doesn't run when unsuspended
   // e.g. rendered (useEffect fires) -> suspended -> rendered (useEffect does not fire)
   useLayoutEffect(() => onEffect(), [onEffect]);
-  return children;
+  return null;
 }
 
-export function DoneTrackedSuspense({ fallback, children }: SuspenseProps) {
-  const [done, setDone] = useState(false);
+/** Hook that returns a Suspense component that is synced with a state */
+function useSuspenseWithState() {
+  const [loaded, setLoaded] = useState(false);
 
-  useDoneTracker({ name: "DoneTrackedSuspense", done });
+  const setLoadedFalse = useCallback(() => setLoaded(false), []);
+  const setLoadedTrue = useCallback(() => setLoaded(true), []);
 
-  return (
-    <Suspense
-      fallback={
-        <RunInUseEffect onEffect={useCallback(() => setDone(false), [])}>
-          {fallback}
-        </RunInUseEffect>
-      }
-    >
-      <RunInUseEffect onEffect={useCallback(() => setDone(true), [])}>
+  const SuspenseWithState = useCallback(
+    ({ fallback, children }: SuspenseProps) => (
+      <OrigSuspense
+        fallback={
+          <>
+            <RunInUseEffect onEffect={setLoadedFalse} />
+            {fallback}
+          </>
+        }
+      >
+        <RunInUseEffect onEffect={setLoadedTrue} />
         {children}
-      </RunInUseEffect>
-    </Suspense>
+      </OrigSuspense>
+    ),
+    [setLoadedFalse, setLoadedTrue]
   );
+
+  return { loaded, SuspenseWithState };
 }
