@@ -18,6 +18,7 @@ export * from './use-root-done-tracker';
 export * from './visualize-wrapper';
 export * from './hooks-util';
 export * from './slow-hooks-util';
+export * from './use-temporarily-skip-node-done-tracker';
 export * from './use-done-tracker-raw';
 export * from './components/TrackDone';
 export * from './components/ImperativeTrackDone';
