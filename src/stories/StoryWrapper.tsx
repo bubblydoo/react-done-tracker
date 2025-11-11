@@ -24,7 +24,6 @@ export default function StoryWrapper(props: StoryWrapperProps) {
     onAbort,
     onError,
     onPending,
-    onChange,
     disableStrictMode,
     recreateDoneTrackerOnPropsChange,
     hideForceRefresh,
@@ -115,11 +114,6 @@ export default function StoryWrapper(props: StoryWrapperProps) {
           onPending?.();
           setStatus("pending");
         }, [onPending])}
-        onChange={useCallback(() => {
-          console.log("Story wrapper status", "change");
-          onChange?.();
-          setStatus("done");
-        }, [onChange])}
       >
         {children}
       </TrackDone>

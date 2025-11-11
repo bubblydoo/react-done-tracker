@@ -29,7 +29,6 @@ const actions = {
   onAbort: action("abort"),
   onError: action("error"),
   onPending: action("pending"),
-  onChange: action("change"),
 };
 
 const VisualizedDelayedComponent = visualizeDoneWrapper(DelayedComponent);
