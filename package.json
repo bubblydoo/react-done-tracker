@@ -1,6 +1,6 @@
 {
   "name": "react-done-tracker",
-  "version": "0.0.19",
+  "version": "0.1.0",
   "description": "Keep track of when your React tree is done loading",
   "type": "module",
   "main": "./dist/index.js",
@@ -8,12 +8,11 @@
   "author": "Hans Otto Wirtz <hansottowirtz@gmail.com>",
   "license": "MIT",
   "exports": {
-    "require": "./dist/index.cjs",
     "types": "./dist/index.d.ts",
     "default": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup src/index.ts --format esm --dts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "pnpm test-vitest && pnpm test-storybook",
