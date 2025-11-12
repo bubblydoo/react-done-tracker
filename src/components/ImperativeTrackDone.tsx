@@ -12,7 +12,6 @@ export function ImperativeTrackDone({
   onDone,
   onError,
   onPending,
-  onChange,
 }: TrackComponentDoneProps<{
   children: (doneTracker: NodeDoneTracker) => any;
   forceRefreshRef?: MutableRefObject<(() => void) | null>;
@@ -29,7 +28,6 @@ export function ImperativeTrackDone({
     done: onDone,
     error: onError,
     pending: onPending,
-    change: onChange,
   });
 
   return (

@@ -16,8 +16,6 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
   private _erroredAt: number | null = null;
   private _pendingAt: number = performance.now();
 
-  public preventChangePropagation = false;
-
   get id() {
     return this._name ? `${this._id}:${this._name}` : this._id;
   }
@@ -125,19 +123,6 @@ export class LeafDoneTracker extends BaseDoneTracker implements DoneTracker {
     this._error = err;
     this._errorSource = this;
     this.dispatchEvent("error", err, this);
-  };
-
-  signalChange = () => {
-    if (this.aborted) {
-      warn("Already aborted, can't signal change", this.id);
-      return;
-    }
-    if (!this.done) {
-      debug("Not done, not signaling change", this.id);
-      return;
-    }
-    log("🌀 Signaling changed", this.id, "after");
-    this.dispatchEvent("change");
   };
 
   reset = () => {

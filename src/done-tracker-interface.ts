@@ -26,8 +26,6 @@ export interface DoneTracker {
   readonly erroredAt: number | null;
   readonly pendingAt: number;
 
-  readonly preventChangePropagation: boolean;
-
   addEventListener<K extends keyof DoneTrackerEventMap>(event: K, listener: DoneTrackerListener<K>): void;
 
   removeEventListener<K extends keyof DoneTrackerEventMap>(event: K, listener: DoneTrackerListener<K>): void;

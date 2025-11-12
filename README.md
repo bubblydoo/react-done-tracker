@@ -312,21 +312,27 @@ import { ForkLeafDoneTracker } from "react-done-tracker";
 
 In certain situations, it's useful to know when the children of a certain component have changed, e.g. when you want to screenshot those components after a change. On first load, you can wait for a `done` event. But when the children change in a non-async way, there will not be a second `done` event.
 
-Because of that, you can trigger the `change` event if you want a parent component to know that the children have changed.
+Previously, this library had a `change` event, but we now recommend to provide your own change emitters:
 
 ```tsx
-// child
-useEffect(() => {
-  doneTracker.signalChange();
-}, [doneTracker, dep]);
-
-// parent
-useDoneTrackerSubscription(doneTracker, {
-  change: () => console.log("children have changed")
-});
+class ChangeEmitter {
+  private listeners: (() => void)[] = [];
+  emit = () => {
+    this.listeners.forEach((listener) => listener());
+  }
+  subscribe = (listener: () => void) => {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners.splice(this.listeners.indexOf(listener), 1);
+    };
+  }
+  fork = (): ChangeEmitter => {
+    const emitter = new ChangeEmitter();
+    this.listeners.push(emitter.emit);
+    return emitter;
+  }
+}
 ```
-
-The `change` event is not part of the "core" of this library. It was added because it's commonly needed.
 
 ## Caveats
 

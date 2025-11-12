@@ -55,7 +55,6 @@ export default {
       onAbort: action("abort"),
       onError: action("error"),
       onPending: action("pending"),
-      onChange: action("change"),
     }),
   ],
 } as Meta;
