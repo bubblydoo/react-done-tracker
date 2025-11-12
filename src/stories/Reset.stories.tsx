@@ -1,5 +1,5 @@
-import { action } from "@storybook/addon-actions";
-import { Meta } from "@storybook/react";
+import { action } from "storybook/actions";
+import { Meta } from "@storybook/react-vite";
 import React, { useState } from "react";
 import OrigImperativeForkNodeDoneTracker from "../components/ImperativeForkNodeDoneTracker";
 import { ForkLeafDoneTracker } from "../components/ForkLeafDoneTracker";
@@ -7,8 +7,8 @@ import { imperativeToContextual } from "../imperative-to-contextual";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { within } from "@storybook/test";
-import { expect } from "@storybook/test";
+import { within } from "storybook/test";
+import { expect } from "storybook/test";
 
 const { actions, actionsMockClear } = createSpyableActions({
   onDone: action("done"),

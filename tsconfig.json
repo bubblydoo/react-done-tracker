@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "incremental": true,
     "tsBuildInfoFile": "build/.tsbuildinfo",
     "skipLibCheck": true

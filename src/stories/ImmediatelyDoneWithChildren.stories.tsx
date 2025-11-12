@@ -1,4 +1,4 @@
-import { Meta } from "@storybook/react";
+import { Meta } from "@storybook/react-vite";
 import React from "react";
 import {
   ContextualStoryDecorator,
@@ -6,10 +6,10 @@ import {
 } from "./StoryWrapper";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
-import { within } from "@storybook/test";
-import { expect } from "@storybook/test";
+import { within } from "storybook/test";
+import { expect } from "storybook/test";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { action } from "@storybook/addon-actions";
+import { action } from "storybook/actions";
 
 const Tree = () => {
   const parent = useNodeDoneTracker({ name: "Parent" });

@@ -1,5 +1,5 @@
-import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { action } from "storybook/actions";
+import { Meta, StoryFn } from "@storybook/react-vite";
 import React, { useState } from "react";
 import StoryWrapper, { ImperativeStoryDecorator } from "./StoryWrapper";
 import OrigImperativeForkNodeDoneTracker from "../components/ImperativeForkNodeDoneTracker";

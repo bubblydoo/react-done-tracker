@@ -1,5 +1,5 @@
-import { action } from "@storybook/addon-actions";
-import { Meta } from "@storybook/react";
+import { action } from "storybook/actions";
+import { Meta } from "@storybook/react-vite";
 import React from "react";
 import { visualizeDoneWrapper } from "../visualize-wrapper";
 import {
@@ -8,8 +8,8 @@ import {
 } from "./StoryWrapper";
 import { useDoneTracker } from "../use-done-tracker";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { within } from "@storybook/test";
-import { expect } from "@storybook/test";
+import { within } from "storybook/test";
+import { expect } from "storybook/test";
 
 function ImmediatelyDone() {
   useDoneTracker({

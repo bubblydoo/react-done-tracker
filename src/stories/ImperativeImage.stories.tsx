@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { action } from "@storybook/addon-actions";
-import type { Meta } from "@storybook/react";
+import { action } from "storybook/actions";
+import type { Meta } from "@storybook/react-vite";
 import { ImperativeStoryDecorator } from "./StoryWrapper";
 import Image from "../components/ImperativeImage";
 

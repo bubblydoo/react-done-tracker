@@ -1,5 +1,5 @@
-import { action } from "@storybook/addon-actions";
-import { Meta } from "@storybook/react";
+import { action } from "storybook/actions";
+import { Meta } from "@storybook/react-vite";
 import React from "react";
 import {
   ContextualStoryDecorator,
@@ -11,8 +11,8 @@ import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { DoneTrackerProvider } from "../done-tracker-provider";
 import { useEffect } from "react";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { within, waitFor } from "@storybook/test";
-import { expect } from "@storybook/test";
+import { within, waitFor } from "storybook/test";
+import { expect } from "storybook/test";
 
 const { actions, actionsMockClear } = createSpyableActions({
   onDone: action("done"),

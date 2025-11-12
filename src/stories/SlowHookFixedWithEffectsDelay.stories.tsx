@@ -1,9 +1,9 @@
-import { action } from "@storybook/addon-actions";
-import { Meta } from "@storybook/react";
+import { action } from "storybook/actions";
+import { Meta } from "@storybook/react-vite";
 import { createSpyableActions, delay } from "./common";
 import { TreeFixedWithEffectsDelay } from "./SlowStories";
 import { ContextualStoryDecorator } from "./StoryWrapper";
-import { expect } from "@storybook/test";
+import { expect } from "storybook/test";
 
 const { actions, actionsMockClear } = createSpyableActions({
   onDone: action("done"),

@@ -1,11 +1,11 @@
-import { action } from "@storybook/addon-actions";
-import { Meta, StoryObj } from "@storybook/react";
+import { action } from "storybook/actions";
+import { Meta, StoryObj } from "@storybook/react-vite";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 import React from "react";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
 import { imperativeToContextual } from "../imperative-to-contextual";
-import { within, expect } from "@storybook/test";
+import { within, expect } from "storybook/test";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { DoneTrackerProvider } from "../done-tracker-provider";
 import { delay } from "./common";

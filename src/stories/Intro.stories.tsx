@@ -1,4 +1,4 @@
-import { action } from "@storybook/addon-actions";
+import { action } from "storybook/actions";
 
 import Image from "../components/Image";
 import Button from "../components/Button";
