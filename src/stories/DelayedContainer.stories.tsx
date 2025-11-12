@@ -1,5 +1,5 @@
 import React from "react";
-import { action } from "@storybook/addon-actions";
+import { action } from "storybook/actions";
 import { ContextualStoryDecorator } from "./StoryWrapper";
 import DelayedContainer from "../components/DelayedContainer";
 import ImperativeDelayedComponent from "../components/ImperativeDelayedComponent";

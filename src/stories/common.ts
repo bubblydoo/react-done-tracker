@@ -1,5 +1,5 @@
-import { action as actionFn } from "@storybook/addon-actions";
-import * as test from "@storybook/test";
+import { action as actionFn } from "storybook/actions";
+import * as test from "storybook/test";
 
 export function createSpyableActions<
   A extends Record<string, ReturnType<typeof actionFn>>

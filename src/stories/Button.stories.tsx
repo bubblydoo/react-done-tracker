@@ -1,13 +1,13 @@
-import type { Meta } from "@storybook/react";
-import { within, fireEvent } from "@storybook/test";
-import { expect } from "@storybook/test";
+import type { Meta } from "@storybook/react-vite";
+import { within, fireEvent } from "storybook/test";
+import { expect } from "storybook/test";
 import Button from "../components/Button";
 import {
   ContextualStoryDecorator,
   RunBeforeRenderDecorator,
 } from "./StoryWrapper";
 import { createSpyableActions, delay, doneTrackerUtils } from "./common";
-import { action } from "@storybook/addon-actions";
+import { action } from "storybook/actions";
 
 const { actions, actionsMockClear } = createSpyableActions({
   onDone: action("done"),
