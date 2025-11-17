@@ -1,9 +1,4 @@
-import {
-  useDebugValue,
-  useEffect,
-  useMemo,
-  useReducer,
-} from "react";
+import { useEffect, useMemo } from "react";
 import { DoneTrackerError } from "./done-tracker-error";
 import { DoneTracker } from "./done-tracker-interface";
 import { LeafDoneTracker } from "./leaf-done-tracker";
@@ -39,44 +34,15 @@ export function useDoneTrackerRaw<
     );
   }
 
-
   const localDoneTracker = useMemo<D>(
     () => {
-      const localDoneTracker = type === "node" ? new NodeDoneTracker(name) : new LeafDoneTracker(name);
+      const localDoneTracker =
+        type === "node" ? new NodeDoneTracker(name) : new LeafDoneTracker(name);
       return localDoneTracker as any as D;
     },
     // doneTracker needs to be in here!
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [name, type, doneTracker]
-  );
-
-  // rerender when the done tracker changes state
-  const [, rerender] = useReducer((i: number) => i + 1, 0);
-
-  useEffect(() => {
-    localDoneTracker.addEventListener("done", rerender);
-    localDoneTracker.addEventListener("abort", rerender);
-    localDoneTracker.addEventListener("error", rerender);
-    localDoneTracker.addEventListener("reset", rerender);
-
-    return () => {
-      localDoneTracker.removeEventListener("done", rerender);
-      localDoneTracker.removeEventListener("abort", rerender);
-      localDoneTracker.removeEventListener("error", rerender);
-      localDoneTracker.removeEventListener("reset", rerender);
-    };
-  }, [localDoneTracker]);
-
-  useDebugValue(
-    `Doneness of ${name}: ${
-      localDoneTracker.aborted
-        ? "aborted"
-        : localDoneTracker.done
-        ? "done"
-        : localDoneTracker.errored
-        ? `errored: ${localDoneTracker.error}`
-        : "pending"
-    }`
   );
 
   // we also cannot use useLayoutEffect here, because it is too fast!

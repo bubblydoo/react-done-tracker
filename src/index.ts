@@ -20,6 +20,7 @@ export * from './hooks-util';
 export * from './slow-hooks-util';
 export * from './use-temporarily-skip-node-done-tracker';
 export * from './use-done-tracker-raw';
+export * from './use-done-tracker-state';
 export * from './components/TrackDone';
 export * from './components/ImperativeTrackDone';
 export * from './components/ForkLeafDoneTracker';

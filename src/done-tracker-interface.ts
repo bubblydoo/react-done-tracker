@@ -1,7 +1,7 @@
 export interface DoneTrackerEventMap {
   "done": [],
   "abort": [],
-  "error": [any, DoneTracker],
+  "error": [unknown, DoneTracker],
   "reset": [],
   "change": [],
 }
@@ -18,7 +18,7 @@ export interface DoneTracker {
   name: string | undefined;
   readonly aborted: boolean;
   readonly errored: boolean;
-  readonly error: any;
+  readonly error: unknown;
   readonly errorSource: DoneTracker | undefined;
 
   readonly createdAt: number;

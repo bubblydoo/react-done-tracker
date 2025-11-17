@@ -264,6 +264,18 @@ function App() {
 }
 ```
 
+### Getting the state of a done tracker
+
+Do not use `doneTracker.done` directly, as it is not reactive. Instead, use `useDoneTrackerState`.
+
+```tsx
+import { useDoneTrackerState } from "react-done-tracker";
+
+const { status } = useDoneTrackerState(doneTracker);
+
+if (status === "done") console.log("Done");
+```
+
 ### Make a done tracked hook
 
 ```tsx

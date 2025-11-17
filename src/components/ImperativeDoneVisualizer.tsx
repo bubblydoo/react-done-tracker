@@ -1,12 +1,12 @@
 import React from "react";
 import { ImperativeDoneTrackedProps } from "../imperative-done-tracked";
-import { DoneTracker } from "../done-tracker-interface";
 import { NodeDoneTracker } from "../node-done-tracker";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
+import { useDoneTrackerState } from "../use-done-tracker-state";
 
-const componentStyle = (dt: DoneTracker): React.CSSProperties => {
+const componentStyle = ({ status: state }: ReturnType<typeof useDoneTrackerState>): React.CSSProperties => {
   return {
-    background: dt.done ? "green" : dt.errored ? "red" : "lightgrey",
+    background: state === "done" ? "green" : state === "errored" ? "red" : "lightgrey",
     position: "relative",
     margin: 8,
     padding: 8,
@@ -41,10 +41,12 @@ export default function ImperativeDoneVisualizer({
     name: name || "Visualizer"
   });
 
+  const state = useDoneTrackerState(localDoneTracker);
+
   const childrenComponents = children?.(localDoneTracker);
 
   return (
-    <div style={componentStyle(localDoneTracker)}>
+    <div style={componentStyle(state)}>
       <div style={indicatorStyle}>{localDoneTracker.id}</div>
       {childrenComponents}
     </div>

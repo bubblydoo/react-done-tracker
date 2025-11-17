@@ -16,6 +16,7 @@ import {
 import Image from "../components/Image";
 import { DoneTrackerProvider } from "../done-tracker-provider";
 import { ContextualStoryDecorator } from "./StoryWrapper";
+import { DoneTrackerState, useDoneTrackerState } from "../use-done-tracker-state";
 
 const DelayedContainer = imperativeToContextual(
   imperativeVisualizeDoneWrapper(ImperativeDelayedContainer),
@@ -28,8 +29,8 @@ const Button = imperativeToContextual(
   { dontContextualizeChildren: true },
 );
 
-const status = (dt: DoneTracker) =>
-  `${dt.name}:${dt.done ? "Done" : "Not done"}`;
+const status = (dt: DoneTracker, state: DoneTrackerState) =>
+  `${dt.name}:${state.status === "done" ? "Done" : "Not done"}`;
 
 const OrigContainerWithImageDelayingChildren = (props: {
   delay: number;
@@ -70,10 +71,14 @@ const OrigContainerWithImageDelayingChildren = (props: {
 
   useEffect(() => setDelaying(true), [localDoneTracker]);
 
+  const localState = useDoneTrackerState(localDoneTracker);
+  const imageState = useDoneTrackerState(imageDoneTracker);
+  const childrenState = useDoneTrackerState(childrenDoneTracker);
+
   return (
     <div>
-      {status(localDoneTracker)} & {status(imageDoneTracker)} &{" "}
-      {status(childrenDoneTracker)}
+      {status(localDoneTracker, localState)} & {status(imageDoneTracker, imageState)} &{" "}
+      {status(childrenDoneTracker, childrenState)}
       <DoneTrackerProvider doneTracker={imageDoneTracker}>
         <Image src={props.src} />
       </DoneTrackerProvider>

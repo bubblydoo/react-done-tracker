@@ -10,8 +10,9 @@ import Image from "../components/ImperativeImage";
 import { useImperativeNodeDoneTracker } from "../use-imperative-node-done-tracker";
 import { useImperativeDoneTracker } from "../use-imperative-done-tracker";
 import { NodeDoneTracker } from "../node-done-tracker";
-import { DoneTracker } from "../done-tracker-interface";
 import { imperativeVisualizeDoneWrapper } from "../visualize-wrapper";
+import { DoneTrackerState, useDoneTrackerState } from "../use-done-tracker-state";
+import { DoneTracker } from "../done-tracker-interface";
 
 const DelayedContainer = imperativeVisualizeDoneWrapper(
   ImperativeDelayedContainer,
@@ -21,8 +22,8 @@ const DelayedComponent = imperativeVisualizeDoneWrapper(
 );
 const Button = imperativeVisualizeDoneWrapper(ImperativeButton);
 
-const status = (dt: DoneTracker) =>
-  `${dt.name}:${dt.done ? "Done" : "Not done"}`;
+const status = (dt: DoneTracker, state: DoneTrackerState) =>
+  `${dt.name}:${state.status === "done" ? "Done" : "Not done"}`;
 
 const OrigContainerWithImageDelayingChildren = (
   props: ImperativeDoneTrackedProps<{
@@ -60,10 +61,14 @@ const OrigContainerWithImageDelayingChildren = (
 
   const childrenComponents = props.children?.(childrenDoneTracker);
 
+  const localState = useDoneTrackerState(localDoneTracker);
+  const imageState = useDoneTrackerState(imageDoneTracker);
+  const childrenState = useDoneTrackerState(childrenDoneTracker);
+
   return (
     <div>
-      {status(localDoneTracker)} & {status(imageDoneTracker)} &{" "}
-      {status(childrenDoneTracker)}
+      {status(localDoneTracker, localState)} & {status(imageDoneTracker, imageState)} &{" "}
+      {status(childrenDoneTracker, childrenState)}
       <Image src={props.src} doneTracker={imageDoneTracker} />
       {delaying ? "Delaying" : "Done"} {childrenComponents}
     </div>
