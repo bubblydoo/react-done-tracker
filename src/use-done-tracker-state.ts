@@ -1,7 +1,9 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { DoneTracker } from "./done-tracker-interface";
 
-export function useDoneTrackerState(doneTracker: DoneTracker): DoneTrackerState {
+export function useDoneTrackerState(
+  doneTracker: DoneTracker
+): DoneTrackerState {
   const store = useMemo(() => doneTrackerToStore(doneTracker), [doneTracker]);
 
   return useSyncExternalStore(
@@ -27,7 +29,6 @@ export type DoneTrackerState =
       status: "pending";
     };
 
-
 type Subscribe = Parameters<typeof useSyncExternalStore>[0];
 
 const DONE: DoneTrackerState = { status: "done" };
@@ -50,28 +51,29 @@ function doneTrackerToStore(doneTracker: DoneTracker) {
     };
   };
 
-  const errorStateMap = new StrongAndWeakMap<DoneTrackerState>();
+  let lastErrorState: DoneTrackerState | undefined = undefined;
 
   const getSnapshot = (): DoneTrackerState => {
     if (doneTracker.done) {
       return DONE;
     }
     if (doneTracker.errored) {
-      const existing = errorStateMap.get(doneTracker.error);
-
-      if (existing) {
-        return existing;
+      if (
+        lastErrorState &&
+        lastErrorState.status === "errored" &&
+        lastErrorState.error === doneTracker.error &&
+        lastErrorState.errorSource === doneTracker.errorSource
+      ) {
+        return lastErrorState;
       }
 
-      const newState: DoneTrackerState = {
+      lastErrorState = {
         status: "errored",
         error: doneTracker.error,
         errorSource: doneTracker.errorSource,
       };
 
-      errorStateMap.set(doneTracker.error, newState);
-
-      return newState;
+      return lastErrorState;
     }
     if (doneTracker.aborted) {
       return ABORTED;
@@ -84,33 +86,4 @@ function doneTrackerToStore(doneTracker: DoneTracker) {
   };
 
   return { subscribe, getSnapshot, getServerSnapshot };
-}
-
-class StrongAndWeakMap<T> {
-  private weakMap = new WeakMap<object, T>();
-  private map = new Map<unknown, T>();
-
-  private selectMap(key: unknown): Map<unknown, T> {
-    if (typeof key === 'object' && key !== null) {
-      return this.weakMap as Map<object, T>;
-    }
-    console.error("The errors thrown to done trackers should be objects, not primitives. This may cause issues with useDoneTrackerState.");
-    return this.map;
-  }
-
-  has(key: unknown): boolean {
-    return this.selectMap(key).has(key);
-  }
-
-  get(key: unknown): T | undefined {
-    return this.selectMap(key).get(key);
-  }
-
-  set(key: unknown, value: T) {
-    this.selectMap(key).set(key, value);
-  }
-
-  delete(key: unknown) {
-    this.selectMap(key).delete(key);
-  }
 }

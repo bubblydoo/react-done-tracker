@@ -9,6 +9,7 @@ import { within, expect } from "storybook/test";
 import { useNodeDoneTracker } from "../use-node-done-tracker";
 import { DoneTrackerProvider } from "../done-tracker-provider";
 import { delay } from "./common";
+import { useDoneTrackerState } from "../use-done-tracker-state";
 
 const DelayedComponent = imperativeToContextual(
   imperativeVisualizeDoneWrapper(ImperativeDelayedComponent, "DelayedComponent")
@@ -19,6 +20,8 @@ function Status({ children }: { children: React.ReactNode }) {
     name: "Status",
   });
 
+  const state = useDoneTrackerState(doneTracker);
+
   return (
     <div>
       <div>
@@ -26,7 +29,7 @@ function Status({ children }: { children: React.ReactNode }) {
         <input
           data-testid="status"
           readOnly
-          value={doneTracker.done ? "Done" : "Not done"}
+          value={state.status === "done" ? "Done" : "Not done"}
         />
       </div>
       <DoneTrackerProvider doneTracker={doneTracker}>
