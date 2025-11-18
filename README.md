@@ -251,8 +251,10 @@ import { TrackDone, DoneTrackerProvider, useNodeDoneTracker } from "react-done-t
 function Tap({ children }) {
   const doneTracker = useNodeDoneTracker({ name: "Tap" });
 
+  const { status } = useDoneTrackerState(doneTracker);
+
   return (
-    <div style={{ background: doneTracker.done ? "green" : "black" }}>
+    <div style={{ background: status === "done" ? "green" : "black" }}>
       <DoneTrackerProvider doneTracker={doneTracker}>
         {props.children}
       </DoneTrackerProvider>
