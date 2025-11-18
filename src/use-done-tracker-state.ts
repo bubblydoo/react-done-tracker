@@ -37,13 +37,11 @@ const PENDING: DoneTrackerState = { status: "pending" };
 
 function doneTrackerToStore(doneTracker: DoneTracker) {
   const subscribe: Subscribe = (onStoreChange) => {
-    console.log("Subscribing to done tracker", doneTracker.id);
     doneTracker.addEventListener("done", onStoreChange);
     doneTracker.addEventListener("error", onStoreChange);
     doneTracker.addEventListener("abort", onStoreChange);
     doneTracker.addEventListener("reset", onStoreChange);
     return () => {
-      console.log("Unsubscribing from done tracker", doneTracker.id);
       doneTracker.removeEventListener("done", onStoreChange);
       doneTracker.removeEventListener("error", onStoreChange);
       doneTracker.removeEventListener("abort", onStoreChange);

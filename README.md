@@ -115,6 +115,11 @@ You can easily use Done Trackers and Suspense together, see [this example](https
 
 Run `window.__debug_react_done_tracker = true` before importing the library, and you will see logs of done tracker events, as well as the state of a done tracker tree when its doneness is being checked.
 
+There are also other verbosity levels: `'vvv'`, `'vv'`, `'v'`. High verbosity levels will have a big performance impact.
+- `'v'` or `true` will not log children.
+- `'vv'` will log children up to 1 level deep.
+- `'vvv'` will log all children.
+
 You can print the state of a done tracker tree to the console with `doneTracker.log()`.
 
 Next to that, the `useDoneTrackerRaw` hook uses `useDebugValue` which displays the done tracker state in React DevTools.

@@ -2,7 +2,7 @@ import { BaseDoneTracker } from "./base-done-tracker";
 import { DEBUG } from "./debug";
 import { DoneTracker } from "./done-tracker-interface";
 import { getUniqueId } from "./get-unique-id";
-import { log, warn, debug } from "./log";
+import { log, warn, debug, LOG_PREFIX } from "./log";
 
 /**
  * Keeps track of "doneness" of a component tree
@@ -200,14 +200,12 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       return;
     }
 
-    if (DEBUG) {
-      console.groupCollapsed(
-        "[Done Tracker]",
-        "🧮 Calculating doneness",
-        this.id
-      );
-      this.log();
+    if (DEBUG === "vvv" || DEBUG === "vv") {
+      console.groupCollapsed(LOG_PREFIX, "🧮 Calculating doneness", this.id);
+      this.log(DEBUG);
       console.groupEnd();
+    } else {
+      log("🧮 Calculating doneness", this.id);
     }
 
     const children = Array.from(this.children);
@@ -218,7 +216,13 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
       this._error = erroredChild.error;
       this._errorSource = erroredChild.errorSource;
       this._erroredAt = performance.now();
-      log("❌ Errored", this.id, "after", this._erroredAt - this._pendingAt, "ms");
+      log(
+        "❌ Errored",
+        this.id,
+        "after",
+        this._erroredAt - this._pendingAt,
+        "ms"
+      );
       this.dispatchEvent("error", this.error, this.errorSource!);
       return;
     }
@@ -232,27 +236,39 @@ export class NodeDoneTracker extends BaseDoneTracker implements DoneTracker {
     this.dispatchEvent("done");
   };
 
-  log = () => {
+  log = (level: "vvv" | "vv" | "v" = "v") => {
     const nDoneChildren = Array.from(this.children)
       .map((child) => child.done)
       .filter(Boolean).length;
 
-    console.group(
+    const mainLog = [
       "Done Tracker:",
       this.id,
       this.done ? "done" : "not done",
       `${nDoneChildren}/${this.children.size}`,
       this.skip ? "(skipped)" : "(not skipped)"
-    );
+    ]
+
+    if (level === "v") {
+      console.log(...mainLog);
+      return;
+    }
+
+    console.group(...mainLog);
+
     console.groupCollapsed("Inspect");
     console.log(this);
     console.groupEnd();
-    const children = Array.from(this.children).sort(
-      (a, b) => a.createdAt - b.createdAt
-    );
-    for (const child of children) {
-      child.log?.();
+
+    if (level === "vvv") {
+      const children = Array.from(this.children).sort(
+        (a, b) => a.createdAt - b.createdAt
+      );
+      for (const child of children) {
+        child.log?.();
+      }
     }
+
     console.groupEnd();
   };
 }
