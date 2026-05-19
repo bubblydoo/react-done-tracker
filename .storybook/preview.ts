@@ -12,6 +12,7 @@ const preview: Preview = {
       source: {
         format: "dedent",
       },
+      codePanel: true,
     },
   },
 };
