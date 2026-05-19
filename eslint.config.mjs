@@ -1,46 +1,26 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from "eslint-plugin-storybook";
-
-import { defineConfig } from "eslint/config";
-import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
+import { fixupPluginRules } from "@eslint/compat";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import tseslint from "typescript-eslint";
 import globals from "globals";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import { defineConfig } from "eslint/config";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
-export default defineConfig([
+export default defineConfig(
+  { ignores: ["dist/", "storybook-static/"] },
+  js.configs.recommended,
+  tseslint.configs.recommended,
+  storybook.configs["flat/recommended"],
   {
-    extends: fixupConfigRules(
-      compat.extends(
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:@typescript-eslint/recommended"
-      )
-    ),
     plugins: {
       react: fixupPluginRules(react),
-      "react-hooks": fixupPluginRules(reactHooks),
-      "@typescript-eslint": fixupPluginRules(typescriptEslint),
+      "react-hooks": reactHooks,
     },
     languageOptions: {
       globals: {
         ...globals.browser,
       },
-      parser: tsParser,
       ecmaVersion: "latest",
       sourceType: "module",
       parserOptions: {
@@ -55,9 +35,12 @@ export default defineConfig([
       },
     },
     rules: {
+      ...react.configs.recommended.rules,
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "react/prop-types": "off",
     },
   },
-]);
+);
