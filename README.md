@@ -283,6 +283,28 @@ const { status } = useDoneTrackerState(doneTracker);
 if (status === "done") console.log("Done");
 ```
 
+### Error handling
+
+Of course, when we think about async loading, we have to think about error handling.
+In this library, errors will always bubble up to the root and take priority over done states.
+
+```tsx
+const [done, setDone] = useState(false);
+const [error, setError] = useState<unknown | undefined>(undefined);
+
+useDoneTracker({
+  name: "Image",
+  done,
+  error,
+});
+
+return <img
+  src="https://example.com/not-found.jpg"
+  onError={(e) => setError(e)}
+  onLoad={() => setDone(true)}
+/>
+```
+
 ### Make a done tracked hook
 
 ```tsx
