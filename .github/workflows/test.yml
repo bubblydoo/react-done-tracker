@@ -18,9 +18,10 @@ jobs:
       - run: pnpm build
       - name: Run vitest tests
         run: pnpm test-vitest
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
       - name: Run tests in development
         run: |
-          pnpx playwright install --with-deps firefox chromium webkit
           pnpx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "pnpm storybook" \
             "pnpx wait-on tcp:6006 && pnpm test-storybook"
