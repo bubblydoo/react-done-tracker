@@ -53,18 +53,15 @@ export function useDoneTrackerRaw<
     doneTracker.add(localDoneTracker);
 
     return () => {
-      // Make sure we abort the previous done tracker after we added the next one,
-      // so the parent never has no children.
+      // In strict mode, this effect will be called twice with the same done tracker
       //
       // This is the order we want:
-      // 1. parent.add(child1) -> first render
-      // 2. parent.add(child2) -> double render
-      // 3. child1.abort()
+      // 1. parent.add(child) -> first render
+      // 2. parent.add(child) -> double render
+      // 3. check references and abort() if needed
       //
       // Without queueMicrotask, step 2 and 3 would be switched.
-      //
-      // Next to that, it should work if child1 === child2.
-      // (this effect will be ran twice with the same done tracker)
+      // We add reference counting to make sure abort can really be called.
       //
       // 1. parent.add(child) -> references = 1
       // 2. parent.add(child) -> references = 2
